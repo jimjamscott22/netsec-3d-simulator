@@ -239,7 +239,8 @@ logs, works out who attacked, how and which account, and files a report.
   *Tests:* correct, wrong, normalization (case, whitespace), out of
   attempts.
 - [ ] **2.4 `report` objective type** in the evaluator.
-  *Tests:* pass; wrong value; out of attempts fails for good.
+  *Tests:* pass; wrong value; out of attempts fails for good and emits
+  `mission_failed` once.
 - [ ] **2.5 Server mini shell:** `ls`, `cat`, `grep [-i]`, `tail [-n]`,
   `service <name> status`, `help`, over log files and (later) server files.
   Update `ios-cli.md` with the server shell section.
@@ -249,6 +250,11 @@ logs, works out who attacked, how and which account, and files a report.
   with match highlight.
 - [ ] **2.8 Report form UI:** fields from `report.fields`, remaining
   attempts, feedback per field.
+- [ ] **2.8b Failed debrief card** (SPEC §7.2 step 6): on `mission_failed`,
+  stop play and show the failed objective, the answers, the evidence, and
+  Retry / Main menu.
+  *Done when:* running out of attempts on any field shows the card, and
+  Retry reloads the mission from its starting state.
 - [ ] **2.9 Write `scenarios/m2_log_triage.json`.** About 150–300 log lines
   mixing normal traffic with an SSH brute force from one IP that ends in a
   successful login. Solution steps use a new `report` step type in the smoke

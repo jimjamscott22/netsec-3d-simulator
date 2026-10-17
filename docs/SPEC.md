@@ -151,6 +151,7 @@ Ports are addressed as `"<device_id>:<canonical interface name>"`, for example
 | `report_submitted` | `field, correct: bool` | The player files a report field (M2) |
 | `objective_updated` | `objective_id, passed: bool` | An objective's result changes |
 | `mission_completed` | `scenario_id` | All objectives pass |
+| `mission_failed` | `scenario_id, objective_id` | An objective can no longer pass (M2: a report field is out of attempts) |
 
 Objectives are re-evaluated after every `link_changed`, `config_changed`,
 `report_submitted`, `patch_applied` and `http_requested`. They never poll.
@@ -304,6 +305,11 @@ After v1: `m4_remote_access` (SSH + static routes) and `m5_nat_acl`
    key, so it never spoils the puzzle by default.
 5. **Debrief**: when all objectives pass, show a summary of what was fixed
    and the commands a real admin would use. Progress is saved.
+6. **Failed debrief**: when `mission_failed` fires, play stops and a
+   failed-mission card shows which objective failed, the correct answers,
+   and where the evidence was (e.g. the log lines that named the attacker).
+   It offers **Retry** (reload the scenario) and **Main menu**. Progress is
+   not saved.
 
 ### 7.3 Objective types
 
@@ -369,8 +375,9 @@ after.
 - `src_ip` and `geo` (ISO 3166 alpha-2) are optional. They feed the threat map.
 - Lines are shown in file order. `t` is display-only.
 - `report.max_attempts` (default 3) limits wrong submissions per field. When a
-  field runs out, its objective fails for good and the debrief shows the
-  answer. The mission can be restarted.
+  field runs out, its objective fails for good, the sim emits
+  `mission_failed`, and the failed debrief (§7.2 step 6) shows the answers
+  and offers Retry.
 - Validator: every `report` objective's `field` must exist in `report.fields`;
   a `choice` objective's `equals` must be one of its `options`; each log
   `source` must be a device id.
