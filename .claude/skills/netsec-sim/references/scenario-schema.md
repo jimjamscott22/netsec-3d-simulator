@@ -18,6 +18,8 @@ If validation fails, it returns a list of errors with JSON paths, such as
 | `links` | array | yes | Cables present at start; may be empty |
 | `spare_cables` | int | no | Cables the player can place; default 0 |
 | `reserved_ports` | array of `"<device>:<port>"` | no | Ports no cable may use (start links included). Use them to block topology shortcuts |
+| `logs` | array | M2 | Log files; each entry has `source` (device id), `file` (path), and `lines` |
+| `report` | object | M2 | Report fields and optional `max_attempts`; see Logs and reports |
 | `objectives` | array | yes | At least one |
 | `hints` | array | no | Keyed by fail reason (see Hints) |
 | `debrief` | string | no | Shown after the mission ends, via `debrief_view()`: what was fixed and how a real admin would do it |
@@ -64,6 +66,15 @@ If validation fails, it returns a list of errors with JSON paths, such as
 - No link may use a port listed in `reserved_ports`, and `connect_link`
   rejects them during play.
 
+## Logs and reports (M2)
+
+A log entry has a `source` device id, a `file` path, and a `lines` array. Each
+report field may include `evidence`, an array of `{ "source", "file", "line" }`
+references. Every supplied pair must identify a declared log, and `line` must
+be an integer from 1 through that log's line count. Evidence may be omitted or
+empty; every supplied reference must resolve to exactly one line. The loader
+rejects invalid references before building state.
+
 ## Objectives
 
 Every objective has `id`, `type`, `description` (player-facing), and its
@@ -90,6 +101,14 @@ Objectives can set `"order": n` for missions that unlock steps one at a time.
 An ordered objective is locked (shown greyed, never passes) until every
 objective with a lower `order` passes. By default, all objectives are
 visible and can be completed in any order.
+
+## Patch regions (M3)
+
+Each vuln's region is a 1-based inclusive range in its starting file. A
+scenario may declare at most one patch region for each `(device, file)` pair;
+the loader rejects duplicate or overlapping ranges, including identical
+boundaries, and reports both vuln ids and the file path before state is built.
+Regions in different files are independent.
 
 ## Hints
 
