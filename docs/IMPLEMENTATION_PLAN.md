@@ -156,8 +156,10 @@ configure VLANs, a trunk and router-on-a-stick, and see PC-A ping PC-B.
   *Tests:* one bad-file fixture per rule; a valid file has zero errors.
 - [ ] **1.17 Scenario loader.** Builds devices, applies starting config,
   places locked/unlocked links, sets spare cables. Never builds state if
-  validation fails.
-  *Tests:* the M1 example loads; a broken file leaves the sim empty.
+  validation fails. Exposes `scenario_view()` (SPEC §3.3).
+  *Tests:* the M1 example loads; a broken file leaves the sim empty;
+  `scenario_view` lists every device with its placement, every start link
+  and the reserved ports.
 - [ ] **1.18 Objective evaluator.** `ping` (with optional `to_device` and `via`) and
   `config` types; `order` locking (SPEC §7.2); re-evaluated on
   `link_changed` and `config_changed`; emits `objective_updated` on change
@@ -193,8 +195,8 @@ configure VLANs, a trunk and router-on-a-stick, and see PC-A ping PC-B.
 - [ ] **1.24 Device model scenes:** greybox `router_2port`, `switch_24`,
   `pc` with ordered socket markers and LEDs.
 - [ ] **1.25 Room builder** (`world/room_builder.gd`): spawns devices from
-  the loaded scenario at their markers; assigns socket ids from `models.gd`;
-  puts a dust cap on each reserved port.
+  `Sim.scenario_view()` at their markers; assigns socket ids from
+  `models.gd`; draws the start links; puts a dust cap on each reserved port.
   *Done when:* M1's devices appear in the right racks and desks.
 - [ ] **1.26 Cabling interaction** (SPEC §8.2): pick up, plug, reject with
   toast, unplug unlocked, cancel; spare cable count.
@@ -283,10 +285,11 @@ exploit with `curl` from a PC, patches the code, and proves the exploit now
 fails.
 
 - [ ] **3.1 Server files + patch regions** (`sim/web/`): files stored as
-  prefix + region + suffix per vuln; `read_file`, `write_patch`,
-  `patch_applied` signal.
+  prefix + region + suffix per vuln; `read_file`, `patch_views`,
+  `write_patch` (bumps `patch_rev`), `patch_applied` signal.
   *Tests:* read; patch replaces only the region; a patch that changes the
-  line count keeps prefix and suffix intact; unknown vuln; signal.
+  line count keeps prefix and suffix intact and `patch_views` reports the
+  new line range; `patch_rev` increments per save; unknown vuln; signal.
 - [ ] **3.2 Patch matcher** (`sim/web/patch_matcher.gd`): normalization
   (strip comments and whitespace outside string literals) + anchored
   full-match against `accept` regexes.
@@ -309,17 +312,19 @@ fails.
   *Tests:* `vuln_patched` pass/fail; `exploit_test vulnerable` passes only
   after a vulnerable response from `from`; `exploit_test patched` fails
   until a patched response is logged after the fix, and fails again if the
-  latest request was from before the patch; a request to a different server
-  with the same vuln id doesn't count.
+  latest request was from before the patch; patch → curl → break → re-patch
+  with no new curl fails (stale `patch_rev`); a request to a different
+  server with the same vuln id doesn't count.
 - [ ] **3.6 `curl` on the PC shell** and `edit <file>` on the server shell.
-  `edit` returns `ShellAction.OPEN_EDITOR` with the path (SPEC §5); the
-  terminal UI opens the editor. The host/server tokenizer accepts
+  `edit` returns `ShellAction.OPEN_EDITOR` with the device id and path
+  (SPEC §5); the terminal UI opens the editor. The host/server tokenizer accepts
   double-quoted arguments.
   *Tests:* parse (including a quoted URL with spaces and single quotes),
   output goldens, and `edit` returning the action and path (unknown file →
   error, no action).
 - [ ] **3.7 Code editor UI:** `CodeEdit` with line numbers, basic PHP
-  highlighting, lines outside the patch region locked and shaded,
+  highlighting; reads `Sim.read_file` + `Sim.patch_views`; lines outside
+  the patch regions locked and shaded,
   Save → `Sim.write_patch`, hint on a rejected patch, unsaved-changes guard
   on close.
 - [ ] **3.8 Write `scenarios/m3_web_patch.json`** with `login.php` (SQLi →

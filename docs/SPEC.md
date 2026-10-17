@@ -123,6 +123,7 @@ These are hard rules. CI fails if any are broken.
 | Method | Returns | Milestone |
 | --- | --- | --- |
 | `load_scenario(data: Dictionary)` | `LoadResult` (`ok`, `errors: Array[String]`) | M1 |
+| `scenario_view()` | `ScenarioView` (read-only): title, briefing, hints, every device's id/type/model/hostname and `rack`+`slot` or `desk`, links (`a`, `b`, `locked`), `reserved_ports` | M1 |
 | `device_view(id: String)` | `DeviceView` (read-only snapshot) or `null` | M1 |
 | `open_session(device_id: String)` | `CliSession` | M1 |
 | `connect_link(a: String, b: String)` | `LinkResult` (`ok`, `reason`); uses one spare cable | M1 |
@@ -133,11 +134,12 @@ These are hard rules. CI fails if any are broken.
 | `query_logs(source_id: String, file: String, filter: LogFilter)` | `Array[LogLine]` | M2 |
 | `submit_report(field: String, value: String)` | `ReportResult` | M2 |
 | `read_file(device_id: String, path: String)` | `String` or `null` | M3 |
+| `patch_views(device_id: String, path: String)` | `Array[PatchView]` (read-only): `vuln_id`, current region line range, `hint` | M3 |
 | `write_patch(device_id: String, vuln_id: String, text: String)` | `bool` | M3 |
 | `http_request(src_id: String, url: String)` | `HttpResult` | M3 |
 
-The presentation layer never gets a live `Device`. `DeviceView` is a fresh
-copy with getters only, so changing it can't touch sim state; all changes
+The presentation layer never gets a live `Device`. `ScenarioView`,
+`DeviceView` and `PatchView` are fresh copies with getters only, so changing it can't touch sim state; all changes
 go through the methods above or a `CliSession`.
 
 Ports are addressed as `"<device_id>:<canonical interface name>"`, for example
@@ -207,7 +209,7 @@ Full grammar, prompts and error strings: `references/ios-cli.md`. Key behavior:
 - Ctrl+Z maps to `end`. Up/Down walks history.
 - `CliResult` carries `output`, `ok`, and an `action: ShellAction` enum
   (`NONE`, `CLOSE_SESSION`, `OPEN_EDITOR`) with an `action_arg` (for
-  `OPEN_EDITOR`, the file path). The core only returns the action; the
+  `OPEN_EDITOR`, the device id and file path). The core only returns the action; the
   terminal UI reads it and opens the editor or closes the terminal, so the
   core never references a UI class.
 
@@ -328,7 +330,7 @@ After v1: `m4_remote_access` (SSH + static routes) and `m5_nat_acl`
 | `config` | `device`, `path`, `equals` | Config value matches. `path` is a key (`"hostname"`) or an array of keys; interface names in it are normalized (`["interfaces", "Gi0/0.10", "dot1q_vlan"]`) | M1 |
 | `report` | `field`, `equals` | The player's filed value for `field` matches (case-insensitive, trimmed) | M2 |
 | `vuln_patched` | `device`, `vuln` | The vuln's patch region matches one of its `accept` patterns (SPEC §7.5) | M3 |
-| `exploit_test` | `from`, `device`, `vuln`, `expect` (`vulnerable` \| `patched`) | Matches log entries with this `from`, `device` (the server that answered) and `vuln`. `vulnerable`: one such entry got the vulnerable response. `patched`: the vuln is patched now and the latest such entry got the patched response | M3 |
+| `exploit_test` | `from`, `device`, `vuln`, `expect` (`vulnerable` \| `patched`) | Matches log entries with this `from`, `device` (the server that answered) and `vuln`. `vulnerable`: one such entry got the vulnerable response. `patched`: the vuln is patched now, and the latest such entry got the patched response **and** has the vuln's current `patch_rev` (so evidence from before the latest save doesn't count) | M3 |
 | `no_ping` | `from`, `to_ip`, `expect_reason` | Ping fails with exactly that reason | M5 |
 | `ssh` | `from`, `to_ip`, `user` | SSH preconditions + L3 reachability | M4 |
 
@@ -436,8 +438,11 @@ region must **fully match** one of a few accepted fixes.
 - `region` is a 1-based, inclusive line range in the **starting** file. The
   sim stores the file as read-only prefix + editable region + read-only
   suffix, so regions survive edits that change the line count.
-- `NetworkSim.write_patch(device, vuln, text)` replaces only the region text.
-  The code editor shows the whole file but locks lines outside the region.
+- `NetworkSim.write_patch(device, vuln, text)` replaces only the region text
+  and bumps that vuln's `patch_rev` counter.
+- The code editor gets the file from `read_file` and the vuln ids, region
+  line ranges and hints from `patch_views(device, path)`. It shows the whole
+  file but locks lines outside the regions.
 - **Normalization** before matching: strip comments (`//`, `#`, `/* */`)
   outside string literals, then remove all whitespace outside string
   literals. Whitespace inside strings is kept.
@@ -471,9 +476,9 @@ PC with `curl`:
    exploit payload (trimmed), return `vulnerable_body` or `patched_body`
    based on the vuln's state.
 5. Otherwise return a fixed `200 OK` page for the route.
-6. Append an entry to the sim's **HTTP log** (`src_id`, `dst_device`, `vuln_id` or `""`,
-   `outcome`: `VULNERABLE` | `PATCHED` | `NORMAL` | `ERROR`) and emit
-   `http_requested`.
+6. Append an entry to the sim's **HTTP log** (`src_id`, `dst_device`,
+   `vuln_id` or `""`, that vuln's `patch_rev` at request time, `outcome`:
+   `VULNERABLE` | `PATCHED` | `NORMAL` | `ERROR`) and emit `http_requested`.
 
 The HTTP log is ordinary sim state, so `exploit_test` objectives stay pure
 predicates. M3 orders them per vuln with `order`: (1) show the exploit works,
