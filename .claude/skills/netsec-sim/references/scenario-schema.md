@@ -46,7 +46,7 @@ If validation fails, it returns a list of errors with JSON paths, such as
   - Router/switch: `interfaces` (by canonical or short name), `vlans`,
     `routes`, `enable_secret`, `users`, `domain_name`, `lines`.
   - Host: `ip`, `mask`, `gateway`.
-  - Server: as host, plus `services` and `vulns` (M4).
+  - Server: as host, plus `files`, `services` and `vulns` (M3; see docs/SPEC.md §7.5).
 - Interface names in the file may be short form; the loader normalizes them.
 
 ## Links
@@ -67,9 +67,9 @@ type's params. All objective types are pure predicates over sim state.
 | --- | --- | --- |
 | `ping` | `from`, `to_ip` | `NetworkSim.ping(from, to_ip).success` |
 | `no_ping` | `from`, `to_ip`, `expect_reason` (required) | ping fails **with exactly that `fail_reason`**, e.g. `ACL_DENIED` |
-| `ssh` | `from`, `to_ip`, `user` | SSH preconditions met + L3 reachable (M2) |
+| `ssh` | `from`, `to_ip`, `user` | SSH preconditions met + L3 reachable (M4) |
 | `config` | `device`, `path`, `equals` | a config value matches, e.g. `path: "hostname"` |
-| `vuln_patched` | `device`, `vuln` | the server's vuln flag is cleared (M4) |
+| `vuln_patched` | `device`, `vuln` | the vuln's `patched_when` checks pass and its service is healthy (M3; see docs/SPEC.md §7.5) |
 
 **Isolation objectives must not be cheesable.** A bare "ping fails" check
 would pass if the player unplugged a cable, shut a port or deleted a route.

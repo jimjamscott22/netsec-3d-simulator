@@ -80,7 +80,7 @@ parse tests, state tests, and (for `show`) golden output tests.
 Hosts don't use IOS; their terminal gets a tiny shell: `ipconfig`,
 `ipconfig /set <ip> <mask> <gw>` (game-specific), and `ping <ip>`.
 
-### M2 — Remote access and routing
+### M4 — Remote access and routing (post-v1)
 
 `enable secret <word>`, `username <word> secret <word>`, `ip domain-name <word>`,
 `crypto key generate rsa`, `line vty 0 4`, `transport input ssh`,
@@ -89,7 +89,7 @@ Hosts don't use IOS; their terminal gets a tiny shell: `ipconfig`,
 of: a hostname other than the default, a domain name, an RSA key, a local user,
 vty lines with `transport input ssh` + `login local`, and L3 reachability.
 
-### M3 — NAT and ACLs
+### M5 — NAT and ACLs (post-v1)
 
 `ip nat inside` / `ip nat outside` (INTERFACE_CONFIG),
 `ip nat inside source static <ipv4> <ipv4>`,

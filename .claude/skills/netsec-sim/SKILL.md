@@ -10,7 +10,7 @@ room and configures it through an IOS-style terminal. The game is two layers:
 a **pure-logic sim core** that owns all network truth, and a **presentation
 layer** (3D world + UI) that only displays it and forwards player input.
 
-If `SPEC.md` or `IMPLEMENTATION_PLAN.md` exist at the repo root, they win over
+If `docs/SPEC.md` or `docs/IMPLEMENTATION_PLAN.md` exist, they win over
 this skill on scope and ordering. Work the plan top-down and tick tasks off as
 you finish them.
 
