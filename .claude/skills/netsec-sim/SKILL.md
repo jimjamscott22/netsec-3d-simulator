@@ -115,15 +115,24 @@ Resolution order:
 2. **Next-hop decision (at each L3 device):** if the destination is in the
    sending interface's own subnet, deliver directly over L2, with no gateway
    involved. Otherwise a host sends to its `gateway` (none set → `NO_GATEWAY`;
-   gateway outside the host's own subnet → `WRONG_SUBNET`), and a router picks the next hop by
-   longest-prefix match over connected + static routes (no match →
-   `NO_ROUTE`).
+   gateway outside the host's own subnet → `WRONG_SUBNET`), and a router
+   picks the next hop by longest-prefix match over connected + static routes
+   (no match → `NO_ROUTE`).
 3. **L2:** reaching that next hop means a BFS across switches within one VLAN,
    honoring access VLANs, trunk allowed lists and router subinterface
    `dot1q_vlan` tags.
-4. **L3 policy:** apply ACLs and NAT where configured as the packet crosses a
-   router.
-5. The reply path must also resolve; asymmetric failure is a fail.
+4. **Router pipeline:** a packet crossing a router runs these steps in this
+   order (Cisco's NAT order of operations, simplified). The NAT step depends
+   on direction:
+   1. Inbound ACL on the ingress interface (deny → `ACL_DENIED`).
+   2. **Outside → inside only:** NAT translates the destination from
+      inside-global to inside-local, *before* routing.
+   3. Route lookup (step 2 above) on the possibly translated destination.
+   4. **Inside → outside only:** NAT translates the source from inside-local
+      to inside-global, *after* routing.
+   5. Outbound ACL on the egress interface (deny → `ACL_DENIED`).
+5. The reply path must also resolve, running the same pipeline in its own
+   direction; asymmetric failure is a fail.
 
 Two hosts in the same VLAN and subnet must ping each other with no router in
 the topology at all.
@@ -171,7 +180,8 @@ The JSON schema, objective types, and a full example are in
   tested: it parses (including abbreviations), it changes state correctly,
   and the related `show` output is right (golden strings).
 - Connectivity tests cover at least: same-subnet hosts with no router,
-  router-on-a-stick across a trunk, and each `fail_reason`.
+  router-on-a-stick across a trunk, a static-NAT round trip (inside host
+  pings outside and the reply comes back in), and each `fail_reason`.
 - Every objective type: a passing case and each documented failing case.
 - Each scenario in `res://scenarios/` gets a smoke test that loads it, applies
   the known solution, and asserts every objective passes.
