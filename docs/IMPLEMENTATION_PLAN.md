@@ -162,7 +162,9 @@ configure VLANs, a trunk and router-on-a-stick, and see PC-A ping PC-B.
   *Tests:* the M1 example loads; a broken file leaves the sim empty;
   `scenario_view` lists every device with its placement and ordered
   interface list, every start link and the reserved ports, and contains no
-  answers or solution.
+  answers or solution. `device_view` immediately reports each interface's
+  admin/oper state and reciprocal peer port after the links and starting
+  config have loaded.
 - [ ] **1.18 Objective evaluator.** `ping` (with optional `to_device` and `via`) and
   `config` types; `order` locking (SPEC §7.2); re-evaluated on
   `link_changed` and `config_changed`; emits `objective_updated` on change
@@ -208,11 +210,13 @@ configure VLANs, a trunk and router-on-a-stick, and see PC-A ping PC-B.
   `Sim.scenario_view()` at their markers; assigns socket ids from each
   device's ordered interface list in that view (never from `models.gd`);
   draws the start links; puts a dust cap on each reserved port.
-  *Done when:* M1's devices appear in the right racks and desks.
+  *Done when:* M1's devices appear in the right racks and desks. Constructing
+  the room after scenario load initializes an already-up link's LED green and
+  an administratively down link's LED amber.
 - [ ] **1.26 Cabling interaction** (SPEC §8.2): pick up, plug, reject with
   toast, unplug unlocked, cancel; spare cable count.
-- [ ] **1.27 Cable rendering + LEDs** driven only by `link_changed` and
-  `interface_state_changed`.
+- [ ] **1.27 Cable rendering + LEDs** initialized from current `device_view`
+  snapshots and then updated from `link_changed` and `interface_state_changed`.
   *Done when:* at mission start the R1–S1 link LEDs are amber (R1 Gi0/0 is
   shut down) and turn green after `no shutdown`; plugging PC-B into Fa0/2
   turns its LED green at once (both ends start admin up).
@@ -254,7 +258,9 @@ logs, works out who attacked, how and which account, and files a report.
   *Tests:* each filter kind; file order kept.
 - [ ] **2.2 Schema + validator** for `logs` and `report` (SPEC §7.4); update
   `scenario-schema.md`.
-  *Tests:* one bad fixture per new rule.
+  *Tests:* one bad fixture per new rule; reject unknown evidence source/file
+  pairs, non-integer lines, line 0 and lines beyond the log length; accept the
+  first and last valid line, and confirm debrief resolves each reference.
 - [ ] **2.3 Report state + `submit_report`** with attempt limits and
   `report_submitted` signal; `scenario_view` gains log descriptors and
   report fields, and `report_view()` gives live attempts left per field.
@@ -325,8 +331,10 @@ fails.
 - [ ] **3.3 Schema + validator** for `files`, `services`, `vulns`
   (SPEC §7.5): compile regexes; region inside the file; reject a scenario
   whose region starts accepted, whose accept fixture fails, or whose reject
-  fixture passes; update `scenario-schema.md`.
-  *Tests:* one bad fixture per rule.
+  fixture passes; update `scenario-schema.md`; reject duplicate or overlapping
+  patch regions for the same device/file before state construction.
+  *Tests:* one bad fixture per rule, including identical and partially
+  overlapping ranges; accept regions in separate files.
 - [ ] **3.4 Simulated HTTP + HTTP log** (`NetworkSim.http_request`,
   SPEC §7.6).
   *Tests:* unreachable (each ping fail reason maps to a curl error); no
