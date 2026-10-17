@@ -294,7 +294,10 @@ After v1: `m4_remote_access` (SSH + static routes) and `m5_nat_acl`
 1. **Main menu** → mission select (locked until the previous mission is done).
 2. **Briefing** card with the ticket text.
 3. **Play**: walk, cable, configure. The HUD lists objectives with live
-   pass/fail ticks.
+   pass/fail ticks. An objective with `"order": n` is **locked** until every
+   objective with a lower `order` passes. A locked objective shows as a
+   greyed "next step" line and never counts as passed. Objectives with no
+   `order` are always unlocked.
 4. **Hints**: when a `ping` objective fails, the HUD can show the hint matching
    its `fail_reason`. A hint appears only after the player presses the hint
    key, so it never spoils the puzzle by default.
@@ -309,7 +312,7 @@ After v1: `m4_remote_access` (SSH + static routes) and `m5_nat_acl`
 | `config` | `device`, `path`, `equals` | Config value matches | M1 |
 | `report` | `field`, `equals` | The player's filed value for `field` matches (case-insensitive, trimmed) | M2 |
 | `vuln_patched` | `device`, `vuln` | The vuln's patch region matches one of its `accept` patterns (SPEC §7.5) | M3 |
-| `exploit_test` | `from`, `device`, `vuln`, `expect` (`vulnerable` \| `patched`) | `vulnerable`: the HTTP log has a request from `from` that got the vulnerable response. `patched`: the vuln is patched now and the latest such request got the patched response | M3 |
+| `exploit_test` | `from`, `device`, `vuln`, `expect` (`vulnerable` \| `patched`) | Matches log entries with this `from`, `device` (the server that answered) and `vuln`. `vulnerable`: one such entry got the vulnerable response. `patched`: the vuln is patched now and the latest such entry got the patched response | M3 |
 | `no_ping` | `from`, `to_ip`, `expect_reason` | Ping fails with exactly that reason | M5 |
 | `ssh` | `from`, `to_ip`, `user` | SSH preconditions + L3 reachability | M4 |
 
@@ -443,7 +446,7 @@ PC with `curl`:
    exploit payload (trimmed), return `vulnerable_body` or `patched_body`
    based on the vuln's state.
 5. Otherwise return a fixed `200 OK` page for the route.
-6. Append an entry to the sim's **HTTP log** (`src_id`, `vuln_id` or `""`,
+6. Append an entry to the sim's **HTTP log** (`src_id`, `dst_device`, `vuln_id` or `""`,
    `outcome`: `VULNERABLE` | `PATCHED` | `NORMAL` | `ERROR`) and emit
    `http_requested`.
 
@@ -486,7 +489,8 @@ No real HTTP is sent. It is a lookup over sim state.
    Reserved ports (scenario `reserved_ports`) show a dust cap and a
    "reserved" label, so the player can see them before trying.
 4. Interact on an unlocked plugged cable unplugs it and returns it to the
-   spare count. Locked cables can't be unplugged.
+   spare count. Locked cables can't be unplugged: `disconnect_link`
+   rejects them in the core, so no caller can change fixed topology.
 5. Press cancel to drop a held cable end.
 
 The 3D cable is only a view of sim state. On `link_changed` the world adds

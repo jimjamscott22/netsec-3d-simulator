@@ -92,9 +92,11 @@ configure VLANs, a trunk and router-on-a-stick, and see PC-A ping PC-B.
   *Tests:* each model builds a device with the expected interface names.
 - [ ] **1.5 `SimEvents` and `NetworkSim` skeleton** (`sim/core/`). Device
   registry, `connect_link` / `disconnect_link` with validation (port exists,
-  port free, port not reserved, not the same device), and `link_changed` +
-  `interface_state_changed` signals.
-  *Tests:* connect/disconnect state; each rejection reason; signals fire
+  port free, port not reserved, not the same device; `disconnect_link`
+  rejects a locked link), and `link_changed` + `interface_state_changed`
+  signals.
+  *Tests:* connect/disconnect state; each rejection reason, including
+  unplugging a locked link; signals fire
   once per change, and not when nothing changed.
 - [ ] **1.6 `PingResult` + `FailReason` enum** (`sim/net/`), with every M1
   reason from SPEC §6.1 (`ACL_DENIED` is declared now, used in M5).
@@ -150,11 +152,14 @@ configure VLANs, a trunk and router-on-a-stick, and see PC-A ping PC-B.
   validation fails.
   *Tests:* the M1 example loads; a broken file leaves the sim empty.
 - [ ] **1.18 Objective evaluator.** `ping` (with optional `to_device` and `via`) and
-  `config` types; re-evaluated on `link_changed` and `config_changed`; emits
-  `objective_updated` on change and `mission_completed` once.
+  `config` types; `order` locking (SPEC §7.2); re-evaluated on
+  `link_changed` and `config_changed`; emits `objective_updated` on change
+  and `mission_completed` once.
   *Tests:* pass and fail cases per type; `to_device` fails when another
   device answers `to_ip`; `via` fails when the ping succeeds without the
-  named device; no duplicate signals.
+  named device; an ordered objective whose predicate is true stays locked
+  until lower orders pass, and re-locks if one of them stops passing;
+  no duplicate signals.
 - [ ] **1.19 Write `scenarios/m1_vlan_ping.json`** from the schema example
   (its `ping` objective sets `"to_device": "PC-B"` and `"via": "R1"`).
   *Tests:* both shortcuts fail the objective: the L2 shortcut (move PC-A
@@ -282,13 +287,14 @@ fails.
   *Tests:* unreachable (each ping fail reason maps to a curl error); no
   service; normal route; exploit vs patched response; raw and
   percent-encoded payloads match the same way; each request is logged with
-  the right outcome.
+  the right target device and outcome.
 - [ ] **3.5 `vuln_patched` and `exploit_test` objective types**,
   re-evaluated on `patch_applied` and `http_requested`.
   *Tests:* `vuln_patched` pass/fail; `exploit_test vulnerable` passes only
   after a vulnerable response from `from`; `exploit_test patched` fails
   until a patched response is logged after the fix, and fails again if the
-  latest request was from before the patch.
+  latest request was from before the patch; a request to a different server
+  with the same vuln id doesn't count.
 - [ ] **3.6 `curl` on the PC shell** and `edit <file>` on the server shell
   (opens the code editor UI). The host/server tokenizer accepts
   double-quoted arguments.

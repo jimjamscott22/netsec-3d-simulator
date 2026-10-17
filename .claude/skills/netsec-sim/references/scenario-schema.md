@@ -84,7 +84,9 @@ should also be paired with a `ping` objective that has to keep working
 breaking the network wholesale fails the mission.
 
 Objectives can set `"order": n` for missions that unlock steps one at a time.
-By default, all objectives are visible and can be completed in any order.
+An ordered objective is locked (shown greyed, never passes) until every
+objective with a lower `order` passes. By default, all objectives are
+visible and can be completed in any order.
 
 ## Hints
 
