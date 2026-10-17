@@ -116,6 +116,10 @@ These are hard rules. CI fails if any are broken.
 - Owns exactly one `NetworkSim`.
 - Loads a scenario, re-emits core signals, and exposes the core's public API to
   the presentation layer.
+- Owns file access: it reads `res://scenarios/*.json`, so the core never does
+  IO. `Sim.scenario_catalog()` returns the valid scenarios'
+  `ScenarioSummary` list (via `summarize_scenario`) sorted by `sequence`,
+  for mission select. Invalid files are skipped and logged.
 - The only path from `world/` and `ui/` into the core.
 
 ### 3.3 `NetworkSim` public API (v1)
@@ -123,6 +127,7 @@ These are hard rules. CI fails if any are broken.
 | Method | Returns | Milestone |
 | --- | --- | --- |
 | `load_scenario(data: Dictionary)` | `LoadResult` (`ok`, `errors: Array[String]`) | M1 |
+| `summarize_scenario(data: Dictionary)` | `ScenarioSummary` (read-only): `id`, `title`, `sequence`, or `null` plus errors if the file is invalid. Doesn't change sim state | M2 |
 | `scenario_view()` | `ScenarioView` (read-only, static scenario data): title, briefing, hints; every device's id, type, model, hostname, `rack`+`slot` or `desk`, and its **ordered canonical interface list** (socket order); links (`a`, `b`, `locked`); `reserved_ports`; M2: log descriptors (`source`, `file`, line count) and report fields (`id`, `label`, `kind`, `options`, `max_attempts`) | M1 (M2 adds logs/report) |
 | `device_view(id: String)` | `DeviceView` (read-only snapshot) or `null` | M1 |
 | `open_session(device_id: String)` | `CliSession` | M1 |
@@ -130,7 +135,7 @@ These are hard rules. CI fails if any are broken.
 | `spare_cables()` | `int` (spare cables left) | M1 |
 | `disconnect_link(port: String)` | `LinkResult` | M1 |
 | `ping(src_id: String, dst_ip: String)` | `PingResult` | M1 |
-| `objective_states()` | `Array[ObjectiveState]` | M1 |
+| `objective_states()` | `Array[ObjectiveState]` (read-only): `id`, `type`, `description`, `order`, `locked`, `passed`, `failed` (can no longer pass), `fail_reason` (`ping` objectives; `NONE` otherwise), `hint` (the scenario hint for that reason, or `""`), `detail` (short status such as "reached, but not through R1" or "2 attempts left") | M1 |
 | `debrief_view()` | `DebriefView` (read-only), or `null` until `mission_completed` or `mission_failed` has fired: the scenario's `debrief` text, each objective's result, M2 report answers with their `evidence` log lines, M3 each vuln's starting vs current region text | M1 (M2/M3 add their parts) |
 | `query_logs(source_id: String, file: String, filter: LogFilter)` | `Array[LogLine]` | M2 |
 | `submit_report(field: String, value: String)` | `ReportResult` | M2 |
@@ -338,7 +343,7 @@ After v1: `m4_remote_access` (SSH + static routes) and `m5_nat_acl`
 | Type | Params | Passes when | Milestone |
 | --- | --- | --- | --- |
 | `ping` | `from`, `to_ip`, `to_device` (optional), `via` (optional) | Ping succeeds; if `to_device` is set, that device owns `to_ip` and is the last hop; if `via` is set, that device is on the forward path | M1 |
-| `config` | `device`, `path`, `equals` | Config value matches. `path` is a key (`"hostname"`) or an array of keys; interface names in it are normalized (`["interfaces", "Gi0/0.10", "dot1q_vlan"]`) | M1 |
+| `config` | `device`, `path`, `equals` | Config value matches. `path` is a key (`"hostname"`) or an array of keys; interface names in it are normalized (`["interfaces", "Gi0/0.10"]`). If `equals` is an object, every key in it must match (e.g. `{"dot1q_vlan": 10, "ip": "192.168.10.1", "mask": "255.255.255.0"}`) | M1 |
 | `report` | `field`, `equals` | The player's filed value for `field` matches (case-insensitive, trimmed) | M2 |
 | `vuln_patched` | `device`, `vuln` | The vuln's patch region matches one of its `accept` patterns (SPEC §7.5) | M3 |
 | `exploit_test` | `from`, `device`, `vuln`, `expect` (`vulnerable` \| `patched`) | Matches log entries with this `from`, `device` (the server that answered) and `vuln`. `vulnerable`: one such entry got the vulnerable response. `patched`: the vuln is patched now, and the latest such entry got the patched response **and** has the vuln's current `patch_rev` (so evidence from before the latest save doesn't count) | M3 |
@@ -351,7 +356,7 @@ without the skill being taught (re-addressing hosts, odd masks, cabling
 around the switch). So a mission pairs its outcome objective with `config`
 objectives for the setup it teaches, and locks host addressing it doesn't
 teach. M1 requires the S1 Gi0/1 trunk, both R1 dot1Q subinterfaces with
-their gateway IPs, and no IP on the parent Gi0/0, and sets both PCs to
+their exact tag, gateway IP and mask, and no IP on the parent Gi0/0, and sets both PCs to
 `locked: true`.
 
 **Anti-cheese rules.** Any "it stops working" objective must name what it

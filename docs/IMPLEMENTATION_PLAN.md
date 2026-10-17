@@ -167,15 +167,17 @@ configure VLANs, a trunk and router-on-a-stick, and see PC-A ping PC-B.
   `config` types; `order` locking (SPEC §7.2); re-evaluated on
   `link_changed` and `config_changed`; emits `objective_updated` on change
   and `mission_completed` once.
-  *Tests:* pass and fail cases per type; `to_device` fails when another
+  *Tests:* every `ObjectiveState` field (SPEC §3.3), including `hint`
+  resolved from `fail_reason` and `detail` for a `via` miss; pass and fail
+  cases per type; `to_device` fails when another
   device answers `to_ip`; `via` fails when the ping succeeds without the
   named device; an ordered objective whose predicate is true stays locked
   until lower orders pass, and re-locks if one of them stops passing;
   no duplicate signals.
 - [ ] **1.19 Write `scenarios/m1_vlan_ping.json`** from the schema example:
   a `ping` objective with `"to_device": "PC-B"` and `"via": "R1"`, `config`
-  objectives for the S1 Gi0/1 trunk, both R1 subinterfaces with their
-  gateway IPs, and no IP on Gi0/0, both PCs
+  objectives for the S1 Gi0/1 trunk, both R1 subinterfaces (tag, IP and
+  mask in one object `equals`), and no IP on Gi0/0, both PCs
   `locked: true`, and `"reserved_ports": ["R1:Gi0/1"]`.
   *Tests:* regression tests that each known shortcut leaves the mission
   incomplete: L2 re-addressing (refused: hosts locked); the decoy IP on an
@@ -183,13 +185,15 @@ configure VLANs, a trunk and router-on-a-stick, and see PC-A ping PC-B.
   (rejected: reserved); asymmetric masks such as R1 Gi0/0 as /16 with
   S1 Gi0/1 in access mode (hosts locked, and the `config` objectives fail);
   the native-VLAN path (PC-A's port in VLAN 1, 192.168.10.1 on the
-  physical Gi0/0, `.10` with only a tag) fails `gw10` and `parent_noip`.
+  physical Gi0/0, `.10` with only a tag) fails `sub10` and `parent_noip`;
+  overlapping masks (Gi0/0.10 as /8) fail `sub10`.
 - [ ] **1.20 Scenario smoke test harness.** Loads every file in
   `res://scenarios/`, asserts at least one objective fails at start, applies
   `solution`, asserts all pass.
   *Done when:* `m1_vlan_ping` passes the smoke test.
 - [ ] **1.21 `Sim` autoload** (`game/sim.gd`). Wraps one `NetworkSim`,
-  re-emits signals, loads a scenario by id.
+  re-emits signals, loads a scenario by id. It is the only code that reads
+  scenario files.
 
 ### M1d — 3D world and cabling
 
@@ -219,9 +223,9 @@ configure VLANs, a trunk and router-on-a-stick, and see PC-A ping PC-B.
   `CliSession`; history, Tab, `?`, Ctrl+Z, Esc to close; cosmetic ping
   reveal; acts on `CliResult.action` (`CLOSE_SESSION` now, `OPEN_EDITOR` in
   M3). Opened by interacting with a device's console port or a PC screen.
-- [ ] **1.29 Mission HUD:** objectives with live ticks, spare cables, hint
-  on H (shows hint for the current `fail_reason` of the first failing
-  `ping` objective).
+- [ ] **1.29 Mission HUD:** objectives from `Sim.objective_states()` with
+  live ticks, locked steps greyed, `detail` text, spare cables; hint on H
+  shows the `hint` of the first failing unlocked objective that has one.
 - [ ] **1.30 Briefing and debrief cards.** Briefing from `scenario_view`;
   debrief from `debrief_view()`.
   *Tests (sim):* `debrief_view` is `null` during play and filled after
@@ -283,7 +287,13 @@ logs, works out who attacked, how and which account, and files a report.
   successful login. Solution steps use a new `report` step type in the smoke
   test.
   *Done when:* the smoke test passes.
-- [ ] **2.10 Mission select screen** with locking based on saved progress.
+- [ ] **2.10 Mission catalog + select screen.** Core
+  `summarize_scenario`; `Sim.scenario_catalog()` reads every file in
+  `res://scenarios/` and returns summaries sorted by `sequence`; the screen
+  locks a mission until the previous `sequence` is completed in saved
+  progress.
+  *Tests:* summaries for valid files; invalid files skipped; a duplicate
+  `sequence` across files is reported and both files are left out.
 - [ ] **2.11 Threat map (should-have):** 2D world map, arcs from `geo`
   countries for lines with `src_ip`; click to jump to the line in the log
   viewer. Pure UI over `query_logs`.

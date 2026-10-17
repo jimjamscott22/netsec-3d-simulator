@@ -11,6 +11,7 @@ If validation fails, it returns a list of errors with JSON paths, such as
 | --- | --- | --- | --- |
 | `schema_version` | int | yes | Currently `1`. Bump it on breaking changes and migrate files. |
 | `id` | string | yes | snake_case, matches the file name |
+| `sequence` | int | yes | Position in the campaign (1, 2, 3…), unique across files. Mission select sorts by it and unlocks a mission once the previous one is done |
 | `title` | string | yes | Shown in the mission HUD |
 | `briefing` | string | yes | 1–4 sentences, written in the voice of the in-game boss/ticket |
 | `devices` | array | yes | See Devices |
@@ -73,7 +74,7 @@ type's params. All objective types are pure predicates over sim state.
 | `ping` | `from`, `to_ip`, `to_device` (optional), `via` (optional) | `NetworkSim.ping(from, to_ip).success`; if `to_device` is set, it is the last entry in `hops`; if `via` is set, that device is in `hops` |
 | `no_ping` | `from`, `to_ip`, `expect_reason` (required) | ping fails **with exactly that `fail_reason`**, e.g. `ACL_DENIED` |
 | `ssh` | `from`, `to_ip`, `user` | SSH preconditions met + L3 reachable (M4) |
-| `config` | `device`, `path`, `equals` | a config value matches. `path` is a key (`"hostname"`) or an array of keys, with interface names normalized (`["interfaces", "Gi0/1", "mode"]`) |
+| `config` | `device`, `path`, `equals` | a config value matches. `path` is a key (`"hostname"`) or an array of keys, with interface names normalized (`["interfaces", "Gi0/1", "mode"]`). An object `equals` matches when every key in it matches |
 | `vuln_patched` | `device`, `vuln` | the vuln's patch region fully matches an `accept` pattern (M3; see docs/SPEC.md §7.5) |
 | `exploit_test` | `from`, `device`, `vuln`, `expect` | the HTTP log shows the exploit working (`vulnerable`) or, after the fix, failing (`patched`) (M3; see docs/SPEC.md §7.6) |
 
@@ -114,6 +115,7 @@ in order, then asserts that every objective passes.
 {
   "schema_version": 1,
   "id": "m1_vlan_ping",
+  "sequence": 1,
   "title": "Day One: Get Them Talking",
   "briefing": "Accounting (PC-A) and Sales (PC-B) can't reach each other. The router is racked and cabled to the switch. Make PC-A ping PC-B.",
   "devices": [
@@ -137,14 +139,12 @@ in order, then asserts that every objective passes.
       "description": "PC-A can ping PC-B through the router" },
     { "id": "trunk", "type": "config", "device": "S1", "path": ["interfaces", "Gi0/1", "mode"], "equals": "trunk",
       "description": "S1 Gi0/1 is a trunk" },
-    { "id": "sub10", "type": "config", "device": "R1", "path": ["interfaces", "Gi0/0.10", "dot1q_vlan"], "equals": 10,
-      "description": "R1 has a subinterface for VLAN 10" },
-    { "id": "sub20", "type": "config", "device": "R1", "path": ["interfaces", "Gi0/0.20", "dot1q_vlan"], "equals": 20,
-      "description": "R1 has a subinterface for VLAN 20" },
-    { "id": "gw10", "type": "config", "device": "R1", "path": ["interfaces", "Gi0/0.10", "ip"], "equals": "192.168.10.1",
-      "description": "VLAN 10's gateway is on Gi0/0.10" },
-    { "id": "gw20", "type": "config", "device": "R1", "path": ["interfaces", "Gi0/0.20", "ip"], "equals": "192.168.20.1",
-      "description": "VLAN 20's gateway is on Gi0/0.20" },
+    { "id": "sub10", "type": "config", "device": "R1", "path": ["interfaces", "Gi0/0.10"],
+      "equals": { "dot1q_vlan": 10, "ip": "192.168.10.1", "mask": "255.255.255.0" },
+      "description": "Gi0/0.10 is VLAN 10's gateway (192.168.10.1/24)" },
+    { "id": "sub20", "type": "config", "device": "R1", "path": ["interfaces", "Gi0/0.20"],
+      "equals": { "dot1q_vlan": 20, "ip": "192.168.20.1", "mask": "255.255.255.0" },
+      "description": "Gi0/0.20 is VLAN 20's gateway (192.168.20.1/24)" },
     { "id": "parent_noip", "type": "config", "device": "R1", "path": ["interfaces", "Gi0/0", "ip"], "equals": null,
       "description": "Gi0/0 itself has no IP address" }
   ],
