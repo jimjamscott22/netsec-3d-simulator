@@ -1,0 +1,141 @@
+# Scenario schema
+
+Each mission is one JSON file in `res://scenarios/`, named `<id>.json`.
+`sim/scenario/loader.gd` validates the whole file before building any state.
+If validation fails, it returns a list of errors with JSON paths, such as
+`devices[2].interfaces[0].name: unknown interface "Gi0/9"`.
+
+## Top level
+
+| Key | Type | Required | Notes |
+| --- | --- | --- | --- |
+| `schema_version` | int | yes | Currently `1`. Bump it on breaking changes and migrate files. |
+| `id` | string | yes | snake_case, matches the file name |
+| `title` | string | yes | Shown in the mission HUD |
+| `briefing` | string | yes | 1–4 sentences, written in the voice of the in-game boss/ticket |
+| `devices` | array | yes | See Devices |
+| `links` | array | yes | Cables present at start; may be empty |
+| `spare_cables` | int | no | Cables the player can place; default 0 |
+| `objectives` | array | yes | At least one |
+| `hints` | array | no | Keyed by fail reason (see Hints) |
+| `solution` | array | yes | Known solution, used by the smoke test only — never shown in game |
+
+## Devices
+
+```json
+{
+  "id": "S1",
+  "type": "switch",
+  "model": "switch_24",
+  "hostname": "S1",
+  "rack": "rack_a",
+  "slot": 3,
+  "config": { }
+}
+```
+
+- `type`: `router` | `switch` | `host` | `server`.
+- `model` picks the interface list and the 3D model from a model catalog in
+  `sim/devices/models.gd`, for example:
+  - `router_2port`: Gi0/0–Gi0/1
+  - `switch_24`: Fa0/1–Fa0/24, Gi0/1–Gi0/2
+  - `pc`: Eth0
+  - `server`: Eth0
+- `rack` + `slot` place it in the world. Hosts use `desk` instead of `rack`/`slot`.
+- `config` is the **starting** state, which is often deliberately broken:
+  - Router/switch: `interfaces` (by canonical or short name), `vlans`,
+    `routes`, `enable_secret`, `users`, `domain_name`, `lines`.
+  - Host: `ip`, `mask`, `gateway`.
+  - Server: as host, plus `services` and `vulns` (M4).
+- Interface names in the file may be short form; the loader normalizes them.
+
+## Links
+
+```json
+{ "a": "S1:Fa0/1", "b": "PC-A:Eth0", "locked": false }
+```
+
+- `locked: true` means the player can't unplug it.
+- Every endpoint must exist, and each port can be used once.
+
+## Objectives
+
+Every objective has `id`, `type`, `description` (player-facing), and its
+type's params. All objective types are pure predicates over sim state.
+
+| `type` | Params | Passes when |
+| --- | --- | --- |
+| `ping` | `from`, `to_ip` | `NetworkSim.ping(from, to_ip).success` |
+| `no_ping` | `from`, `to_ip` | ping fails (used for isolation/ACL tasks) |
+| `ssh` | `from`, `to_ip`, `user` | SSH preconditions met + L3 reachable (M2) |
+| `config` | `device`, `path`, `equals` | a config value matches, e.g. `path: "hostname"` |
+| `vuln_patched` | `device`, `vuln` | the server's vuln flag is cleared (M4) |
+
+Objectives can set `"order": n` for missions that unlock steps one at a time.
+By default, all objectives are visible and can be completed in any order.
+
+## Hints
+
+```json
+"hints": [
+  { "reason": "VLAN_MISMATCH", "text": "PC-A and PC-B are plugged into different VLANs." },
+  { "reason": "ADMIN_DOWN", "text": "Something is plugged in but administratively down." }
+]
+```
+
+When a `ping` objective fails, the HUD can show the hint matching the
+resolver's `fail_reason`. Hints are optional; reasons without one show nothing.
+
+## Solution
+
+A list of `{ "device": "...", "commands": [ ... ] }` and/or
+`{ "link": { "a": "...", "b": "..." } }` steps. The smoke test applies these
+in order, then asserts that every objective passes.
+
+## Full example (M1)
+
+```json
+{
+  "schema_version": 1,
+  "id": "m1_vlan_ping",
+  "title": "Day One: Get Them Talking",
+  "briefing": "Accounting (PC-A) and Sales (PC-B) can't reach each other. The router is racked and cabled to the switch. Make PC-A ping PC-B.",
+  "devices": [
+    { "id": "R1", "type": "router", "model": "router_2port", "hostname": "Router", "rack": "rack_a", "slot": 1, "config": {} },
+    { "id": "S1", "type": "switch", "model": "switch_24", "hostname": "Switch", "rack": "rack_a", "slot": 3,
+      "config": { "vlans": { "10": "ACCOUNTING" },
+                  "interfaces": { "Fa0/1": { "mode": "access", "access_vlan": 10 } } } },
+    { "id": "PC-A", "type": "host", "model": "pc", "hostname": "PC-A", "desk": "desk_1",
+      "config": { "ip": "192.168.10.10", "mask": "255.255.255.0", "gateway": "192.168.10.1" } },
+    { "id": "PC-B", "type": "host", "model": "pc", "hostname": "PC-B", "desk": "desk_2",
+      "config": { "ip": "192.168.20.10", "mask": "255.255.255.0", "gateway": "192.168.20.1" } }
+  ],
+  "links": [
+    { "a": "R1:Gi0/0", "b": "S1:Gi0/1", "locked": true },
+    { "a": "S1:Fa0/1", "b": "PC-A:Eth0", "locked": true }
+  ],
+  "spare_cables": 1,
+  "objectives": [
+    { "id": "ping_ab", "type": "ping", "from": "PC-A", "to_ip": "192.168.20.10",
+      "description": "PC-A can ping PC-B" }
+  ],
+  "hints": [
+    { "reason": "NO_LINK", "text": "PC-B isn't cabled to anything yet." },
+    { "reason": "NO_GATEWAY", "text": "Hosts in different subnets need a router to reach each other." },
+    { "reason": "VLAN_MISMATCH", "text": "Check which VLAN each switch port is in." }
+  ],
+  "solution": [
+    { "link": { "a": "S1:Fa0/2", "b": "PC-B:Eth0" } },
+    { "device": "S1", "commands": [
+      "enable", "configure terminal",
+      "vlan 20", "name SALES", "exit",
+      "interface fa0/2", "switchport mode access", "switchport access vlan 20", "exit",
+      "interface gi0/1", "switchport mode trunk", "end" ] },
+    { "device": "R1", "commands": [
+      "enable", "configure terminal",
+      "interface gi0/0", "no shutdown", "exit",
+      "interface gi0/0.10", "encapsulation dot1Q 10", "ip address 192.168.10.1 255.255.255.0", "exit",
+      "interface gi0/0.20", "encapsulation dot1Q 20", "ip address 192.168.20.1 255.255.255.0", "end" ] }
+  ]
+}
+```
