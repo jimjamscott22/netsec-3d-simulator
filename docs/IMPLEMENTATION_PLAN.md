@@ -84,8 +84,9 @@ configure VLANs, a trunk and router-on-a-stick, and see PC-A ping PC-B.
 - [ ] **1.3 Domain classes** (`sim/devices/`): `Interface`, `Device`,
   `Router`, `Switch`, `Host`, `Server` (empty extras for now), per SPEC §4
   defaults.
-  *Tests:* defaults (router ifaces shut, switch ports VLAN 1 access, VLAN 1
-  always present); oper-up rules for physical and subinterfaces.
+  *Tests:* defaults (router ifaces shut, new subinterfaces admin up, switch
+  ports VLAN 1 access, VLAN 1 always present); oper-up rules for physical
+  and subinterfaces.
 - [ ] **1.4 Model catalog** (`sim/devices/models.gd`). `router_2port`,
   `switch_24`, `pc`, `server`, each with its ordered interface list.
   *Tests:* each model builds a device with the expected interface names.
@@ -148,11 +149,15 @@ configure VLANs, a trunk and router-on-a-stick, and see PC-A ping PC-B.
   places locked/unlocked links, sets spare cables. Never builds state if
   validation fails.
   *Tests:* the M1 example loads; a broken file leaves the sim empty.
-- [ ] **1.18 Objective evaluator.** `ping` and `config` types; re-evaluated
-  on `link_changed` and `config_changed`; emits `objective_updated` on change
-  and `mission_completed` once.
-  *Tests:* pass and fail cases per type; no duplicate signals.
-- [ ] **1.19 Write `scenarios/m1_vlan_ping.json`** from the schema example.
+- [ ] **1.18 Objective evaluator.** `ping` (with optional `via`) and
+  `config` types; re-evaluated on `link_changed` and `config_changed`; emits
+  `objective_updated` on change and `mission_completed` once.
+  *Tests:* pass and fail cases per type; `via` fails when the ping succeeds
+  without the named device; no duplicate signals.
+- [ ] **1.19 Write `scenarios/m1_vlan_ping.json`** from the schema example
+  (its `ping` objective sets `"via": "R1"`).
+  *Tests:* the L2 shortcut fails the objective (move PC-A to
+  192.168.20.11 and Fa0/1 into VLAN 20: the ping succeeds without R1).
 - [ ] **1.20 Scenario smoke test harness.** Loads every file in
   `res://scenarios/`, asserts at least one objective fails at start, applies
   `solution`, asserts all pass.
@@ -176,8 +181,9 @@ configure VLANs, a trunk and router-on-a-stick, and see PC-A ping PC-B.
   toast, unplug unlocked, cancel; spare cable count.
 - [ ] **1.27 Cable rendering + LEDs** driven only by `link_changed` and
   `interface_state_changed`.
-  *Done when:* plugging PC-B in turns its LED amber until the switch
-  port is up, then green.
+  *Done when:* at mission start the R1–S1 link LEDs are amber (R1 Gi0/0 is
+  shut down) and turn green after `no shutdown`; plugging PC-B into Fa0/2
+  turns its LED green at once (both ends start admin up).
 
 ### M1e — Terminal, HUD and game flow
 

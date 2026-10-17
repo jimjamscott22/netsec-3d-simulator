@@ -173,6 +173,8 @@ As defined in the skill, summarized here.
 - Subinterface **oper-up** = parent oper-up and itself `admin_up`.
 - Host and server NICs are `admin_up` by default. Router interfaces start
   shut down, as on real IOS. Switch ports start up, in access mode, VLAN 1.
+- A subinterface is created `admin_up`, as on real IOS, so its state follows
+  its parent. Only the physical port needs `no shutdown`.
 
 ### Device model catalog (`sim/devices/models.gd`)
 
@@ -299,7 +301,7 @@ After v1: `m4_remote_access` (SSH + static routes) and `m5_nat_acl`
 
 | Type | Params | Passes when | Milestone |
 | --- | --- | --- | --- |
-| `ping` | `from`, `to_ip` | Ping succeeds | M1 |
+| `ping` | `from`, `to_ip`, `via` (optional) | Ping succeeds; if `via` is set, that device id is on the forward path | M1 |
 | `config` | `device`, `path`, `equals` | Config value matches | M1 |
 | `report` | `field`, `equals` | The player's filed value for `field` matches (case-insensitive, trimmed) | M2 |
 | `vuln_patched` | `device`, `vuln` | The vuln's `patched_when` checks pass **and** its service is healthy | M3 |
@@ -307,9 +309,13 @@ After v1: `m4_remote_access` (SSH + static routes) and `m5_nat_acl`
 | `no_ping` | `from`, `to_ip`, `expect_reason` | Ping fails with exactly that reason | M5 |
 | `ssh` | `from`, `to_ip`, `user` | SSH preconditions + L3 reachability | M4 |
 
-**Anti-cheese rule.** Any "it stops working" objective must name what it
+**Anti-cheese rules.** Any "it stops working" objective must name what it
 expects (`no_ping.expect_reason`) and be paired with a "still works"
-objective. `vuln_patched` includes the service health check, so deleting the
+objective. A `ping` objective that teaches routing sets `via` to the router,
+so re-addressing both hosts into one subnet and VLAN (a pure L2 path) does
+not pass. When `via` is set and the ping succeeds without it, the HUD says
+"reached, but not through <via>". `vuln_patched` includes the service
+health check, so deleting the
 vulnerable file or stopping the web service does not pass.
 
 ### 7.4 Schema additions for M2 (logs and reports)
