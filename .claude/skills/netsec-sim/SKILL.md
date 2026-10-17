@@ -165,6 +165,11 @@ The JSON schema, objective types, and a full example are in
   registry), and `?` help all live in the session, not the UI.
 - UI reads state only through `Sim` and reacts to its signals. No UI script
   holds its own copy of network truth.
+- Everything the world/UI needs comes from a read-only view on `Sim`
+  (`scenario_view`, `device_view`, `report_view`, `patch_views`,
+  `objective_states`). Never import `sim/` scripts such as `models.gd` or
+  read scenario JSON from presentation code. If a screen needs data no view
+  has, add it to a view (never answers or solutions).
 
 ## Conventions
 

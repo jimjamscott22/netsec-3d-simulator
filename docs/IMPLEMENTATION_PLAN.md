@@ -55,8 +55,10 @@ Goal: an empty Godot project that runs tests headless locally and in CI.
   dependency direction, autoloads read from `project.godot`) and exits
   non-zero on a hit.
   *Done when:* it passes on the clean tree and fails for one fixture per
-  group (`extends Node`, `Timer.new()`, `preload("res://ui/...")`, a
-  reference to the `Sim` autoload).
+  group (`extends Node`, `extends Control`, a `sim/` class extending a
+  custom Node subclass, `Timer.new()`, `preload("res://ui/...")`, a
+  reference to the `Sim` autoload). Base classes are checked by resolving
+  each `extends` chain (SPEC §9).
 - [ ] **0.4 CI.** `.github/workflows/ci.yml`: on push and PR, set up Godot
   4.7 headless on Ubuntu, import the project, run the purity check, run
   GdUnit4, upload the test report.
@@ -158,8 +160,9 @@ configure VLANs, a trunk and router-on-a-stick, and see PC-A ping PC-B.
   places locked/unlocked links, sets spare cables. Never builds state if
   validation fails. Exposes `scenario_view()` (SPEC §3.3).
   *Tests:* the M1 example loads; a broken file leaves the sim empty;
-  `scenario_view` lists every device with its placement, every start link
-  and the reserved ports.
+  `scenario_view` lists every device with its placement and ordered
+  interface list, every start link and the reserved ports, and contains no
+  answers or solution.
 - [ ] **1.18 Objective evaluator.** `ping` (with optional `to_device` and `via`) and
   `config` types; `order` locking (SPEC §7.2); re-evaluated on
   `link_changed` and `config_changed`; emits `objective_updated` on change
@@ -195,8 +198,9 @@ configure VLANs, a trunk and router-on-a-stick, and see PC-A ping PC-B.
 - [ ] **1.24 Device model scenes:** greybox `router_2port`, `switch_24`,
   `pc` with ordered socket markers and LEDs.
 - [ ] **1.25 Room builder** (`world/room_builder.gd`): spawns devices from
-  `Sim.scenario_view()` at their markers; assigns socket ids from
-  `models.gd`; draws the start links; puts a dust cap on each reserved port.
+  `Sim.scenario_view()` at their markers; assigns socket ids from each
+  device's ordered interface list in that view (never from `models.gd`);
+  draws the start links; puts a dust cap on each reserved port.
   *Done when:* M1's devices appear in the right racks and desks.
 - [ ] **1.26 Cabling interaction** (SPEC §8.2): pick up, plug, reject with
   toast, unplug unlocked, cancel; spare cable count.
@@ -242,9 +246,11 @@ logs, works out who attacked, how and which account, and files a report.
   `scenario-schema.md`.
   *Tests:* one bad fixture per new rule.
 - [ ] **2.3 Report state + `submit_report`** with attempt limits and
-  `report_submitted` signal.
+  `report_submitted` signal; `scenario_view` gains log descriptors and
+  report fields, and `report_view()` gives live attempts left per field.
   *Tests:* correct, wrong, normalization (case, whitespace), out of
-  attempts.
+  attempts; the views list every log file and field and never contain the
+  expected answers.
 - [ ] **2.4 `report` objective type** in the evaluator.
   *Tests:* pass; wrong value; out of attempts fails for good and emits
   `mission_failed` once.
@@ -253,10 +259,12 @@ logs, works out who attacked, how and which account, and files a report.
   Update `ios-cli.md` with the server shell section.
   *Tests:* parse, output goldens.
 - [ ] **2.6 Server model scene** (`server_1u`) and a SOC desk with a monitor.
-- [ ] **2.7 Log viewer UI:** file list, scrolling monospace view, filter box
+- [ ] **2.7 Log viewer UI:** file list from `scenario_view` log
+  descriptors, lines via `query_logs`, scrolling monospace view, filter box
   with match highlight.
-- [ ] **2.8 Report form UI:** fields from `report.fields`, remaining
-  attempts, feedback per field.
+- [ ] **2.8 Report form UI:** fields from `scenario_view`, attempts left
+  and per-field feedback from `report_view`; nothing hard-coded per
+  mission.
 - [ ] **2.8b Failed debrief card** (SPEC §7.2 step 6): on `mission_failed`,
   stop play and show the failed objective, the answers, the evidence, and
   Retry / Main menu.

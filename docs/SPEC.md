@@ -123,7 +123,7 @@ These are hard rules. CI fails if any are broken.
 | Method | Returns | Milestone |
 | --- | --- | --- |
 | `load_scenario(data: Dictionary)` | `LoadResult` (`ok`, `errors: Array[String]`) | M1 |
-| `scenario_view()` | `ScenarioView` (read-only): title, briefing, hints, every device's id/type/model/hostname and `rack`+`slot` or `desk`, links (`a`, `b`, `locked`), `reserved_ports` | M1 |
+| `scenario_view()` | `ScenarioView` (read-only, static scenario data): title, briefing, hints; every device's id, type, model, hostname, `rack`+`slot` or `desk`, and its **ordered canonical interface list** (socket order); links (`a`, `b`, `locked`); `reserved_ports`; M2: log descriptors (`source`, `file`, line count) and report fields (`id`, `label`, `kind`, `options`, `max_attempts`) | M1 (M2 adds logs/report) |
 | `device_view(id: String)` | `DeviceView` (read-only snapshot) or `null` | M1 |
 | `open_session(device_id: String)` | `CliSession` | M1 |
 | `connect_link(a: String, b: String)` | `LinkResult` (`ok`, `reason`); uses one spare cable | M1 |
@@ -133,14 +133,20 @@ These are hard rules. CI fails if any are broken.
 | `objective_states()` | `Array[ObjectiveState]` | M1 |
 | `query_logs(source_id: String, file: String, filter: LogFilter)` | `Array[LogLine]` | M2 |
 | `submit_report(field: String, value: String)` | `ReportResult` | M2 |
+| `report_view()` | `ReportView` (read-only, live): per field, attempts left, last value, solved or not | M2 |
 | `read_file(device_id: String, path: String)` | `String` or `null` | M3 |
 | `patch_views(device_id: String, path: String)` | `Array[PatchView]` (read-only): `vuln_id`, current region line range, `hint` | M3 |
 | `write_patch(device_id: String, vuln_id: String, text: String)` | `bool` | M3 |
 | `http_request(src_id: String, url: String)` | `HttpResult` | M3 |
 
-The presentation layer never gets a live `Device`. `ScenarioView`,
-`DeviceView` and `PatchView` are fresh copies with getters only, so changing it can't touch sim state; all changes
-go through the methods above or a `CliSession`.
+**View rule.** Everything the presentation layer needs comes from a
+read-only view on `Sim`: `scenario_view` for static scenario data,
+`device_view` / `report_view` / `objective_states` / `patch_views` for live
+state. Views are fresh copies with getters only, so changing one can't
+touch sim state. The world and UI never read scenario JSON or import
+`sim/` scripts (such as `models.gd`) directly, and all changes go through
+the methods above or a `CliSession`. Answers (`report` objective values,
+`solution`, `accept` patterns) are never in a view.
 
 Ports are addressed as `"<device_id>:<canonical interface name>"`, for example
 `"S1:FastEthernet0/1"`. Short names are normalized by `net/ifname.gd`.
@@ -577,8 +583,11 @@ mission restarts it.
   objective failing.
 - **Purity check:** `tools/check_sim_purity.sh` scans `sim/` and fails CI
   on any hit for every rule in §3.1:
-  - Nodes and scene tree: `extends Node`, `get_tree`, `get_node`, `$`
-    node paths, `/root/`.
+  - Base classes: each script's `extends` must be `RefCounted`,
+    `Resource`, nothing (Godot's default `RefCounted`), or a `class_name` /
+    path defined under `sim/` whose chain ends in those. Any other base
+    (`Node`, `Control`, `CanvasLayer`, a custom Node subclass) fails.
+  - Scene tree: `get_tree`, `get_node`, `$` node paths, `/root/`.
   - Input, time and randomness: `Input.`, `Time.`, `OS.get_ticks`, `Timer`,
     `create_timer`, `await`, `randf`, `randi`, `RandomNumberGenerator`.
   - Dependency direction: any `res://world/`, `res://ui/` or `res://game/`
