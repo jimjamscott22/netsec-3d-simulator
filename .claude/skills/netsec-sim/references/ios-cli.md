@@ -74,7 +74,8 @@ parse tests, state tests, and (for `show`) golden output tests.
 | INTERFACE_CONFIG | `ip address <ipv4> <mask>` / `no ip address` | routers only |
 | INTERFACE_CONFIG | `switchport mode access` / `switchport mode trunk` | switches only |
 | INTERFACE_CONFIG | `switchport access vlan <vlan-id>` | switches only |
-| GLOBAL_CONFIG | `interface <interface>.<sub>` + `encapsulation dot1Q <vlan-id>` | router-on-a-stick |
+| GLOBAL_CONFIG | `interface <interface>.<sub>` | routers only: creates the subinterface if needed, → INTERFACE_CONFIG |
+| INTERFACE_CONFIG | `encapsulation dot1Q <vlan-id>` | subinterfaces only: sets `dot1q_vlan` (router-on-a-stick) |
 
 Hosts don't use IOS; their terminal gets a tiny shell: `ipconfig`,
 `ipconfig /set <ip> <mask> <gw>` (game-specific), and `ping <ip>`.
