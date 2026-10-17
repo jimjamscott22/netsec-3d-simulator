@@ -71,7 +71,14 @@ The presentation layer talks to the core only through the `Sim` autoload
   Servers can carry `services` and `vulns` for security missions.
 - `Interface` — `full_name` ("GigabitEthernet0/1"), `short_name` ("Gi0/1"),
   `admin_up`, `ip`, `mask`, `peer` (the other end, or null).
-  An interface is **oper-up** only if both ends are `admin_up` and a cable exists.
+  A physical interface is **oper-up** only if both ends are `admin_up` and a
+  cable exists.
+- Subinterfaces (`GigabitEthernet0/0.10`) are virtual: they also carry
+  `parent` (the physical interface) and `dot1q_vlan`, and never have a `peer`
+  or cable of their own. A subinterface is **oper-up** when its parent is
+  oper-up and the subinterface itself is `admin_up`. It sends and receives
+  only frames tagged with its `dot1q_vlan` on the parent's link, so a switch
+  trunk carrying that VLAN reaches it (router-on-a-stick).
 
 Interface names are always stored in canonical full form. Normalize user input
 with `net/ifname.gd` (`g0/1`, `gi0/1`, `gig0/1`, `GigabitEthernet0/1` all map
@@ -103,12 +110,23 @@ and a `fail_reason` enum (`NO_LINK`, `ADMIN_DOWN`, `VLAN_MISMATCH`,
 mission hints, so keep it precise.
 
 Resolution order:
-1. **L1:** both interfaces have a cable and are admin-up.
-2. **L2:** BFS across switches within one VLAN, honoring access VLANs and trunk
-   allowed lists.
-3. **L3:** host → gateway, then router hops by longest-prefix match over
-   connected + static routes. Apply ACLs and NAT where configured.
-4. The reply path must also resolve; asymmetric failure is a fail.
+1. **L1:** every interface on the path is oper-up (subinterfaces per the
+   domain model rule above).
+2. **Next-hop decision (at each L3 device):** if the destination is in the
+   sending interface's own subnet, deliver directly over L2, with no gateway
+   involved. Otherwise a host sends to its `gateway` (none set → `NO_GATEWAY`;
+   gateway outside the host's own subnet → `WRONG_SUBNET`), and a router picks the next hop by
+   longest-prefix match over connected + static routes (no match →
+   `NO_ROUTE`).
+3. **L2:** reaching that next hop means a BFS across switches within one VLAN,
+   honoring access VLANs, trunk allowed lists and router subinterface
+   `dot1q_vlan` tags.
+4. **L3 policy:** apply ACLs and NAT where configured as the packet crosses a
+   router.
+5. The reply path must also resolve; asymmetric failure is a fail.
+
+Two hosts in the same VLAN and subnet must ping each other with no router in
+the topology at all.
 
 Out of scope unless the plan adds it: STP, dynamic routing protocols, IPv6,
 DHCP, timing, packet loss.
@@ -152,6 +170,8 @@ The JSON schema, objective types, and a full example are in
 - Every sim change ships with GdUnit4 tests. A command needs three things
   tested: it parses (including abbreviations), it changes state correctly,
   and the related `show` output is right (golden strings).
+- Connectivity tests cover at least: same-subnet hosts with no router,
+  router-on-a-stick across a trunk, and each `fail_reason`.
 - Every objective type: a passing case and each documented failing case.
 - Each scenario in `res://scenarios/` gets a smoke test that loads it, applies
   the known solution, and asserts every objective passes.
