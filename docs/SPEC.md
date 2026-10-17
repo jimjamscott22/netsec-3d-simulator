@@ -129,7 +129,7 @@ These are hard rules. CI fails if any are broken.
 | `load_scenario(data: Dictionary)` | `LoadResult` (`ok`, `errors: Array[String]`) | M1 |
 | `summarize_scenario(data: Dictionary)` | `ScenarioSummary` (read-only): `id`, `title`, `sequence`, or `null` plus errors if the file is invalid. Doesn't change sim state | M2 |
 | `scenario_view()` | `ScenarioView` (read-only, static scenario data): title, briefing, hints; every device's id, type, model, hostname, `rack`+`slot` or `desk`, and its **ordered canonical interface list** (socket order); links (`a`, `b`, `locked`); `reserved_ports`; M2: log descriptors (`source`, `file`, line count) and report fields (`id`, `label`, `kind`, `options`, `max_attempts`) | M1 (M2 adds logs/report) |
-| `device_view(id: String)` | `DeviceView` (read-only snapshot) or `null` | M1 |
+| `device_view(id: String)` | `DeviceView` (read-only snapshot) or `null`: current config plus each canonical interface's `admin_up`, `oper_up`, and peer port (`<device>:<interface>` or `null`). Subinterface peers are `null`; their `oper_up` follows the parent | M1 |
 | `open_session(device_id: String)` | `CliSession` | M1 |
 | `connect_link(a: String, b: String)` | `LinkResult` (`ok`, `reason`); uses one spare cable | M1 |
 | `spare_cables()` | `int` (spare cables left) | M1 |
@@ -149,7 +149,9 @@ These are hard rules. CI fails if any are broken.
 read-only view on `Sim`: `scenario_view` for static scenario data,
 `device_view` / `report_view` / `objective_states` / `patch_views` for live
 state. Views are fresh copies with getters only, so changing one can't
-touch sim state. The world and UI never read scenario JSON or import
+touch sim state. The world initializes port LEDs and cable visuals from the
+current `device_view()` snapshots after loading, then applies later signals;
+it never relies on having observed load-time `interface_state_changed` events. The world and UI never read scenario JSON or import
 `sim/` scripts (such as `models.gd`) directly, and all changes go through
 the methods above or a `CliSession`. Answers (`report` objective values,
 `solution`, `accept` patterns) are never in a view during play. The one
@@ -409,7 +411,10 @@ after.
   and offers Retry.
 - Validator: every `report` objective's `field` must exist in `report.fields`;
   a `choice` objective's `equals` must be one of its `options`; each log
-  `source` must be a device id.
+  `source` must be a device id; every supplied report evidence `(source, file)`
+  pair must identify a declared log, and `line` must be an integer from 1
+  through that log's line count. Evidence may be omitted or empty, but every
+  supplied reference must resolve to exactly one log line.
 
 ### 7.5 Schema additions for M3 (files, services, vulns)
 
@@ -455,7 +460,11 @@ region must **fully match** one of a few accepted fixes.
   pseudo-code, since PHP is the classic teaching example for SQLi and XSS.
 - `region` is a 1-based, inclusive line range in the **starting** file. The
   sim stores the file as read-only prefix + editable region + read-only
-  suffix, so regions survive edits that change the line count.
+  suffix, so regions survive edits that change the line count. A scenario may
+  declare at most one patch region for each `(device, file)` pair. The loader
+  rejects duplicate or overlapping regions (including identical boundaries)
+  and reports both vuln ids and the file path before building state. Regions
+  in different files are independent.
 - `NetworkSim.write_patch(device, vuln, text)` replaces only the region text
   and bumps that vuln's `patch_rev` counter.
 - The code editor gets the file from `read_file` and the vuln ids, region
