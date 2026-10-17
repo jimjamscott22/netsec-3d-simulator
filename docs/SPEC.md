@@ -208,7 +208,10 @@ Full grammar, prompts and error strings: `references/ios-cli.md`. Key behavior:
 | Server | Mini Linux-style shell | `ls [path]`, `cat <file>`, `grep [-i] <pattern> <file>`, `tail [-n N] <file>`, `edit <file>` (M3), `service <name> status`, `help` |
 
 The host and server shells are separate small command registries that share
-the same tokenizer and help system as the IOS CLI.
+the same help system as the IOS CLI. Their tokenizer also accepts a
+double-quoted argument (`curl "http://10.0.10.5/login.php?user=' OR '1'='1"`),
+which can hold spaces and single quotes. The IOS CLI keeps plain whitespace
+splitting.
 
 ### 5.2 Ping output
 
@@ -301,7 +304,7 @@ After v1: `m4_remote_access` (SSH + static routes) and `m5_nat_acl`
 
 | Type | Params | Passes when | Milestone |
 | --- | --- | --- | --- |
-| `ping` | `from`, `to_ip`, `via` (optional) | Ping succeeds; if `via` is set, that device id is on the forward path | M1 |
+| `ping` | `from`, `to_ip`, `to_device` (optional), `via` (optional) | Ping succeeds; if `to_device` is set, that device owns `to_ip` and is the last hop; if `via` is set, that device is on the forward path | M1 |
 | `config` | `device`, `path`, `equals` | Config value matches | M1 |
 | `report` | `field`, `equals` | The player's filed value for `field` matches (case-insensitive, trimmed) | M2 |
 | `vuln_patched` | `device`, `vuln` | The vuln's `patched_when` checks pass **and** its service is healthy | M3 |
@@ -311,7 +314,9 @@ After v1: `m4_remote_access` (SSH + static routes) and `m5_nat_acl`
 
 **Anti-cheese rules.** Any "it stops working" objective must name what it
 expects (`no_ping.expect_reason`) and be paired with a "still works"
-objective. A `ping` objective that teaches routing sets `via` to the router,
+objective. A `ping` objective names its target with `to_device`, so giving
+`to_ip` to some other device (for example a router subinterface) does not
+pass. A `ping` objective that teaches routing also sets `via` to the router,
 so re-addressing both hosts into one subnet and VLAN (a pure L2 path) does
 not pass. When `via` is set and the ping succeeds without it, the HUD says
 "reached, but not through <via>". `vuln_patched` includes the service
@@ -374,8 +379,14 @@ vulnerable file or stopping the web service does not pass.
         "file": "/var/www/login.php", "route": "/login.php",
         "patched_when": [
           { "file": "/var/www/login.php",
-            "must_match": ["->prepare\\s*\\("],
-            "must_not_match": ["\\.\\s*\\$user\\s*\\.", "\\$_POST\\[[^\\]]+\\]\\s*\\.\\s*[\"']"] }
+            "must_match": ["->prepare\\s*\\(\\s*[\"'][^\"']*\\?",
+                           "->execute\\s*\\(\\s*\\[\\s*\\$user\\s*\\]\\s*\\)"],
+            "must_not_match": ["(?i)(SELECT|INSERT|UPDATE|DELETE)[^;]*\\$",
+                               "->query\\s*\\(", "\\.=\\s*\\$"] }
+        ],
+        "bypass_fixtures": [
+          "<?php ... $q = \"SELECT * FROM users WHERE name = '$user'\"; // ->prepare( ...",
+          "<?php ... $st = $db->prepare('SELECT 1 WHERE ?'); $db->query(\"SELECT ... '\" . $user . \"'\");"
         ],
         "exploit": { "param": "user", "payload": "' OR '1'='1",
                      "vulnerable_body": "Welcome, admin!", "patched_body": "Login failed." } }
@@ -389,6 +400,15 @@ vulnerable file or stopping the web service does not pass.
 - A check passes when every `must_match` regex matches and no
   `must_not_match` regex matches. Regexes use Godot's `RegEx` (deterministic,
   `RefCounted`, allowed in the core).
+- Checks run on the file **with comments stripped** (`//`, `#` and `/* */`
+  outside string literals, for `.php` files), so a commented-out
+  `->prepare(` does not count.
+- Regex checks are a heuristic, not a parser. Each vuln therefore lists
+  `bypass_fixtures`: known-bad patches (string interpolation, an unused or
+  commented `prepare`, an unprepared `->query(`) that must **not** read as
+  patched. The validator runs them at load time and rejects the scenario if
+  any fixture passes. Every bypass found in playtesting becomes a new
+  fixture.
 - The validator compiles every regex at load time and rejects bad ones. It
   also runs the checks against the **starting** files and rejects a scenario
   where a vuln already reads as patched or a service already reads as
@@ -401,11 +421,14 @@ vulnerable file or stopping the web service does not pass.
 `NetworkSim.http_request(src_id, url)` lets the player test an exploit from a
 PC with `curl`:
 
-1. Parse the URL (`http://<ipv4>[:port]/<route>?<query>`).
+1. Parse the URL (`http://<ipv4>[:port]/<route>?<query>`). Query values are
+   URL-decoded (`%27` → `'`, `+` → space) before any comparison, so a quoted
+   raw payload and a percent-encoded one behave the same.
 2. Resolve L3 reachability with the ping resolver. On failure, print a
    curl-style error, for example `curl: (7) Failed to connect to 10.0.10.5 port 80`.
 3. Find the service on that port. None → connection refused.
-4. If the route matches a vuln and the request carries its exploit payload,
+4. If the route matches a vuln and the decoded `param` value equals its
+   exploit payload (trimmed),
    return `vulnerable_body` or `patched_body` based on the vuln's state.
 5. Otherwise return a fixed `200 OK` page for the route.
 

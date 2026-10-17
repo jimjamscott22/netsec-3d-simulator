@@ -149,15 +149,17 @@ configure VLANs, a trunk and router-on-a-stick, and see PC-A ping PC-B.
   places locked/unlocked links, sets spare cables. Never builds state if
   validation fails.
   *Tests:* the M1 example loads; a broken file leaves the sim empty.
-- [ ] **1.18 Objective evaluator.** `ping` (with optional `via`) and
+- [ ] **1.18 Objective evaluator.** `ping` (with optional `to_device` and `via`) and
   `config` types; re-evaluated on `link_changed` and `config_changed`; emits
   `objective_updated` on change and `mission_completed` once.
-  *Tests:* pass and fail cases per type; `via` fails when the ping succeeds
-  without the named device; no duplicate signals.
+  *Tests:* pass and fail cases per type; `to_device` fails when another
+  device answers `to_ip`; `via` fails when the ping succeeds without the
+  named device; no duplicate signals.
 - [ ] **1.19 Write `scenarios/m1_vlan_ping.json`** from the schema example
-  (its `ping` objective sets `"via": "R1"`).
-  *Tests:* the L2 shortcut fails the objective (move PC-A to
-  192.168.20.11 and Fa0/1 into VLAN 20: the ping succeeds without R1).
+  (its `ping` objective sets `"to_device": "PC-B"` and `"via": "R1"`).
+  *Tests:* both shortcuts fail the objective: the L2 shortcut (move PC-A
+  to 192.168.20.11 and Fa0/1 into VLAN 20) and the decoy (leave PC-B
+  uncabled and put 192.168.20.10 on an R1 subinterface).
 - [ ] **1.20 Scenario smoke test harness.** Loads every file in
   `res://scenarios/`, asserts at least one objective fails at start, applies
   `solution`, asserts all pass.
@@ -258,12 +260,15 @@ a PC, fixes the code, and proves the fix, without breaking the site.
 - [ ] **3.1 Server files** (`sim/web/` or `Server`): `read_file`,
   `write_file`, `file_changed` signal.
   *Tests:* read, write, unknown path, signal.
-- [ ] **3.2 Check engine** (`sim/web/checks.gd`): evaluates
-  `must_match` / `must_not_match` lists with `RegEx`.
-  *Tests:* match/no-match combinations; multiline code.
+- [ ] **3.2 Check engine** (`sim/web/checks.gd`): strips PHP comments
+  (outside string literals), then evaluates `must_match` / `must_not_match`
+  lists with `RegEx`.
+  *Tests:* match/no-match combinations; multiline code; comment markers
+  inside strings are kept; a commented-out match does not count.
 - [ ] **3.3 Schema + validator** for `files`, `services`, `vulns`
-  (SPEC §7.5): compile regexes; reject a scenario whose vulns start patched
-  or services start unhealthy; update `scenario-schema.md`.
+  (SPEC §7.5): compile regexes; reject a scenario whose vulns start patched,
+  whose services start unhealthy, or whose `bypass_fixtures` read as
+  patched; update `scenario-schema.md`.
   *Tests:* one bad fixture per rule.
 - [ ] **3.4 `vuln_patched` and `service_up` objective types**, re-evaluated
   on `file_changed`.
@@ -271,10 +276,13 @@ a PC, fixes the code, and proves the fix, without breaking the site.
   deleting the vulnerable code fails; unpatched fails.
 - [ ] **3.5 Simulated HTTP** (`NetworkSim.http_request`, SPEC §7.6).
   *Tests:* unreachable (each ping fail reason maps to a curl error); no
-  service; normal route; exploit vs patched response.
+  service; normal route; exploit vs patched response; raw and
+  percent-encoded payloads match the same way.
 - [ ] **3.6 `curl` on the PC shell** and `edit <file>` on the server shell
-  (opens the code editor UI).
-  *Tests:* parse and output goldens.
+  (opens the code editor UI). The host/server tokenizer accepts
+  double-quoted arguments.
+  *Tests:* parse (including a quoted URL with spaces and single quotes) and
+  output goldens.
 - [ ] **3.7 Code editor UI:** `CodeEdit` with line numbers, basic PHP
   highlighting, Save → `Sim.write_file`, unsaved-changes guard on close.
 - [ ] **3.8 Write `scenarios/m3_web_patch.json`** with `login.php` (SQLi →

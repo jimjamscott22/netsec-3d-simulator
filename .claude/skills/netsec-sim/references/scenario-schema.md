@@ -65,7 +65,7 @@ type's params. All objective types are pure predicates over sim state.
 
 | `type` | Params | Passes when |
 | --- | --- | --- |
-| `ping` | `from`, `to_ip`, `via` (optional) | `NetworkSim.ping(from, to_ip).success`, and if `via` is set, that device is in `hops` |
+| `ping` | `from`, `to_ip`, `to_device` (optional), `via` (optional) | `NetworkSim.ping(from, to_ip).success`; if `to_device` is set, it is the last entry in `hops`; if `via` is set, that device is in `hops` |
 | `no_ping` | `from`, `to_ip`, `expect_reason` (required) | ping fails **with exactly that `fail_reason`**, e.g. `ACL_DENIED` |
 | `ssh` | `from`, `to_ip`, `user` | SSH preconditions met + L3 reachable (M4) |
 | `config` | `device`, `path`, `equals` | a config value matches, e.g. `path: "hostname"` |
@@ -124,7 +124,7 @@ in order, then asserts that every objective passes.
   ],
   "spare_cables": 1,
   "objectives": [
-    { "id": "ping_ab", "type": "ping", "from": "PC-A", "to_ip": "192.168.20.10", "via": "R1",
+    { "id": "ping_ab", "type": "ping", "from": "PC-A", "to_ip": "192.168.20.10", "to_device": "PC-B", "via": "R1",
       "description": "PC-A can ping PC-B through the router" }
   ],
   "hints": [
