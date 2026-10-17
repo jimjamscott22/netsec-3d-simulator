@@ -132,7 +132,7 @@ These are hard rules. CI fails if any are broken.
 | `query_logs(source_id: String, file: String, filter: LogFilter)` | `Array[LogLine]` | M2 |
 | `submit_report(field: String, value: String)` | `ReportResult` | M2 |
 | `read_file(device_id: String, path: String)` | `String` or `null` | M3 |
-| `write_file(device_id: String, path: String, text: String)` | `bool` | M3 |
+| `write_patch(device_id: String, vuln_id: String, text: String)` | `bool` | M3 |
 | `http_request(src_id: String, url: String)` | `HttpResult` | M3 |
 
 Ports are addressed as `"<device_id>:<canonical interface name>"`, for example
@@ -145,13 +145,14 @@ Ports are addressed as `"<device_id>:<canonical interface name>"`, for example
 | `link_changed` | `a_port, b_port, connected: bool` | A cable is connected or removed |
 | `interface_state_changed` | `port, oper_up: bool` | An interface's oper state flips |
 | `config_changed` | `device_id` | Any CLI command changes device state |
-| `file_changed` | `device_id, path` | A server file is saved (M3) |
+| `patch_applied` | `device_id, vuln_id` | The player saves a vuln's patch region (M3) |
+| `http_requested` | `src_id, vuln_id, outcome` | A `curl` request finishes (M3) |
 | `report_submitted` | `field, correct: bool` | The player files a report field (M2) |
 | `objective_updated` | `objective_id, passed: bool` | An objective's result changes |
 | `mission_completed` | `scenario_id` | All objectives pass |
 
 Objectives are re-evaluated after every `link_changed`, `config_changed`,
-`file_changed` and `report_submitted`. They never poll.
+`report_submitted`, `patch_applied` and `http_requested`. They never poll.
 
 ---
 
@@ -307,8 +308,8 @@ After v1: `m4_remote_access` (SSH + static routes) and `m5_nat_acl`
 | `ping` | `from`, `to_ip`, `to_device` (optional), `via` (optional) | Ping succeeds; if `to_device` is set, that device owns `to_ip` and is the last hop; if `via` is set, that device is on the forward path | M1 |
 | `config` | `device`, `path`, `equals` | Config value matches | M1 |
 | `report` | `field`, `equals` | The player's filed value for `field` matches (case-insensitive, trimmed) | M2 |
-| `vuln_patched` | `device`, `vuln` | The vuln's `patched_when` checks pass **and** its service is healthy | M3 |
-| `service_up` | `device`, `service` | The service's `healthy_when` checks pass | M3 |
+| `vuln_patched` | `device`, `vuln` | The vuln's patch region matches one of its `accept` patterns (SPEC §7.5) | M3 |
+| `exploit_test` | `from`, `device`, `vuln`, `expect` (`vulnerable` \| `patched`) | `vulnerable`: the HTTP log has a request from `from` that got the vulnerable response. `patched`: the vuln is patched now and the latest such request got the patched response | M3 |
 | `no_ping` | `from`, `to_ip`, `expect_reason` | Ping fails with exactly that reason | M5 |
 | `ssh` | `from`, `to_ip`, `user` | SSH preconditions + L3 reachability | M4 |
 
@@ -322,9 +323,11 @@ not pass. A scenario also blocks topology shortcuts with `reserved_ports`
 (ports no cable may use): M1 reserves `R1:Gi0/1`, so PC-B can't be cabled
 straight to the router and the only way across is the trunk and
 subinterfaces. When `via` is set and the ping succeeds without it, the HUD says
-"reached, but not through <via>". `vuln_patched` includes the service
-health check, so deleting the
-vulnerable file or stopping the web service does not pass.
+"reached, but not through <via>". In M3, the player can edit only each
+vuln's patch region, and the region must fully match an accepted fix, so
+deleting code or hiding the old query does not pass. `exploit_test`
+objectives make the player prove the attack before the fix and its failure
+after.
 
 ### 7.4 Schema additions for M2 (logs and reports)
 
@@ -362,6 +365,11 @@ vulnerable file or stopping the web service does not pass.
 
 ### 7.5 Schema additions for M3 (files, services, vulns)
 
+Regex blacklists over a whole file can always be dodged (split keywords,
+dummy statements, unused code). So M3 uses **guided patching**: each vuln
+marks a small patch region, the rest of the file is read-only, and the
+region must **fully match** one of a few accepted fixes.
+
 ```json
 {
   "id": "WEB1", "type": "server", "model": "server", "hostname": "web1",
@@ -369,28 +377,25 @@ vulnerable file or stopping the web service does not pass.
   "config": {
     "ip": "10.0.10.5", "mask": "255.255.255.0", "gateway": "10.0.10.1",
     "files": {
-      "/var/www/login.php": "<?php\n$user = $_POST['user'];\n$q = \"SELECT * FROM users WHERE name = '\" . $user . \"'\";\n..."
+      "/var/www/login.php": "<?php\nfunction check_login($db) {\n  $user = $_POST['user'];\n  $q = \"SELECT * FROM users WHERE name = '\" . $user . \"'\";\n  $res = $db->query($q);\n  return $res->fetch();\n}\n"
     },
-    "services": [
-      { "id": "http", "port": 80, "root": "/var/www",
-        "healthy_when": [
-          { "file": "/var/www/login.php", "must_match": ["function\\s+check_login\\s*\\("] }
-        ] }
-    ],
+    "services": [ { "id": "http", "port": 80, "root": "/var/www" } ],
     "vulns": [
-      { "id": "sqli_login", "kind": "sqli", "service": "http",
-        "file": "/var/www/login.php", "route": "/login.php",
-        "patched_when": [
-          { "file": "/var/www/login.php",
-            "must_match": ["->prepare\\s*\\(\\s*[\"'][^\"']*\\?",
-                           "->execute\\s*\\(\\s*\\[\\s*\\$user\\s*\\]\\s*\\)"],
-            "must_not_match": ["(?i)(SELECT|INSERT|UPDATE|DELETE)[^;]*\\$",
-                               "->query\\s*\\(", "\\.=\\s*\\$"] }
+      { "id": "sqli_login", "kind": "sqli", "service": "http", "route": "/login.php",
+        "region": { "file": "/var/www/login.php", "first_line": 4, "last_line": 5 },
+        "accept": [
+          "\\$res=\\$db->prepare\\(([\"'])SELECT \\* FROM users WHERE name = \\?\\1\\);\\$res->execute\\((\\[\\$user\\]|array\\(\\$user\\))\\);"
         ],
-        "bypass_fixtures": [
-          "<?php ... $q = \"SELECT * FROM users WHERE name = '$user'\"; // ->prepare( ...",
-          "<?php ... $st = $db->prepare('SELECT 1 WHERE ?'); $db->query(\"SELECT ... '\" . $user . \"'\");"
+        "accept_fixtures": [
+          "$res = $db->prepare(\"SELECT * FROM users WHERE name = ?\");\n$res->execute([$user]);",
+          "$res = $db->prepare( 'SELECT * FROM users WHERE name = ?' ); // safe\n$res->execute(array($user));"
         ],
+        "reject_fixtures": [
+          "$q = \"SELECT * FROM users WHERE name = '$user'\";\n$res = $db->query($q);",
+          "$q = \"SE\" . \"LECT * FROM users WHERE name = '\" . $user . \"'\";\n$res = $db->prepare($q);\n$d = $db->prepare(\"?\");\n$d->execute([$user]);",
+          ""
+        ],
+        "hint": "Use a prepared statement with a ? placeholder, then pass $user to execute().",
         "exploit": { "param": "user", "payload": "' OR '1'='1",
                      "vulnerable_body": "Welcome, admin!", "patched_body": "Login failed." } }
     ]
@@ -400,24 +405,28 @@ vulnerable file or stopping the web service does not pass.
 
 - `files` holds short source files (under 60 lines each). Code is PHP-flavored
   pseudo-code, since PHP is the classic teaching example for SQLi and XSS.
-- A check passes when every `must_match` regex matches and no
-  `must_not_match` regex matches. Regexes use Godot's `RegEx` (deterministic,
-  `RefCounted`, allowed in the core).
-- Checks run on the file **with comments stripped** (`//`, `#` and `/* */`
-  outside string literals, for `.php` files), so a commented-out
-  `->prepare(` does not count.
-- Regex checks are a heuristic, not a parser. Each vuln therefore lists
-  `bypass_fixtures`: known-bad patches (string interpolation, an unused or
-  commented `prepare`, an unprepared `->query(`) that must **not** read as
-  patched. The validator runs them at load time and rejects the scenario if
-  any fixture passes. Every bypass found in playtesting becomes a new
-  fixture.
-- The validator compiles every regex at load time and rejects bad ones. It
-  also runs the checks against the **starting** files and rejects a scenario
-  where a vuln already reads as patched or a service already reads as
-  unhealthy.
-- The smoke test's `solution` gains a step type:
-  `{ "device": "WEB1", "write_file": { "path": "...", "text": "..." } }`.
+- `region` is a 1-based, inclusive line range in the **starting** file. The
+  sim stores the file as read-only prefix + editable region + read-only
+  suffix, so regions survive edits that change the line count.
+- `NetworkSim.write_patch(device, vuln, text)` replaces only the region text.
+  The code editor shows the whole file but locks lines outside the region.
+- **Normalization** before matching: strip comments (`//`, `#`, `/* */`)
+  outside string literals, then remove all whitespace outside string
+  literals. Whitespace inside strings is kept.
+- The region is patched when its normalized text **fully matches** (anchored
+  at both ends) at least one `accept` regex. Anything else is unpatched:
+  extra statements, split keywords, deleted code, and an empty region all
+  fail. Regexes use Godot's `RegEx` (deterministic, `RefCounted`).
+- When a save doesn't match, the editor shows the vuln's `hint`, so a
+  correct but unlisted fix gets steered to the expected form rather than
+  failing silently.
+- The validator compiles every regex and rejects the scenario if: the
+  starting region already matches `accept`; any `accept_fixtures` entry is
+  rejected; or any `reject_fixtures` entry is accepted. Every bypass found
+  in playtesting becomes a new reject fixture.
+- The smoke test's `solution` gains two step types:
+  `{ "device": "WEB1", "patch": { "vuln": "sqli_login", "text": "..." } }` and
+  `{ "device": "PC-1", "http": "http://10.0.10.5/login.php?user=..." }`.
 
 ### 7.6 Simulated HTTP (M3)
 
@@ -431,9 +440,16 @@ PC with `curl`:
    curl-style error, for example `curl: (7) Failed to connect to 10.0.10.5 port 80`.
 3. Find the service on that port. None → connection refused.
 4. If the route matches a vuln and the decoded `param` value equals its
-   exploit payload (trimmed),
-   return `vulnerable_body` or `patched_body` based on the vuln's state.
+   exploit payload (trimmed), return `vulnerable_body` or `patched_body`
+   based on the vuln's state.
 5. Otherwise return a fixed `200 OK` page for the route.
+6. Append an entry to the sim's **HTTP log** (`src_id`, `vuln_id` or `""`,
+   `outcome`: `VULNERABLE` | `PATCHED` | `NORMAL` | `ERROR`) and emit
+   `http_requested`.
+
+The HTTP log is ordinary sim state, so `exploit_test` objectives stay pure
+predicates. M3 orders them per vuln with `order`: (1) show the exploit works,
+(2) patch, (3) show the exploit now fails.
 
 No real HTTP is sent. It is a lookup over sim state.
 
@@ -487,7 +503,7 @@ or removes cable meshes to match.
 | Log viewer | Opened from the SOC desk monitor. File list, scrolling view, text filter, highlight on match | M2 |
 | Report form | Fields from `report.fields`; shows remaining attempts | M2 |
 | Threat map | 2D world map; arcs from `geo` countries for log lines with `src_ip`; click an arc to jump to the line | M2 (should-have) |
-| Code editor | `CodeEdit` with line numbers and basic PHP highlighting; Save calls `Sim.write_file` | M3 |
+| Code editor | `CodeEdit` with line numbers and basic PHP highlighting; lines outside the patch region are locked; Save calls `Sim.write_patch` and shows the hint if the patch isn't accepted | M3 |
 
 UI scripts read state only through `Sim` and react to its signals. No UI
 script stores its own copy of network truth.

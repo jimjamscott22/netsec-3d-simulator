@@ -72,7 +72,8 @@ type's params. All objective types are pure predicates over sim state.
 | `no_ping` | `from`, `to_ip`, `expect_reason` (required) | ping fails **with exactly that `fail_reason`**, e.g. `ACL_DENIED` |
 | `ssh` | `from`, `to_ip`, `user` | SSH preconditions met + L3 reachable (M4) |
 | `config` | `device`, `path`, `equals` | a config value matches, e.g. `path: "hostname"` |
-| `vuln_patched` | `device`, `vuln` | the vuln's `patched_when` checks pass and its service is healthy (M3; see docs/SPEC.md §7.5) |
+| `vuln_patched` | `device`, `vuln` | the vuln's patch region fully matches an `accept` pattern (M3; see docs/SPEC.md §7.5) |
+| `exploit_test` | `from`, `device`, `vuln`, `expect` | the HTTP log shows the exploit working (`vulnerable`) or, after the fix, failing (`patched`) (M3; see docs/SPEC.md §7.6) |
 
 **Isolation objectives must not be cheesable.** A bare "ping fails" check
 would pass if the player unplugged a cable, shut a port or deleted a route.

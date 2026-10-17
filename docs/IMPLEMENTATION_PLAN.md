@@ -257,44 +257,58 @@ logs, works out who attacked, how and which account, and files a report.
 ## M3 — Web patch mission
 
 Goal: `m3_web_patch`. A web server has a SQL injection in its login page and
-a reflected XSS in its search page. The player proves each with `curl` from
-a PC, fixes the code, and proves the fix, without breaking the site.
+a reflected XSS in its search page. For each one, the player proves the
+exploit with `curl` from a PC, patches the code, and proves the exploit now
+fails.
 
-- [ ] **3.1 Server files** (`sim/web/` or `Server`): `read_file`,
-  `write_file`, `file_changed` signal.
-  *Tests:* read, write, unknown path, signal.
-- [ ] **3.2 Check engine** (`sim/web/checks.gd`): strips PHP comments
-  (outside string literals), then evaluates `must_match` / `must_not_match`
-  lists with `RegEx`.
-  *Tests:* match/no-match combinations; multiline code; comment markers
-  inside strings are kept; a commented-out match does not count.
+- [ ] **3.1 Server files + patch regions** (`sim/web/`): files stored as
+  prefix + region + suffix per vuln; `read_file`, `write_patch`,
+  `patch_applied` signal.
+  *Tests:* read; patch replaces only the region; a patch that changes the
+  line count keeps prefix and suffix intact; unknown vuln; signal.
+- [ ] **3.2 Patch matcher** (`sim/web/patch_matcher.gd`): normalization
+  (strip comments and whitespace outside string literals) + anchored
+  full-match against `accept` regexes.
+  *Tests:* normalization keeps string contents; comment markers inside
+  strings are kept; full match only (extra statements fail); every
+  `accept_fixtures` / `reject_fixtures` entry in SPEC §7.5 behaves as listed.
 - [ ] **3.3 Schema + validator** for `files`, `services`, `vulns`
-  (SPEC §7.5): compile regexes; reject a scenario whose vulns start patched,
-  whose services start unhealthy, or whose `bypass_fixtures` read as
-  patched; update `scenario-schema.md`.
+  (SPEC §7.5): compile regexes; region inside the file; reject a scenario
+  whose region starts accepted, whose accept fixture fails, or whose reject
+  fixture passes; update `scenario-schema.md`.
   *Tests:* one bad fixture per rule.
-- [ ] **3.4 `vuln_patched` and `service_up` objective types**, re-evaluated
-  on `file_changed`.
-  *Tests:* patched + healthy passes; patched but broken service fails;
-  deleting the vulnerable code fails; unpatched fails.
-- [ ] **3.5 Simulated HTTP** (`NetworkSim.http_request`, SPEC §7.6).
+- [ ] **3.4 Simulated HTTP + HTTP log** (`NetworkSim.http_request`,
+  SPEC §7.6).
   *Tests:* unreachable (each ping fail reason maps to a curl error); no
   service; normal route; exploit vs patched response; raw and
-  percent-encoded payloads match the same way.
+  percent-encoded payloads match the same way; each request is logged with
+  the right outcome.
+- [ ] **3.5 `vuln_patched` and `exploit_test` objective types**,
+  re-evaluated on `patch_applied` and `http_requested`.
+  *Tests:* `vuln_patched` pass/fail; `exploit_test vulnerable` passes only
+  after a vulnerable response from `from`; `exploit_test patched` fails
+  until a patched response is logged after the fix, and fails again if the
+  latest request was from before the patch.
 - [ ] **3.6 `curl` on the PC shell** and `edit <file>` on the server shell
   (opens the code editor UI). The host/server tokenizer accepts
   double-quoted arguments.
   *Tests:* parse (including a quoted URL with spaces and single quotes) and
   output goldens.
 - [ ] **3.7 Code editor UI:** `CodeEdit` with line numbers, basic PHP
-  highlighting, Save → `Sim.write_file`, unsaved-changes guard on close.
+  highlighting, lines outside the patch region locked and shaded,
+  Save → `Sim.write_patch`, hint on a rejected patch, unsaved-changes guard
+  on close.
 - [ ] **3.8 Write `scenarios/m3_web_patch.json`** with `login.php` (SQLi →
-  prepared statement) and `search.php` (XSS → `htmlspecialchars`). Smoke
-  test uses a new `write_file` solution step.
+  prepared statement) and `search.php` (XSS → `htmlspecialchars`). Per
+  vuln: ordered `exploit_test vulnerable` → `vuln_patched` →
+  `exploit_test patched`. The smoke test uses the new `http` and `patch`
+  solution steps, and also checks that patching without any `curl` leaves
+  the `exploit_test` objectives failing.
   *Done when:* the smoke test passes.
 - [ ] **3.9 Debrief content:** explain each vuln, show the before/after
   diff, and link to OWASP pages.
-- [ ] **3.10 Playtest** with `docs/playtest/m3_web_patch.md`.
+- [ ] **3.10 Playtest** with `docs/playtest/m3_web_patch.md`. Any bypass
+  found becomes a `reject_fixtures` entry.
 
 **Exit criteria:** all three missions playable in sequence; CI green.
 
