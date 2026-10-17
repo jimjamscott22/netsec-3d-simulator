@@ -16,6 +16,7 @@ If validation fails, it returns a list of errors with JSON paths, such as
 | `devices` | array | yes | See Devices |
 | `links` | array | yes | Cables present at start; may be empty |
 | `spare_cables` | int | no | Cables the player can place; default 0 |
+| `reserved_ports` | array of `"<device>:<port>"` | no | Ports no cable may use (start links included). Use them to block topology shortcuts |
 | `objectives` | array | yes | At least one |
 | `hints` | array | no | Keyed by fail reason (see Hints) |
 | `solution` | array | yes | Known solution, used by the smoke test only — never shown in game |
@@ -57,6 +58,8 @@ If validation fails, it returns a list of errors with JSON paths, such as
 
 - `locked: true` means the player can't unplug it.
 - Every endpoint must exist, and each port can be used once.
+- No link may use a port listed in `reserved_ports`, and `connect_link`
+  rejects them during play.
 
 ## Objectives
 
@@ -123,6 +126,7 @@ in order, then asserts that every objective passes.
     { "a": "S1:Fa0/1", "b": "PC-A:Eth0", "locked": true }
   ],
   "spare_cables": 1,
+  "reserved_ports": ["R1:Gi0/1"],
   "objectives": [
     { "id": "ping_ab", "type": "ping", "from": "PC-A", "to_ip": "192.168.20.10", "to_device": "PC-B", "via": "R1",
       "description": "PC-A can ping PC-B through the router" }

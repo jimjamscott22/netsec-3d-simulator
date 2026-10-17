@@ -92,7 +92,7 @@ configure VLANs, a trunk and router-on-a-stick, and see PC-A ping PC-B.
   *Tests:* each model builds a device with the expected interface names.
 - [ ] **1.5 `SimEvents` and `NetworkSim` skeleton** (`sim/core/`). Device
   registry, `connect_link` / `disconnect_link` with validation (port exists,
-  port free, not the same device), and `link_changed` +
+  port free, port not reserved, not the same device), and `link_changed` +
   `interface_state_changed` signals.
   *Tests:* connect/disconnect state; each rejection reason; signals fire
   once per change, and not when nothing changed.
@@ -159,7 +159,9 @@ configure VLANs, a trunk and router-on-a-stick, and see PC-A ping PC-B.
   (its `ping` objective sets `"to_device": "PC-B"` and `"via": "R1"`).
   *Tests:* both shortcuts fail the objective: the L2 shortcut (move PC-A
   to 192.168.20.11 and Fa0/1 into VLAN 20) and the decoy (leave PC-B
-  uncabled and put 192.168.20.10 on an R1 subinterface).
+  uncabled and put 192.168.20.10 on an R1 subinterface). The file sets
+  `"reserved_ports": ["R1:Gi0/1"]`, and a test checks that cabling PC-B
+  straight to `R1:Gi0/1` is rejected (the direct-to-router shortcut).
 - [ ] **1.20 Scenario smoke test harness.** Loads every file in
   `res://scenarios/`, asserts at least one objective fails at start, applies
   `solution`, asserts all pass.
@@ -177,7 +179,8 @@ configure VLANs, a trunk and router-on-a-stick, and see PC-A ping PC-B.
 - [ ] **1.24 Device model scenes:** greybox `router_2port`, `switch_24`,
   `pc` with ordered socket markers and LEDs.
 - [ ] **1.25 Room builder** (`world/room_builder.gd`): spawns devices from
-  the loaded scenario at their markers; assigns socket ids from `models.gd`.
+  the loaded scenario at their markers; assigns socket ids from `models.gd`;
+  puts a dust cap on each reserved port.
   *Done when:* M1's devices appear in the right racks and desks.
 - [ ] **1.26 Cabling interaction** (SPEC §8.2): pick up, plug, reject with
   toast, unplug unlocked, cancel; spare cable count.

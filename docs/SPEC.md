@@ -318,7 +318,10 @@ objective. A `ping` objective names its target with `to_device`, so giving
 `to_ip` to some other device (for example a router subinterface) does not
 pass. A `ping` objective that teaches routing also sets `via` to the router,
 so re-addressing both hosts into one subnet and VLAN (a pure L2 path) does
-not pass. When `via` is set and the ping succeeds without it, the HUD says
+not pass. A scenario also blocks topology shortcuts with `reserved_ports`
+(ports no cable may use): M1 reserves `R1:Gi0/1`, so PC-B can't be cabled
+straight to the router and the only way across is the trunk and
+subinterfaces. When `via` is set and the ping succeeds without it, the HUD says
 "reached, but not through <via>". `vuln_patched` includes the service
 health check, so deleting the
 vulnerable file or stopping the web service does not pass.
@@ -462,8 +465,10 @@ No real HTTP is sent. It is a lookup over sim state.
 2. Look at a second free socket and press interact. The world calls
    `Sim.connect_link(a, b)`.
 3. If the sim accepts, a cable mesh is drawn between the sockets with a
-   simple sag curve. If it rejects (port in use, same device), the cable end
-   returns and a toast shows the reason.
+   simple sag curve. If it rejects (port in use, same device, port
+   reserved), the cable end returns and a toast shows the reason.
+   Reserved ports (scenario `reserved_ports`) show a dust cap and a
+   "reserved" label, so the player can see them before trying.
 4. Interact on an unlocked plugged cable unplugs it and returns it to the
    spare count. Locked cables can't be unplugged.
 5. Press cancel to drop a held cable end.
