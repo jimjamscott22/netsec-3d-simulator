@@ -19,6 +19,7 @@ If validation fails, it returns a list of errors with JSON paths, such as
 | `reserved_ports` | array of `"<device>:<port>"` | no | Ports no cable may use (start links included). Use them to block topology shortcuts |
 | `objectives` | array | yes | At least one |
 | `hints` | array | no | Keyed by fail reason (see Hints) |
+| `debrief` | string | no | Shown after the mission ends, via `debrief_view()`: what was fixed and how a real admin would do it |
 | `solution` | array | yes | Known solution, used by the smoke test only — never shown in game |
 
 ## Devices
@@ -139,7 +140,13 @@ in order, then asserts that every objective passes.
     { "id": "sub10", "type": "config", "device": "R1", "path": ["interfaces", "Gi0/0.10", "dot1q_vlan"], "equals": 10,
       "description": "R1 has a subinterface for VLAN 10" },
     { "id": "sub20", "type": "config", "device": "R1", "path": ["interfaces", "Gi0/0.20", "dot1q_vlan"], "equals": 20,
-      "description": "R1 has a subinterface for VLAN 20" }
+      "description": "R1 has a subinterface for VLAN 20" },
+    { "id": "gw10", "type": "config", "device": "R1", "path": ["interfaces", "Gi0/0.10", "ip"], "equals": "192.168.10.1",
+      "description": "VLAN 10's gateway is on Gi0/0.10" },
+    { "id": "gw20", "type": "config", "device": "R1", "path": ["interfaces", "Gi0/0.20", "ip"], "equals": "192.168.20.1",
+      "description": "VLAN 20's gateway is on Gi0/0.20" },
+    { "id": "parent_noip", "type": "config", "device": "R1", "path": ["interfaces", "Gi0/0", "ip"], "equals": null,
+      "description": "Gi0/0 itself has no IP address" }
   ],
   "hints": [
     { "reason": "NO_LINK", "text": "PC-B isn't cabled to anything yet." },

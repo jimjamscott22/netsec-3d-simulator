@@ -174,13 +174,16 @@ configure VLANs, a trunk and router-on-a-stick, and see PC-A ping PC-B.
   no duplicate signals.
 - [ ] **1.19 Write `scenarios/m1_vlan_ping.json`** from the schema example:
   a `ping` objective with `"to_device": "PC-B"` and `"via": "R1"`, `config`
-  objectives for the S1 Gi0/1 trunk and both R1 subinterfaces, both PCs
+  objectives for the S1 Gi0/1 trunk, both R1 subinterfaces with their
+  gateway IPs, and no IP on Gi0/0, both PCs
   `locked: true`, and `"reserved_ports": ["R1:Gi0/1"]`.
   *Tests:* regression tests that each known shortcut leaves the mission
   incomplete: L2 re-addressing (refused: hosts locked); the decoy IP on an
   R1 subinterface (`to_device` fails); cabling PC-B to `R1:Gi0/1`
   (rejected: reserved); asymmetric masks such as R1 Gi0/0 as /16 with
-  S1 Gi0/1 in access mode (hosts locked, and the `config` objectives fail).
+  S1 Gi0/1 in access mode (hosts locked, and the `config` objectives fail);
+  the native-VLAN path (PC-A's port in VLAN 1, 192.168.10.1 on the
+  physical Gi0/0, `.10` with only a tag) fails `gw10` and `parent_noip`.
 - [ ] **1.20 Scenario smoke test harness.** Loads every file in
   `res://scenarios/`, asserts at least one objective fails at start, applies
   `solution`, asserts all pass.
@@ -219,7 +222,10 @@ configure VLANs, a trunk and router-on-a-stick, and see PC-A ping PC-B.
 - [ ] **1.29 Mission HUD:** objectives with live ticks, spare cables, hint
   on H (shows hint for the current `fail_reason` of the first failing
   `ping` objective).
-- [ ] **1.30 Briefing and debrief cards.**
+- [ ] **1.30 Briefing and debrief cards.** Briefing from `scenario_view`;
+  debrief from `debrief_view()`.
+  *Tests (sim):* `debrief_view` is `null` during play and filled after
+  `mission_completed`.
 - [ ] **1.31 Main menu** with "Start mission" and settings (mouse
   sensitivity, fullscreen, volume). `game/progress.gd` saves completion.
 - [ ] **1.32 Art pass (light):** swap greybox for Kenney/Quaternius models,
@@ -266,8 +272,10 @@ logs, works out who attacked, how and which account, and files a report.
   and per-field feedback from `report_view`; nothing hard-coded per
   mission.
 - [ ] **2.8b Failed debrief card** (SPEC §7.2 step 6): on `mission_failed`,
-  stop play and show the failed objective, the answers, the evidence, and
-  Retry / Main menu.
+  stop play and show the failed objective, the answers and the evidence
+  lines from `Sim.debrief_view()`, and Retry / Main menu.
+  *Tests (sim):* `debrief_view` has no answers before failure and has the
+  answers and `evidence` after.
   *Done when:* running out of attempts on any field shows the card, and
   Retry reloads the mission from its starting state.
 - [ ] **2.9 Write `scenarios/m2_log_triage.json`.** About 150–300 log lines
@@ -343,7 +351,7 @@ fails.
   the `exploit_test` objectives failing.
   *Done when:* the smoke test passes.
 - [ ] **3.9 Debrief content:** explain each vuln, show the before/after
-  diff, and link to OWASP pages.
+  diff (from `debrief_view()`), and link to OWASP pages.
 - [ ] **3.10 Playtest** with `docs/playtest/m3_web_patch.md`. Any bypass
   found becomes a `reject_fixtures` entry.
 

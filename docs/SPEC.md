@@ -131,6 +131,7 @@ These are hard rules. CI fails if any are broken.
 | `disconnect_link(port: String)` | `LinkResult` | M1 |
 | `ping(src_id: String, dst_ip: String)` | `PingResult` | M1 |
 | `objective_states()` | `Array[ObjectiveState]` | M1 |
+| `debrief_view()` | `DebriefView` (read-only), or `null` until `mission_completed` or `mission_failed` has fired: the scenario's `debrief` text, each objective's result, M2 report answers with their `evidence` log lines, M3 each vuln's starting vs current region text | M1 (M2/M3 add their parts) |
 | `query_logs(source_id: String, file: String, filter: LogFilter)` | `Array[LogLine]` | M2 |
 | `submit_report(field: String, value: String)` | `ReportResult` | M2 |
 | `report_view()` | `ReportView` (read-only, live): per field, attempts left, last value, solved or not | M2 |
@@ -146,7 +147,10 @@ state. Views are fresh copies with getters only, so changing one can't
 touch sim state. The world and UI never read scenario JSON or import
 `sim/` scripts (such as `models.gd`) directly, and all changes go through
 the methods above or a `CliSession`. Answers (`report` objective values,
-`solution`, `accept` patterns) are never in a view.
+`solution`, `accept` patterns) are never in a view during play. The one
+exception is `debrief_view()`, which returns `null` until the mission has
+ended (completed or failed); `solution` and `accept` patterns are never
+exposed at all.
 
 Ports are addressed as `"<device_id>:<canonical interface name>"`, for example
 `"S1:FastEthernet0/1"`. Short names are normalized by `net/ifname.gd`.
@@ -324,7 +328,8 @@ After v1: `m4_remote_access` (SSH + static routes) and `m5_nat_acl`
    and the commands a real admin would use. Progress is saved.
 6. **Failed debrief**: when `mission_failed` fires, play stops and a
    failed-mission card shows which objective failed, the correct answers,
-   and where the evidence was (e.g. the log lines that named the attacker).
+   and where the evidence was (e.g. the log lines that named the attacker),
+   all read from `Sim.debrief_view()`.
    It offers **Retry** (reload the scenario) and **Main menu**. Progress is
    not saved.
 
@@ -345,8 +350,9 @@ Each round of review found another way to make a lone `ping` objective pass
 without the skill being taught (re-addressing hosts, odd masks, cabling
 around the switch). So a mission pairs its outcome objective with `config`
 objectives for the setup it teaches, and locks host addressing it doesn't
-teach. M1 requires the S1 Gi0/1 trunk and both R1 dot1Q subinterfaces, and
-sets both PCs to `locked: true`.
+teach. M1 requires the S1 Gi0/1 trunk, both R1 dot1Q subinterfaces with
+their gateway IPs, and no IP on the parent Gi0/0, and sets both PCs to
+`locked: true`.
 
 **Anti-cheese rules.** Any "it stops working" objective must name what it
 expects (`no_ping.expect_reason`) and be paired with a "still works"
@@ -378,7 +384,8 @@ after.
 ],
 "report": {
   "fields": [
-    { "id": "attacker_ip", "label": "Attacker IP", "kind": "ipv4" },
+    { "id": "attacker_ip", "label": "Attacker IP", "kind": "ipv4",
+      "evidence": [ { "source": "WEB1", "file": "/var/log/auth.log", "line": 214 } ] },
     { "id": "attack_type", "label": "Attack type", "kind": "choice",
       "options": ["Brute force", "SQL injection", "Port scan", "Phishing"] },
     { "id": "compromised_user", "label": "Compromised account", "kind": "text" }
@@ -505,8 +512,9 @@ No real HTTP is sent. It is a lookup over sim state.
   `Sim` and instantiates each device's model scene at its `rack`/`slot` or
   `desk` marker (`Marker3D` nodes in the room scene).
 - **Port sockets:** each model scene has ordered socket markers. The spawner
-  assigns `device_id` and canonical interface names from `models.gd`, in
-  order. Names are never typed into scenes by hand.
+  assigns `device_id` and canonical interface names from the device's
+  ordered interface list in `Sim.scenario_view()`, in order. Names are never
+  typed into scenes by hand, and the world never reads `models.gd`.
 - **Port LEDs:** off (no cable), amber (cable, not oper-up), green (oper-up).
   They react to `interface_state_changed`.
 - **Player:** `CharacterBody3D` with WASD + mouse look, crouch, and an
