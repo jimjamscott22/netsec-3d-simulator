@@ -66,10 +66,18 @@ type's params. All objective types are pure predicates over sim state.
 | `type` | Params | Passes when |
 | --- | --- | --- |
 | `ping` | `from`, `to_ip` | `NetworkSim.ping(from, to_ip).success` |
-| `no_ping` | `from`, `to_ip` | ping fails (used for isolation/ACL tasks) |
+| `no_ping` | `from`, `to_ip`, `expect_reason` (required) | ping fails **with exactly that `fail_reason`**, e.g. `ACL_DENIED` |
 | `ssh` | `from`, `to_ip`, `user` | SSH preconditions met + L3 reachable (M2) |
 | `config` | `device`, `path`, `equals` | a config value matches, e.g. `path: "hostname"` |
 | `vuln_patched` | `device`, `vuln` | the server's vuln flag is cleared (M4) |
+
+**Isolation objectives must not be cheesable.** A bare "ping fails" check
+would pass if the player unplugged a cable, shut a port or deleted a route.
+So `no_ping` always names the failure the mission is teaching, and the
+validator rejects a `no_ping` without `expect_reason`. A `no_ping` objective
+should also be paired with a `ping` objective that has to keep working
+(e.g. block Sales → Server while Accounting → Server still succeeds), so
+breaking the network wholesale fails the mission.
 
 Objectives can set `"order": n` for missions that unlock steps one at a time.
 By default, all objectives are visible and can be completed in any order.
