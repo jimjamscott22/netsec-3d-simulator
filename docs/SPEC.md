@@ -123,7 +123,7 @@ These are hard rules. CI fails if any are broken.
 | Method | Returns | Milestone |
 | --- | --- | --- |
 | `load_scenario(data: Dictionary)` | `LoadResult` (`ok`, `errors: Array[String]`) | M1 |
-| `get_device(id: String)` | `Device` or `null` | M1 |
+| `device_view(id: String)` | `DeviceView` (read-only snapshot) or `null` | M1 |
 | `open_session(device_id: String)` | `CliSession` | M1 |
 | `connect_link(a: String, b: String)` | `LinkResult` (`ok`, `reason`); uses one spare cable | M1 |
 | `spare_cables()` | `int` (spare cables left) | M1 |
@@ -135,6 +135,10 @@ These are hard rules. CI fails if any are broken.
 | `read_file(device_id: String, path: String)` | `String` or `null` | M3 |
 | `write_patch(device_id: String, vuln_id: String, text: String)` | `bool` | M3 |
 | `http_request(src_id: String, url: String)` | `HttpResult` | M3 |
+
+The presentation layer never gets a live `Device`. `DeviceView` is a fresh
+copy with getters only, so changing it can't touch sim state; all changes
+go through the methods above or a `CliSession`.
 
 Ports are addressed as `"<device_id>:<canonical interface name>"`, for example
 `"S1:FastEthernet0/1"`. Short names are normalized by `net/ifname.gd`.
@@ -201,6 +205,11 @@ Full grammar, prompts and error strings: `references/ios-cli.md`. Key behavior:
   handled by the `CommandRegistry`, not individual handlers.
 - `show` output comes only from `cli/formatters.gd`, which is golden-tested.
 - Ctrl+Z maps to `end`. Up/Down walks history.
+- `CliResult` carries `output`, `ok`, and an `action: ShellAction` enum
+  (`NONE`, `CLOSE_SESSION`, `OPEN_EDITOR`) with an `action_arg` (for
+  `OPEN_EDITOR`, the file path). The core only returns the action; the
+  terminal UI reads it and opens the editor or closes the terminal, so the
+  core never references a UI class.
 
 ### 5.1 Shells per device type
 
@@ -561,9 +570,17 @@ mission restarts it.
 - **Scenarios:** a smoke test per file: load, apply `solution`, assert all
   objectives pass. Plus: the unsolved starting state has at least one
   objective failing.
-- **Purity check:** `tools/check_sim_purity.sh` greps `sim/` for
-  `extends Node`, `get_tree`, `Input.`, `randf`, `randi`, `await`, `Time.`,
-  `OS.get_ticks`. Any hit fails CI.
+- **Purity check:** `tools/check_sim_purity.sh` scans `sim/` and fails CI
+  on any hit for every rule in §3.1:
+  - Nodes and scene tree: `extends Node`, `get_tree`, `get_node`, `$`
+    node paths, `/root/`.
+  - Input, time and randomness: `Input.`, `Time.`, `OS.get_ticks`, `Timer`,
+    `create_timer`, `await`, `randf`, `randi`, `RandomNumberGenerator`.
+  - Dependency direction: any `res://world/`, `res://ui/` or `res://game/`
+    path (`preload`, `load`, `extends`).
+  - Autoloads: `Engine.get_singleton`, plus `\b<Name>\.` for every
+    autoload name the script reads from the `[autoload]` section of
+    `project.godot`.
 - **Manual playtest checklist** per mission, kept in
   `docs/playtest/<mission>.md`.
 

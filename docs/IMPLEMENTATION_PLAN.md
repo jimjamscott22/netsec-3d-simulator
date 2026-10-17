@@ -50,10 +50,13 @@ Goal: an empty Godot project that runs tests headless locally and in CI.
 - [ ] **0.2 Install GdUnit4** under `addons/gdUnit4` and enable the plugin.
   Add one trivial test in `tests/test_smoke.gd`.
   *Done when:* `addons/gdUnit4/runtest.sh -a res://tests` passes headless.
-- [ ] **0.3 Purity check script.** `tools/check_sim_purity.sh` greps `sim/`
-  for the forbidden patterns listed in SPEC §9 and exits non-zero on a hit.
-  *Done when:* it passes on the clean tree and fails when you add a test file
-  in `sim/` with `extends Node`.
+- [ ] **0.3 Purity check script.** `tools/check_sim_purity.sh` scans `sim/`
+  for every forbidden pattern group in SPEC §9 (nodes, input/time/random,
+  dependency direction, autoloads read from `project.godot`) and exits
+  non-zero on a hit.
+  *Done when:* it passes on the clean tree and fails for one fixture per
+  group (`extends Node`, `Timer.new()`, `preload("res://ui/...")`, a
+  reference to the `Sim` autoload).
 - [ ] **0.4 CI.** `.github/workflows/ci.yml`: on push and PR, set up Godot
   4.7 headless on Ubuntu, import the project, run the purity check, run
   GdUnit4, upload the test report.
@@ -99,7 +102,8 @@ configure VLANs, a trunk and router-on-a-stick, and see PC-A ping PC-B.
   *Tests:* connect/disconnect state; each rejection reason, including
   unplugging a locked link and connecting with no spare cable left; the
   spare count after connect and disconnect; signals fire
-  once per change, and not when nothing changed.
+  once per change, and not when nothing changed; `device_view` returns a
+  copy (changing it leaves the sim unchanged).
 - [ ] **1.6 `PingResult` + `FailReason` enum** (`sim/net/`), with every M1
   reason from SPEC §6.1 (`ACL_DENIED` is declared now, used in M5).
 - [ ] **1.7 L2 resolver** (`sim/net/l2.gd`). BFS from an interface across
@@ -204,7 +208,8 @@ configure VLANs, a trunk and router-on-a-stick, and see PC-A ping PC-B.
 
 - [ ] **1.28 Terminal UI** (`ui/terminal/`): full-screen console bound to a
   `CliSession`; history, Tab, `?`, Ctrl+Z, Esc to close; cosmetic ping
-  reveal. Opened by interacting with a device's console port or a PC screen.
+  reveal; acts on `CliResult.action` (`CLOSE_SESSION` now, `OPEN_EDITOR` in
+  M3). Opened by interacting with a device's console port or a PC screen.
 - [ ] **1.29 Mission HUD:** objectives with live ticks, spare cables, hint
   on H (shows hint for the current `fail_reason` of the first failing
   `ping` objective).
@@ -306,11 +311,13 @@ fails.
   until a patched response is logged after the fix, and fails again if the
   latest request was from before the patch; a request to a different server
   with the same vuln id doesn't count.
-- [ ] **3.6 `curl` on the PC shell** and `edit <file>` on the server shell
-  (opens the code editor UI). The host/server tokenizer accepts
+- [ ] **3.6 `curl` on the PC shell** and `edit <file>` on the server shell.
+  `edit` returns `ShellAction.OPEN_EDITOR` with the path (SPEC §5); the
+  terminal UI opens the editor. The host/server tokenizer accepts
   double-quoted arguments.
-  *Tests:* parse (including a quoted URL with spaces and single quotes) and
-  output goldens.
+  *Tests:* parse (including a quoted URL with spaces and single quotes),
+  output goldens, and `edit` returning the action and path (unknown file →
+  error, no action).
 - [ ] **3.7 Code editor UI:** `CodeEdit` with line numbers, basic PHP
   highlighting, lines outside the patch region locked and shaded,
   Save → `Sim.write_patch`, hint on a rejected patch, unsaved-changes guard

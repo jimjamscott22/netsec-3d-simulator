@@ -94,7 +94,9 @@ command. Core points:
   the current interface/VLAN/line context.
 - Commands are registered per mode in a `CommandRegistry` as token patterns
   with a handler `Callable`. A handler returns a `CliResult`
-  (`output: String`, `ok: bool`), and mutates state only via `NetworkSim`.
+  (`output: String`, `ok: bool`, `action: ShellAction` + `action_arg` for
+  UI requests such as opening the editor), and mutates state only via
+  `NetworkSim`. The core never references UI classes.
 - Token matching uses **unique-prefix abbreviation** (`sh ip int br`), as IOS does.
 - `no <cmd>` negation is handled by the registry, not ad hoc in each handler.
 - Never print IOS output by string concatenation scattered through handlers.
@@ -192,7 +194,8 @@ The JSON schema, objective types, and a full example are in
 
 ## Before you finish any task
 
-1. Grep `res://sim/` for `extends Node`, `get_tree`, `Input.`, `randf`, `await`.
-   Any hit is a bug.
+1. Run `tools/check_sim_purity.sh` (or grep `res://sim/` for `extends Node`,
+   `get_tree`, `Input.`, `Timer`, `randf`, `await`, `res://ui/`). Any hit is
+   a bug.
 2. Run the test suite and report results.
 3. If you added a command or objective type, update the matching reference file.
