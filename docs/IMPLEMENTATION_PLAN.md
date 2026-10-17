@@ -92,11 +92,13 @@ configure VLANs, a trunk and router-on-a-stick, and see PC-A ping PC-B.
   *Tests:* each model builds a device with the expected interface names.
 - [ ] **1.5 `SimEvents` and `NetworkSim` skeleton** (`sim/core/`). Device
   registry, `connect_link` / `disconnect_link` with validation (port exists,
-  port free, port not reserved, not the same device; `disconnect_link`
-  rejects a locked link), and `link_changed` + `interface_state_changed`
-  signals.
+  port free, port not reserved, not the same device, a spare cable left;
+  `disconnect_link` rejects a locked link), spare-cable inventory
+  (`connect_link` takes one, unplugging an unlocked link returns it), and
+  `link_changed` + `interface_state_changed` signals.
   *Tests:* connect/disconnect state; each rejection reason, including
-  unplugging a locked link; signals fire
+  unplugging a locked link and connecting with no spare cable left; the
+  spare count after connect and disconnect; signals fire
   once per change, and not when nothing changed.
 - [ ] **1.6 `PingResult` + `FailReason` enum** (`sim/net/`), with every M1
   reason from SPEC §6.1 (`ACL_DENIED` is declared now, used in M5).
@@ -138,8 +140,9 @@ configure VLANs, a trunk and router-on-a-stick, and see PC-A ping PC-B.
 - [ ] **1.14 `ping` command** for IOS devices (SPEC §5.2 format).
   *Tests:* success and failure goldens.
 - [ ] **1.15 PC mini shell:** `ipconfig`, `ipconfig /set`, `ping`, `help`,
-  with Windows-style ping output.
-  *Tests:* parse, state change, output goldens.
+  with Windows-style ping output. `ipconfig /set` is refused on a host with
+  `locked: true`.
+  *Tests:* parse, state change, locked-host refusal, output goldens.
 
 ### M1c — Scenarios and objectives
 
@@ -160,13 +163,15 @@ configure VLANs, a trunk and router-on-a-stick, and see PC-A ping PC-B.
   named device; an ordered objective whose predicate is true stays locked
   until lower orders pass, and re-locks if one of them stops passing;
   no duplicate signals.
-- [ ] **1.19 Write `scenarios/m1_vlan_ping.json`** from the schema example
-  (its `ping` objective sets `"to_device": "PC-B"` and `"via": "R1"`).
-  *Tests:* both shortcuts fail the objective: the L2 shortcut (move PC-A
-  to 192.168.20.11 and Fa0/1 into VLAN 20) and the decoy (leave PC-B
-  uncabled and put 192.168.20.10 on an R1 subinterface). The file sets
-  `"reserved_ports": ["R1:Gi0/1"]`, and a test checks that cabling PC-B
-  straight to `R1:Gi0/1` is rejected (the direct-to-router shortcut).
+- [ ] **1.19 Write `scenarios/m1_vlan_ping.json`** from the schema example:
+  a `ping` objective with `"to_device": "PC-B"` and `"via": "R1"`, `config`
+  objectives for the S1 Gi0/1 trunk and both R1 subinterfaces, both PCs
+  `locked: true`, and `"reserved_ports": ["R1:Gi0/1"]`.
+  *Tests:* regression tests that each known shortcut leaves the mission
+  incomplete: L2 re-addressing (refused: hosts locked); the decoy IP on an
+  R1 subinterface (`to_device` fails); cabling PC-B to `R1:Gi0/1`
+  (rejected: reserved); asymmetric masks such as R1 Gi0/0 as /16 with
+  S1 Gi0/1 in access mode (hosts locked, and the `config` objectives fail).
 - [ ] **1.20 Scenario smoke test harness.** Loads every file in
   `res://scenarios/`, asserts at least one objective fails at start, applies
   `solution`, asserts all pass.

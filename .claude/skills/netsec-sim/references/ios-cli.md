@@ -78,7 +78,9 @@ parse tests, state tests, and (for `show`) golden output tests.
 | INTERFACE_CONFIG | `encapsulation dot1Q <vlan-id>` | subinterfaces only: sets `dot1q_vlan` (router-on-a-stick) |
 
 Hosts don't use IOS; their terminal gets a tiny shell: `ipconfig`,
-`ipconfig /set <ip> <mask> <gw>` (game-specific), and `ping <ip>`.
+`ipconfig /set <ip> <mask> <gw>` (game-specific; refused with
+`Access is denied. Network settings are managed by IT.` when the host's
+scenario config sets `locked: true`), and `ping <ip>`.
 
 ### M4 — Remote access and routing (post-v1)
 

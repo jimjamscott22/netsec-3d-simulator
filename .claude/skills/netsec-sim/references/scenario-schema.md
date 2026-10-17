@@ -46,7 +46,8 @@ If validation fails, it returns a list of errors with JSON paths, such as
 - `config` is the **starting** state, which is often deliberately broken:
   - Router/switch: `interfaces` (by canonical or short name), `vlans`,
     `routes`, `enable_secret`, `users`, `domain_name`, `lines`.
-  - Host: `ip`, `mask`, `gateway`.
+  - Host: `ip`, `mask`, `gateway`, and `locked` (default false; true means
+    the player can't change the host's addressing).
   - Server: as host, plus `files`, `services` and `vulns` (M3; see docs/SPEC.md §7.5).
 - Interface names in the file may be short form; the loader normalizes them.
 
@@ -71,7 +72,7 @@ type's params. All objective types are pure predicates over sim state.
 | `ping` | `from`, `to_ip`, `to_device` (optional), `via` (optional) | `NetworkSim.ping(from, to_ip).success`; if `to_device` is set, it is the last entry in `hops`; if `via` is set, that device is in `hops` |
 | `no_ping` | `from`, `to_ip`, `expect_reason` (required) | ping fails **with exactly that `fail_reason`**, e.g. `ACL_DENIED` |
 | `ssh` | `from`, `to_ip`, `user` | SSH preconditions met + L3 reachable (M4) |
-| `config` | `device`, `path`, `equals` | a config value matches, e.g. `path: "hostname"` |
+| `config` | `device`, `path`, `equals` | a config value matches. `path` is a key (`"hostname"`) or an array of keys, with interface names normalized (`["interfaces", "Gi0/1", "mode"]`) |
 | `vuln_patched` | `device`, `vuln` | the vuln's patch region fully matches an `accept` pattern (M3; see docs/SPEC.md §7.5) |
 | `exploit_test` | `from`, `device`, `vuln`, `expect` | the HTTP log shows the exploit working (`vulnerable`) or, after the fix, failing (`patched`) (M3; see docs/SPEC.md §7.6) |
 
@@ -120,9 +121,9 @@ in order, then asserts that every objective passes.
       "config": { "vlans": { "10": "ACCOUNTING" },
                   "interfaces": { "Fa0/1": { "mode": "access", "access_vlan": 10 } } } },
     { "id": "PC-A", "type": "host", "model": "pc", "hostname": "PC-A", "desk": "desk_1",
-      "config": { "ip": "192.168.10.10", "mask": "255.255.255.0", "gateway": "192.168.10.1" } },
+      "config": { "ip": "192.168.10.10", "mask": "255.255.255.0", "gateway": "192.168.10.1", "locked": true } },
     { "id": "PC-B", "type": "host", "model": "pc", "hostname": "PC-B", "desk": "desk_2",
-      "config": { "ip": "192.168.20.10", "mask": "255.255.255.0", "gateway": "192.168.20.1" } }
+      "config": { "ip": "192.168.20.10", "mask": "255.255.255.0", "gateway": "192.168.20.1", "locked": true } }
   ],
   "links": [
     { "a": "R1:Gi0/0", "b": "S1:Gi0/1", "locked": true },
@@ -132,7 +133,13 @@ in order, then asserts that every objective passes.
   "reserved_ports": ["R1:Gi0/1"],
   "objectives": [
     { "id": "ping_ab", "type": "ping", "from": "PC-A", "to_ip": "192.168.20.10", "to_device": "PC-B", "via": "R1",
-      "description": "PC-A can ping PC-B through the router" }
+      "description": "PC-A can ping PC-B through the router" },
+    { "id": "trunk", "type": "config", "device": "S1", "path": ["interfaces", "Gi0/1", "mode"], "equals": "trunk",
+      "description": "S1 Gi0/1 is a trunk" },
+    { "id": "sub10", "type": "config", "device": "R1", "path": ["interfaces", "Gi0/0.10", "dot1q_vlan"], "equals": 10,
+      "description": "R1 has a subinterface for VLAN 10" },
+    { "id": "sub20", "type": "config", "device": "R1", "path": ["interfaces", "Gi0/0.20", "dot1q_vlan"], "equals": 20,
+      "description": "R1 has a subinterface for VLAN 20" }
   ],
   "hints": [
     { "reason": "NO_LINK", "text": "PC-B isn't cabled to anything yet." },

@@ -125,7 +125,8 @@ These are hard rules. CI fails if any are broken.
 | `load_scenario(data: Dictionary)` | `LoadResult` (`ok`, `errors: Array[String]`) | M1 |
 | `get_device(id: String)` | `Device` or `null` | M1 |
 | `open_session(device_id: String)` | `CliSession` | M1 |
-| `connect_link(a: String, b: String)` | `LinkResult` (`ok`, `reason`) | M1 |
+| `connect_link(a: String, b: String)` | `LinkResult` (`ok`, `reason`); uses one spare cable | M1 |
+| `spare_cables()` | `int` (spare cables left) | M1 |
 | `disconnect_link(port: String)` | `LinkResult` | M1 |
 | `ping(src_id: String, dst_ip: String)` | `PingResult` | M1 |
 | `objective_states()` | `Array[ObjectiveState]` | M1 |
@@ -205,7 +206,7 @@ Full grammar, prompts and error strings: `references/ios-cli.md`. Key behavior:
 | Device | Shell | Commands (v1) |
 | --- | --- | --- |
 | Router, switch | IOS-style | Per milestone, see `ios-cli.md` |
-| PC (`host`) | Mini Windows-style shell | `ipconfig`, `ipconfig /set <ip> <mask> <gw>`, `ping <ip>`, `curl <url>` (M3), `help` |
+| PC (`host`) | Mini Windows-style shell | `ipconfig`, `ipconfig /set <ip> <mask> <gw>` (refused with `Access is denied. Network settings are managed by IT.` when the scenario sets the host's `locked: true`), `ping <ip>`, `curl <url>` (M3), `help` |
 | Server | Mini Linux-style shell | `ls [path]`, `cat <file>`, `grep [-i] <pattern> <file>`, `tail [-n N] <file>`, `edit <file>` (M3), `service <name> status`, `help` |
 
 The host and server shells are separate small command registries that share
@@ -309,12 +310,20 @@ After v1: `m4_remote_access` (SSH + static routes) and `m5_nat_acl`
 | Type | Params | Passes when | Milestone |
 | --- | --- | --- | --- |
 | `ping` | `from`, `to_ip`, `to_device` (optional), `via` (optional) | Ping succeeds; if `to_device` is set, that device owns `to_ip` and is the last hop; if `via` is set, that device is on the forward path | M1 |
-| `config` | `device`, `path`, `equals` | Config value matches | M1 |
+| `config` | `device`, `path`, `equals` | Config value matches. `path` is a key (`"hostname"`) or an array of keys; interface names in it are normalized (`["interfaces", "Gi0/0.10", "dot1q_vlan"]`) | M1 |
 | `report` | `field`, `equals` | The player's filed value for `field` matches (case-insensitive, trimmed) | M2 |
 | `vuln_patched` | `device`, `vuln` | The vuln's patch region matches one of its `accept` patterns (SPEC §7.5) | M3 |
 | `exploit_test` | `from`, `device`, `vuln`, `expect` (`vulnerable` \| `patched`) | Matches log entries with this `from`, `device` (the server that answered) and `vuln`. `vulnerable`: one such entry got the vulnerable response. `patched`: the vuln is patched now and the latest such entry got the patched response | M3 |
 | `no_ping` | `from`, `to_ip`, `expect_reason` | Ping fails with exactly that reason | M5 |
 | `ssh` | `from`, `to_ip`, `user` | SSH preconditions + L3 reachability | M4 |
+
+**Teaching missions check the intended config, not just the outcome.**
+Each round of review found another way to make a lone `ping` objective pass
+without the skill being taught (re-addressing hosts, odd masks, cabling
+around the switch). So a mission pairs its outcome objective with `config`
+objectives for the setup it teaches, and locks host addressing it doesn't
+teach. M1 requires the S1 Gi0/1 trunk and both R1 dot1Q subinterfaces, and
+sets both PCs to `locked: true`.
 
 **Anti-cheese rules.** Any "it stops working" objective must name what it
 expects (`no_ping.expect_reason`) and be paired with a "still works"
@@ -479,8 +488,9 @@ No real HTTP is sent. It is a lookup over sim state.
 
 ### 8.2 Cabling
 
-1. Look at a free socket and press interact to pick up a cable end. This uses
-   one of `spare_cables`.
+1. Look at a free socket and press interact to pick up a cable end. The
+   world checks `Sim.spare_cables() > 0` first; the count itself lives in
+   the core.
 2. Look at a second free socket and press interact. The world calls
    `Sim.connect_link(a, b)`.
 3. If the sim accepts, a cable mesh is drawn between the sockets with a
