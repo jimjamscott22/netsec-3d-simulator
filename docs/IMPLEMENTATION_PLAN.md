@@ -258,9 +258,11 @@ logs, works out who attacked, how and which account, and files a report.
   *Tests:* each filter kind; file order kept.
 - [ ] **2.2 Schema + validator** for `logs` and `report` (SPEC §7.4); update
   `scenario-schema.md`.
-  *Tests:* one bad fixture per new rule; reject unknown evidence source/file
-  pairs, non-integer lines, line 0 and lines beyond the log length; accept the
-  first and last valid line, and confirm debrief resolves each reference.
+  *Tests:* one bad fixture per new rule; reject duplicate `(source, file)` log
+  pairs (even when no evidence references them); reject unknown evidence
+  source/file pairs, non-integer lines, line 0 and lines beyond the log length;
+  accept the first and last valid line, and confirm debrief resolves each
+  reference.
 - [ ] **2.3 Report state + `submit_report`** with attempt limits and
   `report_submitted` signal; `scenario_view` gains log descriptors and
   report fields, and `report_view()` gives live attempts left per field.
@@ -318,10 +320,14 @@ fails.
 
 - [ ] **3.1 Server files + patch regions** (`sim/web/`): files stored as
   prefix + region + suffix per vuln; `read_file`, `patch_views`,
-  `write_patch` (bumps `patch_rev`), `patch_applied` signal.
+  `write_patch` (bumps `patch_rev`), `patch_applied` signal; `device_view`
+  exposes server `services` metadata but redacts `files`, `vulns`, `accept`
+  regexes, fixtures, and `exploit` metadata.
   *Tests:* read; patch replaces only the region; a patch that changes the
   line count keeps prefix and suffix intact and `patch_views` reports the
-  new line range; `patch_rev` increments per save; unknown vuln; signal.
+  new line range; `patch_rev` increments per save; unknown vuln; signal;
+  `device_view` on a server excludes `files`, `vulns`, `accept` patterns,
+  fixtures, and `exploit` metadata.
 - [ ] **3.2 Patch matcher** (`sim/web/patch_matcher.gd`): normalization
   (strip comments and whitespace outside string literals) + anchored
   full-match against `accept` regexes.

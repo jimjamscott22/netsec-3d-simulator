@@ -129,7 +129,7 @@ These are hard rules. CI fails if any are broken.
 | `load_scenario(data: Dictionary)` | `LoadResult` (`ok`, `errors: Array[String]`) | M1 |
 | `summarize_scenario(data: Dictionary)` | `ScenarioSummary` (read-only): `id`, `title`, `sequence`, or `null` plus errors if the file is invalid. Doesn't change sim state | M2 |
 | `scenario_view()` | `ScenarioView` (read-only, static scenario data): title, briefing, hints; every device's id, type, model, hostname, `rack`+`slot` or `desk`, and its **ordered canonical interface list** (socket order); links (`a`, `b`, `locked`); `reserved_ports`; M2: log descriptors (`source`, `file`, line count) and report fields (`id`, `label`, `kind`, `options`, `max_attempts`) | M1 (M2 adds logs/report) |
-| `device_view(id: String)` | `DeviceView` (read-only snapshot) or `null`: current config plus each canonical interface's `admin_up`, `oper_up`, and peer port (`<device>:<interface>` or `null`). Subinterface peers are `null`; their `oper_up` follows the parent | M1 |
+| `device_view(id: String)` | `DeviceView` (read-only snapshot) or `null`: sanitized viewable config (`hostname`, router/switch VLANs/routes/NAT/ACLs, host/server `ip`/`mask`/`gateway`/`locked`, server `services` metadata without `files` or `vulns`) plus each canonical interface's `admin_up`, `oper_up`, `ip`, `mask`, L2/dot1Q settings, and peer port (`<device>:<interface>` or `null`). Subinterface peers are `null`; their `oper_up` follows the parent. Server `files`, `vulns`, `accept` regexes, fixtures, and `exploit` metadata are excluded | M1 |
 | `open_session(device_id: String)` | `CliSession` | M1 |
 | `connect_link(a: String, b: String)` | `LinkResult` (`ok`, `reason`); uses one spare cable | M1 |
 | `spare_cables()` | `int` (spare cables left) | M1 |
@@ -153,8 +153,8 @@ touch sim state. The world initializes port LEDs and cable visuals from the
 current `device_view()` snapshots after loading, then applies later signals;
 it never relies on having observed load-time `interface_state_changed` events. The world and UI never read scenario JSON or import
 `sim/` scripts (such as `models.gd`) directly, and all changes go through
-the methods above or a `CliSession`. Answers (`report` objective values,
-`solution`, `accept` patterns) are never in a view during play. The one
+the methods above or a `CliSession`. Answers and hidden server metadata (`report` objective values,
+`solution`, server `files` and `vulns`, `accept` patterns, fixtures, and `exploit` metadata) are never in a `DeviceView`, `ScenarioView`, or `ReportView` during play (source files are read through `read_file` and region metadata through `patch_views`). The one
 exception is `debrief_view()`, which returns `null` until the mission has
 ended (completed or failed); `solution` and `accept` patterns are never
 exposed at all.
@@ -411,10 +411,12 @@ after.
   and offers Retry.
 - Validator: every `report` objective's `field` must exist in `report.fields`;
   a `choice` objective's `equals` must be one of its `options`; each log
-  `source` must be a device id; every supplied report evidence `(source, file)`
-  pair must identify a declared log, and `line` must be an integer from 1
-  through that log's line count. Evidence may be omitted or empty, but every
-  supplied reference must resolve to exactly one log line.
+  `source` must be a device id; every declared `(source, file)` log pair must
+  be unique across `logs` (whether or not any `evidence` references it); every
+  supplied report evidence `(source, file)` pair must identify a declared log,
+  and `line` must be an integer from 1 through that log's line count. Evidence
+  may be omitted or empty, but every supplied reference must resolve to
+  exactly one log line.
 
 ### 7.5 Schema additions for M3 (files, services, vulns)
 

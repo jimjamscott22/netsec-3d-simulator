@@ -68,12 +68,15 @@ If validation fails, it returns a list of errors with JSON paths, such as
 
 ## Logs and reports (M2)
 
-A log entry has a `source` device id, a `file` path, and a `lines` array. Each
-report field may include `evidence`, an array of `{ "source", "file", "line" }`
-references. Every supplied pair must identify a declared log, and `line` must
-be an integer from 1 through that log's line count. Evidence may be omitted or
-empty; every supplied reference must resolve to exactly one line. The loader
-rejects invalid references before building state.
+A log entry has a `source` device id, a `file` path, and a `lines` array. Every
+declared `(source, file)` pair must be unique across `logs`, whether or not any
+report `evidence` references it, so `query_logs(source_id, file, ...)` always
+identifies a single log. Each report field may include `evidence`, an array of
+`{ "source", "file", "line" }` references. Every supplied pair must identify a
+declared log, and `line` must be an integer from 1 through that log's line
+count. Evidence may be omitted or empty; every supplied reference must resolve
+to exactly one line. The loader rejects duplicate `(source, file)` pairs and
+invalid evidence references before building state.
 
 ## Objectives
 
