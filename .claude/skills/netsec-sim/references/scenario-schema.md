@@ -11,13 +11,18 @@ If validation fails, it returns a list of errors with JSON paths, such as
 | --- | --- | --- | --- |
 | `schema_version` | int | yes | Currently `1`. Bump it on breaking changes and migrate files. |
 | `id` | string | yes | snake_case, matches the file name |
+| `sequence` | int | yes | Position in the campaign (1, 2, 3…), unique across files. Mission select sorts by it and unlocks a mission once the previous one is done |
 | `title` | string | yes | Shown in the mission HUD |
 | `briefing` | string | yes | 1–4 sentences, written in the voice of the in-game boss/ticket |
 | `devices` | array | yes | See Devices |
 | `links` | array | yes | Cables present at start; may be empty |
 | `spare_cables` | int | no | Cables the player can place; default 0 |
+| `reserved_ports` | array of `"<device>:<port>"` | no | Ports no cable may use (start links included). Use them to block topology shortcuts |
+| `logs` | array | M2 | Log files; each entry has `source` (device id), `file` (path), and `lines` |
+| `report` | object | M2 | Report fields and optional `max_attempts`; see Logs and reports |
 | `objectives` | array | yes | At least one |
 | `hints` | array | no | Keyed by fail reason (see Hints) |
+| `debrief` | string | no | Shown after the mission ends, via `debrief_view()`: what was fixed and how a real admin would do it |
 | `solution` | array | yes | Known solution, used by the smoke test only — never shown in game |
 
 ## Devices
@@ -45,8 +50,9 @@ If validation fails, it returns a list of errors with JSON paths, such as
 - `config` is the **starting** state, which is often deliberately broken:
   - Router/switch: `interfaces` (by canonical or short name), `vlans`,
     `routes`, `enable_secret`, `users`, `domain_name`, `lines`.
-  - Host: `ip`, `mask`, `gateway`.
-  - Server: as host, plus `services` and `vulns` (M4).
+  - Host: `ip`, `mask`, `gateway`, and `locked` (default false; true means
+    the player can't change the host's addressing).
+  - Server: as host, plus `files`, `services` and `vulns` (M3; see docs/SPEC.md §7.5).
 - Interface names in the file may be short form; the loader normalizes them.
 
 ## Links
@@ -57,6 +63,20 @@ If validation fails, it returns a list of errors with JSON paths, such as
 
 - `locked: true` means the player can't unplug it.
 - Every endpoint must exist, and each port can be used once.
+- No link may use a port listed in `reserved_ports`, and `connect_link`
+  rejects them during play.
+
+## Logs and reports (M2)
+
+A log entry has a `source` device id, a `file` path, and a `lines` array. Every
+declared `(source, file)` pair must be unique across `logs`, whether or not any
+report `evidence` references it, so `query_logs(source_id, file, ...)` always
+identifies a single log. Each report field may include `evidence`, an array of
+`{ "source", "file", "line" }` references. Every supplied pair must identify a
+declared log, and `line` must be an integer from 1 through that log's line
+count. Evidence may be omitted or empty; every supplied reference must resolve
+to exactly one line. The loader rejects duplicate `(source, file)` pairs and
+invalid evidence references before building state.
 
 ## Objectives
 
@@ -65,11 +85,12 @@ type's params. All objective types are pure predicates over sim state.
 
 | `type` | Params | Passes when |
 | --- | --- | --- |
-| `ping` | `from`, `to_ip` | `NetworkSim.ping(from, to_ip).success` |
+| `ping` | `from`, `to_ip`, `to_device` (optional), `via` (optional) | `NetworkSim.ping(from, to_ip).success`; if `to_device` is set, it is the last entry in `hops`; if `via` is set, that device is in `hops` |
 | `no_ping` | `from`, `to_ip`, `expect_reason` (required) | ping fails **with exactly that `fail_reason`**, e.g. `ACL_DENIED` |
-| `ssh` | `from`, `to_ip`, `user` | SSH preconditions met + L3 reachable (M2) |
-| `config` | `device`, `path`, `equals` | a config value matches, e.g. `path: "hostname"` |
-| `vuln_patched` | `device`, `vuln` | the server's vuln flag is cleared (M4) |
+| `ssh` | `from`, `to_ip`, `user` | SSH preconditions met + L3 reachable (M4) |
+| `config` | `device`, `path`, `equals` | a config value matches. `path` is a key (`"hostname"`) or an array of keys, with interface names normalized (`["interfaces", "Gi0/1", "mode"]`). An object `equals` matches when every key in it matches |
+| `vuln_patched` | `device`, `vuln` | the vuln's patch region fully matches an `accept` pattern (M3; see docs/SPEC.md §7.5) |
+| `exploit_test` | `from`, `device`, `vuln`, `expect` | the HTTP log shows the exploit working (`vulnerable`) or, after the fix, failing (`patched`) (M3; see docs/SPEC.md §7.6) |
 
 **Isolation objectives must not be cheesable.** A bare "ping fails" check
 would pass if the player unplugged a cable, shut a port or deleted a route.
@@ -80,7 +101,17 @@ should also be paired with a `ping` objective that has to keep working
 breaking the network wholesale fails the mission.
 
 Objectives can set `"order": n` for missions that unlock steps one at a time.
-By default, all objectives are visible and can be completed in any order.
+An ordered objective is locked (shown greyed, never passes) until every
+objective with a lower `order` passes. By default, all objectives are
+visible and can be completed in any order.
+
+## Patch regions (M3)
+
+Each vuln's region is a 1-based inclusive range in its starting file. A
+scenario may declare at most one patch region for each `(device, file)` pair;
+the loader rejects duplicate or overlapping ranges, including identical
+boundaries, and reports both vuln ids and the file path before state is built.
+Regions in different files are independent.
 
 ## Hints
 
@@ -106,6 +137,7 @@ in order, then asserts that every objective passes.
 {
   "schema_version": 1,
   "id": "m1_vlan_ping",
+  "sequence": 1,
   "title": "Day One: Get Them Talking",
   "briefing": "Accounting (PC-A) and Sales (PC-B) can't reach each other. The router is racked and cabled to the switch. Make PC-A ping PC-B.",
   "devices": [
@@ -114,18 +146,29 @@ in order, then asserts that every objective passes.
       "config": { "vlans": { "10": "ACCOUNTING" },
                   "interfaces": { "Fa0/1": { "mode": "access", "access_vlan": 10 } } } },
     { "id": "PC-A", "type": "host", "model": "pc", "hostname": "PC-A", "desk": "desk_1",
-      "config": { "ip": "192.168.10.10", "mask": "255.255.255.0", "gateway": "192.168.10.1" } },
+      "config": { "ip": "192.168.10.10", "mask": "255.255.255.0", "gateway": "192.168.10.1", "locked": true } },
     { "id": "PC-B", "type": "host", "model": "pc", "hostname": "PC-B", "desk": "desk_2",
-      "config": { "ip": "192.168.20.10", "mask": "255.255.255.0", "gateway": "192.168.20.1" } }
+      "config": { "ip": "192.168.20.10", "mask": "255.255.255.0", "gateway": "192.168.20.1", "locked": true } }
   ],
   "links": [
     { "a": "R1:Gi0/0", "b": "S1:Gi0/1", "locked": true },
     { "a": "S1:Fa0/1", "b": "PC-A:Eth0", "locked": true }
   ],
   "spare_cables": 1,
+  "reserved_ports": ["R1:Gi0/1"],
   "objectives": [
-    { "id": "ping_ab", "type": "ping", "from": "PC-A", "to_ip": "192.168.20.10",
-      "description": "PC-A can ping PC-B" }
+    { "id": "ping_ab", "type": "ping", "from": "PC-A", "to_ip": "192.168.20.10", "to_device": "PC-B", "via": "R1",
+      "description": "PC-A can ping PC-B through the router" },
+    { "id": "trunk", "type": "config", "device": "S1", "path": ["interfaces", "Gi0/1", "mode"], "equals": "trunk",
+      "description": "S1 Gi0/1 is a trunk" },
+    { "id": "sub10", "type": "config", "device": "R1", "path": ["interfaces", "Gi0/0.10"],
+      "equals": { "dot1q_vlan": 10, "ip": "192.168.10.1", "mask": "255.255.255.0" },
+      "description": "Gi0/0.10 is VLAN 10's gateway (192.168.10.1/24)" },
+    { "id": "sub20", "type": "config", "device": "R1", "path": ["interfaces", "Gi0/0.20"],
+      "equals": { "dot1q_vlan": 20, "ip": "192.168.20.1", "mask": "255.255.255.0" },
+      "description": "Gi0/0.20 is VLAN 20's gateway (192.168.20.1/24)" },
+    { "id": "parent_noip", "type": "config", "device": "R1", "path": ["interfaces", "Gi0/0", "ip"], "equals": null,
+      "description": "Gi0/0 itself has no IP address" }
   ],
   "hints": [
     { "reason": "NO_LINK", "text": "PC-B isn't cabled to anything yet." },

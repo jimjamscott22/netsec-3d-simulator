@@ -10,7 +10,7 @@ room and configures it through an IOS-style terminal. The game is two layers:
 a **pure-logic sim core** that owns all network truth, and a **presentation
 layer** (3D world + UI) that only displays it and forwards player input.
 
-If `SPEC.md` or `IMPLEMENTATION_PLAN.md` exist at the repo root, they win over
+If `docs/SPEC.md` or `docs/IMPLEMENTATION_PLAN.md` exist, they win over
 this skill on scope and ordering. Work the plan top-down and tick tasks off as
 you finish them.
 
@@ -94,7 +94,9 @@ command. Core points:
   the current interface/VLAN/line context.
 - Commands are registered per mode in a `CommandRegistry` as token patterns
   with a handler `Callable`. A handler returns a `CliResult`
-  (`output: String`, `ok: bool`), and mutates state only via `NetworkSim`.
+  (`output: String`, `ok: bool`, `action: ShellAction` + `action_arg` for
+  UI requests such as opening the editor), and mutates state only via
+  `NetworkSim`. The core never references UI classes.
 - Token matching uses **unique-prefix abbreviation** (`sh ip int br`), as IOS does.
 - `no <cmd>` negation is handled by the registry, not ad hoc in each handler.
 - Never print IOS output by string concatenation scattered through handlers.
@@ -163,6 +165,11 @@ The JSON schema, objective types, and a full example are in
   registry), and `?` help all live in the session, not the UI.
 - UI reads state only through `Sim` and reacts to its signals. No UI script
   holds its own copy of network truth.
+- Everything the world/UI needs comes from a read-only view on `Sim`
+  (`scenario_view`, `device_view`, `report_view`, `patch_views`,
+  `objective_states`). Never import `sim/` scripts such as `models.gd` or
+  read scenario JSON from presentation code. If a screen needs data no view
+  has, add it to a view (never answers or solutions).
 
 ## Conventions
 
@@ -192,7 +199,8 @@ The JSON schema, objective types, and a full example are in
 
 ## Before you finish any task
 
-1. Grep `res://sim/` for `extends Node`, `get_tree`, `Input.`, `randf`, `await`.
-   Any hit is a bug.
+1. Run `tools/check_sim_purity.sh` (or grep `res://sim/` for `extends Node`,
+   `get_tree`, `Input.`, `Timer`, `randf`, `await`, `res://ui/`). Any hit is
+   a bug.
 2. Run the test suite and report results.
 3. If you added a command or objective type, update the matching reference file.
