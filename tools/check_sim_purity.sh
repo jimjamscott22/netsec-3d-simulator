@@ -11,6 +11,7 @@
 set -u
 
 ROOT="${1:-$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)}"
+ROOT="$(cd "$ROOT" && pwd)"
 SIM="$ROOT/sim"
 PROJECT_FILE="$ROOT/project.godot"
 
@@ -33,22 +34,47 @@ report() { # file line group message
 
 # Prints "<line>:<code>" with comments removed (a '#' inside a string is kept).
 # With a second argument "blank", string contents are emptied too, so words
-# inside string literals never match the pattern rules.
+# inside string literals never match the pattern rules. Triple-quoted strings
+# (which can span lines) are always emptied.
 strip_comments() {
-	awk -v blank="${2:-}" '{
-		out = ""; q = ""; n = length($0)
-		for (i = 1; i <= n; i++) {
-			c = substr($0, i, 1)
-			if (q != "") {
-				if (c == "\\") { i++; if (blank == "") out = out c substr($0, i, 1) }
-				else if (c == q) { q = ""; out = out c }
-				else if (blank == "") out = out c
-			} else if (c == "\"" || c == "\047") { q = c; out = out c }
-			else if (c == "#") break
-			else out = out c
+	awk -v blank="${2:-}" '
+	{
+		out = ""; q = ""; n = length($0); i = 1
+		while (i <= n) {
+			if (tq != "") {
+				j = index(substr($0, i), tq)
+				if (j == 0) { i = n + 1 }
+				else { i += j + 2; out = out tq; tq = "" }
+			} else if (q != "") {
+				c = substr($0, i, 1)
+				if (c == "\\") { if (blank == "") out = out substr($0, i, 2); i += 2 }
+				else if (c == q) { q = ""; out = out c; i++ }
+				else { if (blank == "") out = out c; i++ }
+			} else {
+				c = substr($0, i, 1); t3 = substr($0, i, 3)
+				if (t3 == "\"\"\"" || t3 == "\047\047\047") { tq = t3; out = out t3; i += 3 }
+				else if (c == "\"" || c == "\047") { q = c; out = out c; i++ }
+				else if (c == "#") break
+				else { out = out c; i++ }
+			}
 		}
 		print NR ":" out
 	}' "$1"
+}
+
+# Prints "$1" with "." and ".." path segments resolved (lexically).
+normpath() {
+	awk -v p="$1" 'BEGIN {
+		n = split(p, a, "/"); m = 0
+		for (i = 1; i <= n; i++) {
+			if (a[i] == "" || a[i] == ".") continue
+			if (a[i] == "..") { if (m > 0) m--; continue }
+			s[++m] = a[i]
+		}
+		out = ""
+		for (i = 1; i <= m; i++) out = out "/" s[i]
+		print out
+	}'
 }
 
 # --- Pattern groups ---------------------------------------------------------
@@ -119,6 +145,7 @@ base_ok() { # target from_file depth
 				res://*) file="$ROOT/${path#res://}" ;;
 				*) file="$(dirname "$from")/$path" ;;
 			esac
+			file="$(normpath "$file")"
 			if [ ! -f "$file" ] || [[ "$file" != "$SIM"/* ]]; then
 				WHY="extends $target, which is not a script under sim/"
 				return 1
@@ -155,6 +182,32 @@ for f in "${FILES[@]}"; do
 			report "$f" "$lineno" base "inner class: $WHY"
 		fi
 	done < <(strip_comments "$f" | grep -E "^[0-9]+:[[:space:]]*class[[:space:]]+[A-Za-z0-9_]+[[:space:]]+extends" || true)
+
+	# Relative paths ("../") must stay inside sim/. Plain res://world|ui|game/ paths
+	# are caught by the dependency rule below; this also catches "res://sim/../ui/x.gd".
+	while IFS= read -r entry; do
+		[ -z "$entry" ] && continue
+		lit="${entry#*:}"
+		case "$lit" in
+			*../* | */.. | ..) ;;
+			*) continue ;;
+		esac
+		case "$lit" in
+			res://*) abs="$ROOT/${lit#res://}" ;;
+			*://*) continue ;;
+			*) abs="$(dirname "$f")/$lit" ;;
+		esac
+		abs="$(normpath "$abs")"
+		if [[ "$abs" != "$SIM"/* ]]; then
+			report "$f" "${entry%%:*}" dependency "path '$lit' escapes sim/ (resolves to ${abs#"$ROOT"/})"
+		fi
+	done < <(strip_comments "$f" | awk '{
+		i = index($0, ":"); ln = substr($0, 1, i - 1); s = substr($0, i + 1)
+		while (match(s, /"[^"]*"|\047[^\047]*\047/)) {
+			print ln ":" substr(s, RSTART + 1, RLENGTH - 2)
+			s = substr(s, RSTART + RLENGTH)
+		}
+	}')
 
 	# Pattern groups.
 	for rule in "${RULES[@]}"; do
