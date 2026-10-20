@@ -8,8 +8,9 @@ A Godot 4.7 (GDScript, Compatibility renderer) first-person game that teaches
 CCNA-level networking and entry-level security: the player cables gear in a
 server room and fixes it through an IOS-style terminal.
 
-The repo is currently **docs-only**: no `project.godot`, no code yet. Work
-starts at task 0.1 of the plan.
+The Godot project exists (`project.godot`, empty `game/main.tscn`, folder
+layout from the plan). There is no sim code or test runner yet. Work continues
+at task 0.2 of the plan (install GdUnit4).
 
 ## Source of truth (read before working)
 
@@ -30,8 +31,7 @@ layout diagram leaves out.
 
 ## Commands
 
-The project hasn't been created yet, so these are the commands the plan sets
-up (GdUnit4 in `addons/gdUnit4`, purity script in `tools/`):
+These are the commands the plan sets up (GdUnit4 in `addons/gdUnit4`, purity script in `tools/`):
 
 ```sh
 # Run all tests headless (Linux/macOS)

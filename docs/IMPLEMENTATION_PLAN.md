@@ -41,7 +41,7 @@ M0–M3 + R1 are v1. M4 and M5 come after v1.
 
 Goal: an empty Godot project that runs tests headless locally and in CI.
 
-- [ ] **0.1 Create the Godot project.** Godot 4.7, Compatibility renderer,
+- [x] **0.1 Create the Godot project.** Godot 4.7, Compatibility renderer,
   `project.godot` at the repo root. Add the folder layout from the skill
   (`sim/{core,devices,cli,net,scenario,logs,web}`, `game/`, `world/`, `ui/`,
   `scenarios/`, `tests/`, `tools/`). Update `.gitignore` for `.godot/`.
