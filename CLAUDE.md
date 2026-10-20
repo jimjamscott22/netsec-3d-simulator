@@ -8,9 +8,9 @@ A Godot 4.7 (GDScript, Compatibility renderer) first-person game that teaches
 CCNA-level networking and entry-level security: the player cables gear in a
 server room and fixes it through an IOS-style terminal.
 
-The Godot project exists (`project.godot`, empty `game/main.tscn`, folder
-layout from the plan). There is no sim code or test runner yet. Work continues
-at task 0.2 of the plan (install GdUnit4).
+The Godot project exists with GdUnit4, the purity check and a CI workflow
+(M0 tasks 0.1 to 0.5). There is no sim code yet. Task 0.4 stays unticked until
+a PR shows a green CI run; M1 starts after that.
 
 ## Source of truth (read before working)
 
@@ -44,7 +44,9 @@ tools/check_sim_purity.sh
 tools/test_check_sim_purity.sh
 ```
 
-If the GdUnit4 runner path or flags differ in the installed version, check its
+GdUnit4 refuses to run under `--headless` unless you pass `--ignoreHeadlessMode`
+(CI does, through a `--headless` wrapper set as `GODOT_BIN`); locally,
+`GODOT_BIN` must point at the Godot binary. If the GdUnit4 runner path or flags differ in the installed version, check its
 docs instead of guessing. CI (`.github/workflows/ci.yml`, task 0.4) runs Godot
 headless on Ubuntu: it imports the project, then runs the purity check, then GdUnit4.
 

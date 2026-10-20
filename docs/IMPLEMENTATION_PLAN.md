@@ -63,7 +63,7 @@ Goal: an empty Godot project that runs tests headless locally and in CI.
   4.7 headless on Ubuntu, import the project, run the purity check, run
   GdUnit4, upload the test report.
   *Done when:* a PR shows a green CI check.
-- [ ] **0.5 Input map and project settings.** Add the actions from SPEC §8.4.
+- [x] **0.5 Input map and project settings.** Add the actions from SPEC §8.4.
   Set the window to 1280×720 default, resizable.
   *Done when:* the actions show up in Project Settings → Input Map.
 
