@@ -50,7 +50,7 @@ Goal: an empty Godot project that runs tests headless locally and in CI.
 - [x] **0.2 Install GdUnit4** under `addons/gdUnit4` and enable the plugin.
   Add one trivial test in `tests/test_smoke.gd`.
   *Done when:* `addons/gdUnit4/runtest.sh -a res://tests` passes headless.
-- [ ] **0.3 Purity check script.** `tools/check_sim_purity.sh` scans `sim/`
+- [x] **0.3 Purity check script.** `tools/check_sim_purity.sh` scans `sim/`
   for every forbidden pattern group in SPEC §9 (nodes, input/time/random,
   dependency direction, autoloads read from `project.godot`) and exits
   non-zero on a hit.

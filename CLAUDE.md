@@ -40,6 +40,8 @@ addons/gdUnit4/runtest.sh -a res://tests
 addons/gdUnit4/runtest.sh -a res://tests/net/test_resolver.gd
 # Sim-core purity check (CI fails on any hit)
 tools/check_sim_purity.sh
+# Self-test of the purity check against tools/purity_fixtures/
+tools/test_check_sim_purity.sh
 ```
 
 If the GdUnit4 runner path or flags differ in the installed version, check its
