@@ -47,7 +47,7 @@ Goal: an empty Godot project that runs tests headless locally and in CI.
   `scenarios/`, `tests/`, `tools/`). Update `.gitignore` for `.godot/`.
   *Done when:* the project opens in the editor with no errors and an empty
   main scene runs.
-- [ ] **0.2 Install GdUnit4** under `addons/gdUnit4` and enable the plugin.
+- [x] **0.2 Install GdUnit4** under `addons/gdUnit4` and enable the plugin.
   Add one trivial test in `tests/test_smoke.gd`.
   *Done when:* `addons/gdUnit4/runtest.sh -a res://tests` passes headless.
 - [ ] **0.3 Purity check script.** `tools/check_sim_purity.sh` scans `sim/`
