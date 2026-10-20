@@ -59,7 +59,7 @@ Goal: an empty Godot project that runs tests headless locally and in CI.
   custom Node subclass, `Timer.new()`, `preload("res://ui/...")`, a
   reference to the `Sim` autoload). Base classes are checked by resolving
   each `extends` chain (SPEC §9).
-- [ ] **0.4 CI.** `.github/workflows/ci.yml`: on push and PR, set up Godot
+- [x] **0.4 CI.** `.github/workflows/ci.yml`: on push and PR, set up Godot
   4.7 headless on Ubuntu, import the project, run the purity check, run
   GdUnit4, upload the test report.
   *Done when:* a PR shows a green CI check.

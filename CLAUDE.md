@@ -9,8 +9,7 @@ CCNA-level networking and entry-level security: the player cables gear in a
 server room and fixes it through an IOS-style terminal.
 
 The Godot project exists with GdUnit4, the purity check and a CI workflow
-(M0 tasks 0.1 to 0.5). There is no sim code yet. Task 0.4 stays unticked until
-a PR shows a green CI run; M1 starts after that.
+(M0 tasks 0.1 to 0.5, all done). There is no sim code yet. M1 is next.
 
 ## Source of truth (read before working)
 
