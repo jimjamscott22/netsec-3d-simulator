@@ -41,16 +41,16 @@ M0–M3 + R1 are v1. M4 and M5 come after v1.
 
 Goal: an empty Godot project that runs tests headless locally and in CI.
 
-- [ ] **0.1 Create the Godot project.** Godot 4.7, Compatibility renderer,
+- [x] **0.1 Create the Godot project.** Godot 4.7, Compatibility renderer,
   `project.godot` at the repo root. Add the folder layout from the skill
   (`sim/{core,devices,cli,net,scenario,logs,web}`, `game/`, `world/`, `ui/`,
   `scenarios/`, `tests/`, `tools/`). Update `.gitignore` for `.godot/`.
   *Done when:* the project opens in the editor with no errors and an empty
   main scene runs.
-- [ ] **0.2 Install GdUnit4** under `addons/gdUnit4` and enable the plugin.
+- [x] **0.2 Install GdUnit4** under `addons/gdUnit4` and enable the plugin.
   Add one trivial test in `tests/test_smoke.gd`.
   *Done when:* `addons/gdUnit4/runtest.sh -a res://tests` passes headless.
-- [ ] **0.3 Purity check script.** `tools/check_sim_purity.sh` scans `sim/`
+- [x] **0.3 Purity check script.** `tools/check_sim_purity.sh` scans `sim/`
   for every forbidden pattern group in SPEC §9 (nodes, input/time/random,
   dependency direction, autoloads read from `project.godot`) and exits
   non-zero on a hit.
@@ -59,11 +59,11 @@ Goal: an empty Godot project that runs tests headless locally and in CI.
   custom Node subclass, `Timer.new()`, `preload("res://ui/...")`, a
   reference to the `Sim` autoload). Base classes are checked by resolving
   each `extends` chain (SPEC §9).
-- [ ] **0.4 CI.** `.github/workflows/ci.yml`: on push and PR, set up Godot
+- [x] **0.4 CI.** `.github/workflows/ci.yml`: on push and PR, set up Godot
   4.7 headless on Ubuntu, import the project, run the purity check, run
   GdUnit4, upload the test report.
   *Done when:* a PR shows a green CI check.
-- [ ] **0.5 Input map and project settings.** Add the actions from SPEC §8.4.
+- [x] **0.5 Input map and project settings.** Add the actions from SPEC §8.4.
   Set the window to 1280×720 default, resizable.
   *Done when:* the actions show up in Project Settings → Input Map.
 
