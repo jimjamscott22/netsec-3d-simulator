@@ -111,7 +111,7 @@ configure VLANs, a trunk and router-on-a-stick, and see PC-A ping PC-B.
   spare count after connect and disconnect; signals fire
   once per change, and not when nothing changed; `device_view` returns a
   copy (changing it leaves the sim unchanged).
-- [ ] **1.6 `PingResult` + `FailReason` enum** (`sim/net/`), with every M1
+- [x] **1.6 `PingResult` + `FailReason` enum** (`sim/net/`), with every M1
   reason from SPEC §6.1 (`ACL_DENIED` is declared now, used in M5).
 - [ ] **1.7 L2 resolver** (`sim/net/l2.gd`). BFS from an interface across
   switches within one VLAN: access VLANs, trunk allowed lists, dot1Q
