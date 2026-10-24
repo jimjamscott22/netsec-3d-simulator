@@ -9,7 +9,10 @@ CCNA-level networking and entry-level security: the player cables gear in a
 server room and fixes it through an IOS-style terminal.
 
 The Godot project exists with GdUnit4, the purity check and a CI workflow
-(M0 tasks 0.1 to 0.5, all done). There is no sim code yet. M1 is next.
+(M0 tasks 0.1 to 0.5, all done). M1a (plan tasks 1.1 to 1.8) is done: IPv4 and
+interface-name helpers, device model catalog, `NetworkSim` with cabling and
+events, `PingResult`/`FailReason`, and the L2/L3 resolvers behind `ping`. The
+CLI (task 1.9) is next.
 
 ## Source of truth (read before working)
 
