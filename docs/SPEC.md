@@ -263,9 +263,9 @@ search and returns:
 ```gdscript
 class_name PingResult extends RefCounted
 var success: bool
-var hops: Array[String]        # device ids, in order, forward path
+var hops: Array[String]        # L3 devices only: source, routers traversed, destination last
 var fail_reason: FailReason    # NONE when success
-var fail_at: String            # device id or port where it failed, "" if none
+var fail_at: String            # id of the device holding the packet when it failed, "" if none
 ```
 
 ### 6.1 Fail reasons
@@ -299,6 +299,52 @@ inside→outside, outbound ACL) → the reply path must also resolve.
 - A router pings from the IP of its egress interface.
 - When several reasons apply, report the **first** one hit in resolution order,
   walking the forward path from the source.
+
+Exact semantics:
+
+1. **Order per hop:** `NO_IP`, then the sender's own egress L1 (`NO_LINK` if
+   there is no cable, `ADMIN_DOWN` if cabled but not oper-up), then the
+   next-hop decision (`WRONG_SUBNET` / `NO_GATEWAY` / `NO_ROUTE`), then owner
+   lookup (`HOST_UNREACHABLE`), then L2 to the owner in three tiers: cable
+   graph (`NO_LINK`), oper-up graph (`ADMIN_DOWN`), VLAN-aware graph
+   (`VLAN_MISMATCH`).
+2. **`hops`** lists L3 devices only: the source, each router traversed, and
+   the device that owns the destination IP as the last entry. Switches never
+   appear. (`to_device` and `via` objectives read this list.)
+3. **`fail_at`** is the id of the device holding the packet when it failed:
+   the sender for L1/L2 failures, or a non-forwarding host that received the
+   packet for `HOST_UNREACHABLE`. It is `""` when there is no device (unknown
+   source).
+4. **Reply path:** after the forward path succeeds, the destination runs the
+   same walk toward the original source IP. A reply failure returns
+   `success = false` with the reply's reason and `fail_at`; `hops` stays the
+   forward path. A router source uses the IP of its egress interface as the
+   source address.
+5. **Switch VLAN rules:** a switch drops frames in a VLAN missing from its
+   `vlans`, on ingress or egress. An access port accepts only untagged
+   frames. A trunk accepts tagged frames in its allowed list and treats
+   untagged frames as VLAN 1 (native), which must also be allowed; VLAN 1
+   leaves a trunk untagged, other VLANs leave tagged. Host NICs and router
+   physical ports accept only untagged frames; a router subinterface accepts
+   frames tagged with its `dot1q_vlan` on its parent.
+6. **Connected routes** exist for any interface with a valid address
+   regardless of oper state (the L1/L2 tiers then report `ADMIN_DOWN` etc.).
+   Routes are chosen by longest prefix over connected and static routes. A
+   static route's next hop must lie inside a connected subnet, else
+   `NO_ROUTE`.
+7. **Ownership:** an interface owns an IP if it has a valid address and the
+   parsed addresses are equal, regardless of oper state. With duplicate
+   owners, pick the first owner reachable in the VLAN-aware graph, scanning
+   devices in sorted id order; if none is reachable, classify against the
+   first owner in sorted id order.
+8. **Edge inputs:** an unknown source id, or a switch as source, gives
+   `NO_IP` with `fail_at ""`. A destination that is empty, malformed or
+   `0.0.0.0` gives `HOST_UNREACHABLE` with `fail_at` = the source. A next hop
+   owned by the sender itself gives `HOST_UNREACHABLE`. A subinterface with
+   `dot1q_vlan <= 0` is never reachable and cannot send: `VLAN_MISMATCH`.
+   Hosts do not forward: a gateway owned by a host gives `HOST_UNREACHABLE`
+   at that host. More than 32 L3 hops gives `NO_ROUTE` at the device where
+   the limit hit.
 
 ---
 

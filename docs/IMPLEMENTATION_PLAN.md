@@ -78,44 +78,50 @@ configure VLANs, a trunk and router-on-a-stick, and see PC-A ping PC-B.
 
 ### M1a — Sim core and connectivity
 
-- [ ] **1.1 Address helpers** (`sim/net/ipv4.gd`). Parse/format dotted quads,
+- [x] **1.1 Address helpers** (`sim/net/ipv4.gd`). Parse/format dotted quads,
   mask ↔ prefix length, `same_subnet(a, b, mask)`, network address, validate
   contiguous masks.
   *Tests:* valid/invalid parsing, /0 through /32, non-contiguous mask rejected.
-- [ ] **1.2 Interface name normalizer** (`sim/net/ifname.gd`). `g0/1`,
+- [x] **1.2 Interface name normalizer** (`sim/net/ifname.gd`). `g0/1`,
   `gi0/1`, `gig0/1`, `GigabitEthernet0/1` → canonical; same for `fa`, `eth`;
   subinterfaces (`g0/0.10`). Full ↔ short name.
   *Tests:* table-driven over every alias and case variant; invalid names.
-- [ ] **1.3 Domain classes** (`sim/devices/`): `Interface`, `Device`,
+- [x] **1.3 Domain classes** (`sim/devices/`): `Interface`, `Device`,
   `Router`, `Switch`, `Host`, `Server` (empty extras for now), per SPEC §4
   defaults.
   *Tests:* defaults (router ifaces shut, new subinterfaces admin up, switch
-  ports VLAN 1 access, VLAN 1 always present); oper-up rules for physical
-  and subinterfaces.
-- [ ] **1.4 Model catalog** (`sim/devices/models.gd`). `router_2port`,
+  ports VLAN 1 access, VLAN 1 always present); `Router.add_subinterface`;
+  `has_address`. (The oper-up rules need the cable graph, which `NetworkSim`
+  owns, so they are tested in 1.5; `Interface` only stores `peer_port`.)
+- [x] **1.4 Model catalog** (`sim/devices/models.gd`). `router_2port`,
   `switch_24`, `pc`, `server`, each with its ordered interface list.
   *Tests:* each model builds a device with the expected interface names.
-- [ ] **1.5 `SimEvents` and `NetworkSim` skeleton** (`sim/core/`). Device
+- [x] **1.5 `SimEvents` and `NetworkSim` skeleton** (`sim/core/`). Device
   registry, `connect_link` / `disconnect_link` with validation (port exists,
   port free, port not reserved, not the same device, a spare cable left;
   `disconnect_link` rejects a locked link), spare-cable inventory
   (`connect_link` takes one, unplugging an unlocked link returns it), and
-  `link_changed` + `interface_state_changed` signals.
-  *Tests:* connect/disconnect state; each rejection reason, including
+  `link_changed` + `interface_state_changed` signals. Also `reserve_port`,
+  `add_fixed_link` (uses no spare cable, emits no signals) and `is_oper_up`
+  (physical: cable and both ends admin up; subinterface: parent oper-up and
+  itself admin up).
+  *Tests:* connect/disconnect state; oper-up rules for physical and
+  subinterfaces; each rejection reason, including
   unplugging a locked link and connecting with no spare cable left; the
   spare count after connect and disconnect; signals fire
   once per change, and not when nothing changed; `device_view` returns a
   copy (changing it leaves the sim unchanged).
-- [ ] **1.6 `PingResult` + `FailReason` enum** (`sim/net/`), with every M1
+- [x] **1.6 `PingResult` + `FailReason` enum** (`sim/net/`), with every M1
   reason from SPEC §6.1 (`ACL_DENIED` is declared now, used in M5).
-- [ ] **1.7 L2 resolver** (`sim/net/l2.gd`). BFS from an interface across
+- [x] **1.7 L2 resolver** (`sim/net/l2.gd`). BFS from an interface across
   switches within one VLAN: access VLANs, trunk allowed lists, dot1Q
   subinterface tags on router ports.
   *Tests:* same-VLAN reach; different-VLAN blocked; trunk carries tagged VLAN;
   trunk allowed list excludes it; multi-switch chain.
-- [ ] **1.8 L3 resolver / `NetworkSim.ping`** (`sim/net/resolver.gd`).
+- [x] **1.8 L3 resolver / `NetworkSim.ping`** (`sim/net/resolver.gd`).
   Next-hop decision (direct vs gateway vs connected routes), forward path +
   reply path, first-reason-wins (SPEC §6.3). Router pings from its egress IP.
+  `hops` are L3 devices only (switches never appear).
   *Tests:* same-subnet hosts with no router; router-on-a-stick across a trunk;
   one test per M1 fail reason; asymmetric reply failure;
   ordering when two faults exist.
