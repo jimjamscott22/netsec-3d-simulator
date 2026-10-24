@@ -1,0 +1,52 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+env:
+  GODOT_VERSION: "4.7.2"
+  GODOT_ZIP_SHA512: "9aa00f7a605200940bce3027a567b782f49bd8e940dd06ae9e987bd65aee1b1467edd56ed84fcdcbdd44354bf613bdbb4e5d2913e925850368e150c59ed54c65"
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Godot ${{ env.GODOT_VERSION }}
+        run: |
+          zip="Godot_v${GODOT_VERSION}-stable_linux.x86_64.zip"
+          curl -fsSL -o "$zip" "https://github.com/godotengine/godot-builds/releases/download/${GODOT_VERSION}-stable/${zip}"
+          echo "${GODOT_ZIP_SHA512}  ${zip}" | sha512sum -c -
+          unzip -q "$zip"
+          mkdir -p "$HOME/godot"
+          mv "Godot_v${GODOT_VERSION}-stable_linux.x86_64" "$HOME/godot/godot"
+          # GdUnit4's runner launches Godot itself, so give it a headless wrapper.
+          printf '#!/usr/bin/env bash\nexec "%s/godot/godot" --headless "$@"\n' "$HOME" > "$HOME/godot/godot-headless"
+          chmod +x "$HOME/godot/godot" "$HOME/godot/godot-headless"
+          rm "$zip"
+
+      - name: Import project
+        run: |
+          # First import builds the class-name cache; it can exit non-zero on a cold cache.
+          "$HOME/godot/godot" --headless --import || true
+          "$HOME/godot/godot" --headless --import
+
+      - name: Sim purity check
+        run: |
+          tools/test_check_sim_purity.sh
+          tools/check_sim_purity.sh
+
+      - name: GdUnit4
+        run: |
+          export GODOT_BIN="$HOME/godot/godot-headless"
+          addons/gdUnit4/runtest.sh -a res://tests --ignoreHeadlessMode
+
+      - name: Upload test report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gdunit4-report
+          path: reports/
+          if-no-files-found: ignore

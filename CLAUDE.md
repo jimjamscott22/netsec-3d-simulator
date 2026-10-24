@@ -8,8 +8,8 @@ A Godot 4.7 (GDScript, Compatibility renderer) first-person game that teaches
 CCNA-level networking and entry-level security: the player cables gear in a
 server room and fixes it through an IOS-style terminal.
 
-The repo is currently **docs-only**: no `project.godot`, no code yet. Work
-starts at task 0.1 of the plan.
+The Godot project exists with GdUnit4, the purity check and a CI workflow
+(M0 tasks 0.1 to 0.5, all done). There is no sim code yet. M1 is next.
 
 ## Source of truth (read before working)
 
@@ -30,8 +30,7 @@ layout diagram leaves out.
 
 ## Commands
 
-The project hasn't been created yet, so these are the commands the plan sets
-up (GdUnit4 in `addons/gdUnit4`, purity script in `tools/`):
+These are the commands the plan sets up (GdUnit4 in `addons/gdUnit4`, purity script in `tools/`):
 
 ```sh
 # Run all tests headless (Linux/macOS)
@@ -40,9 +39,13 @@ addons/gdUnit4/runtest.sh -a res://tests
 addons/gdUnit4/runtest.sh -a res://tests/net/test_resolver.gd
 # Sim-core purity check (CI fails on any hit)
 tools/check_sim_purity.sh
+# Self-test of the purity check against tools/purity_fixtures/
+tools/test_check_sim_purity.sh
 ```
 
-If the GdUnit4 runner path or flags differ in the installed version, check its
+GdUnit4 refuses to run under `--headless` unless you pass `--ignoreHeadlessMode`
+(CI does, through a `--headless` wrapper set as `GODOT_BIN`); locally,
+`GODOT_BIN` must point at the Godot binary. If the GdUnit4 runner path or flags differ in the installed version, check its
 docs instead of guessing. CI (`.github/workflows/ci.yml`, task 0.4) runs Godot
 headless on Ubuntu: it imports the project, then runs the purity check, then GdUnit4.
 
