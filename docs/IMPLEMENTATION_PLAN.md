@@ -86,7 +86,7 @@ configure VLANs, a trunk and router-on-a-stick, and see PC-A ping PC-B.
   `gi0/1`, `gig0/1`, `GigabitEthernet0/1` → canonical; same for `fa`, `eth`;
   subinterfaces (`g0/0.10`). Full ↔ short name.
   *Tests:* table-driven over every alias and case variant; invalid names.
-- [ ] **1.3 Domain classes** (`sim/devices/`): `Interface`, `Device`,
+- [x] **1.3 Domain classes** (`sim/devices/`): `Interface`, `Device`,
   `Router`, `Switch`, `Host`, `Server` (empty extras for now), per SPEC §4
   defaults.
   *Tests:* defaults (router ifaces shut, new subinterfaces admin up, switch
