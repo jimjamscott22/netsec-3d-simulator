@@ -96,7 +96,7 @@ configure VLANs, a trunk and router-on-a-stick, and see PC-A ping PC-B.
 - [x] **1.4 Model catalog** (`sim/devices/models.gd`). `router_2port`,
   `switch_24`, `pc`, `server`, each with its ordered interface list.
   *Tests:* each model builds a device with the expected interface names.
-- [ ] **1.5 `SimEvents` and `NetworkSim` skeleton** (`sim/core/`). Device
+- [x] **1.5 `SimEvents` and `NetworkSim` skeleton** (`sim/core/`). Device
   registry, `connect_link` / `disconnect_link` with validation (port exists,
   port free, port not reserved, not the same device, a spare cable left;
   `disconnect_link` rejects a locked link), spare-cable inventory
