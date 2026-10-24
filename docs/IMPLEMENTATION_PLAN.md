@@ -90,8 +90,9 @@ configure VLANs, a trunk and router-on-a-stick, and see PC-A ping PC-B.
   `Router`, `Switch`, `Host`, `Server` (empty extras for now), per SPEC §4
   defaults.
   *Tests:* defaults (router ifaces shut, new subinterfaces admin up, switch
-  ports VLAN 1 access, VLAN 1 always present); oper-up rules for physical
-  and subinterfaces.
+  ports VLAN 1 access, VLAN 1 always present); `Router.add_subinterface`;
+  `has_address`. (The oper-up rules need the cable graph, which `NetworkSim`
+  owns, so they are tested in 1.5; `Interface` only stores `peer_port`.)
 - [ ] **1.4 Model catalog** (`sim/devices/models.gd`). `router_2port`,
   `switch_24`, `pc`, `server`, each with its ordered interface list.
   *Tests:* each model builds a device with the expected interface names.
@@ -100,8 +101,12 @@ configure VLANs, a trunk and router-on-a-stick, and see PC-A ping PC-B.
   port free, port not reserved, not the same device, a spare cable left;
   `disconnect_link` rejects a locked link), spare-cable inventory
   (`connect_link` takes one, unplugging an unlocked link returns it), and
-  `link_changed` + `interface_state_changed` signals.
-  *Tests:* connect/disconnect state; each rejection reason, including
+  `link_changed` + `interface_state_changed` signals. Also `reserve_port`,
+  `add_fixed_link` (uses no spare cable, emits no signals) and `is_oper_up`
+  (physical: cable and both ends admin up; subinterface: parent oper-up and
+  itself admin up).
+  *Tests:* connect/disconnect state; oper-up rules for physical and
+  subinterfaces; each rejection reason, including
   unplugging a locked link and connecting with no spare cable left; the
   spare count after connect and disconnect; signals fire
   once per change, and not when nothing changed; `device_view` returns a
@@ -116,6 +121,7 @@ configure VLANs, a trunk and router-on-a-stick, and see PC-A ping PC-B.
 - [ ] **1.8 L3 resolver / `NetworkSim.ping`** (`sim/net/resolver.gd`).
   Next-hop decision (direct vs gateway vs connected routes), forward path +
   reply path, first-reason-wins (SPEC §6.3). Router pings from its egress IP.
+  `hops` are L3 devices only (switches never appear).
   *Tests:* same-subnet hosts with no router; router-on-a-stick across a trunk;
   one test per M1 fail reason; asymmetric reply failure;
   ordering when two faults exist.
