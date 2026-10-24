@@ -26,3 +26,4 @@ mono_crash.*.json
 
 # GdUnit4 test reports
 reports/
+/graphify-out
