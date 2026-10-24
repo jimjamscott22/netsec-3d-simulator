@@ -118,7 +118,7 @@ configure VLANs, a trunk and router-on-a-stick, and see PC-A ping PC-B.
   subinterface tags on router ports.
   *Tests:* same-VLAN reach; different-VLAN blocked; trunk carries tagged VLAN;
   trunk allowed list excludes it; multi-switch chain.
-- [ ] **1.8 L3 resolver / `NetworkSim.ping`** (`sim/net/resolver.gd`).
+- [x] **1.8 L3 resolver / `NetworkSim.ping`** (`sim/net/resolver.gd`).
   Next-hop decision (direct vs gateway vs connected routes), forward path +
   reply path, first-reason-wins (SPEC §6.3). Router pings from its egress IP.
   `hops` are L3 devices only (switches never appear).

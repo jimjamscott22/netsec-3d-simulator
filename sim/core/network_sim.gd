@@ -173,3 +173,7 @@ func _emit_state_changes(list: Array[Interface], before: Array[bool]) -> void:
 		var now: bool = is_oper_up(list[n].port())
 		if now != before[n]:
 			events.interface_state_changed.emit(list[n].port(), now)
+
+
+func ping(src_id: String, dst_ip: String) -> PingResult:
+	return Resolver.ping(self, src_id, dst_ip)
