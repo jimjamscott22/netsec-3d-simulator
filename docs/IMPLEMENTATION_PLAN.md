@@ -113,7 +113,7 @@ configure VLANs, a trunk and router-on-a-stick, and see PC-A ping PC-B.
   copy (changing it leaves the sim unchanged).
 - [x] **1.6 `PingResult` + `FailReason` enum** (`sim/net/`), with every M1
   reason from SPEC §6.1 (`ACL_DENIED` is declared now, used in M5).
-- [ ] **1.7 L2 resolver** (`sim/net/l2.gd`). BFS from an interface across
+- [x] **1.7 L2 resolver** (`sim/net/l2.gd`). BFS from an interface across
   switches within one VLAN: access VLANs, trunk allowed lists, dot1Q
   subinterface tags on router ports.
   *Tests:* same-VLAN reach; different-VLAN blocked; trunk carries tagged VLAN;
