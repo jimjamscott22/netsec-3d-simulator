@@ -93,7 +93,7 @@ configure VLANs, a trunk and router-on-a-stick, and see PC-A ping PC-B.
   ports VLAN 1 access, VLAN 1 always present); `Router.add_subinterface`;
   `has_address`. (The oper-up rules need the cable graph, which `NetworkSim`
   owns, so they are tested in 1.5; `Interface` only stores `peer_port`.)
-- [ ] **1.4 Model catalog** (`sim/devices/models.gd`). `router_2port`,
+- [x] **1.4 Model catalog** (`sim/devices/models.gd`). `router_2port`,
   `switch_24`, `pc`, `server`, each with its ordered interface list.
   *Tests:* each model builds a device with the expected interface names.
 - [ ] **1.5 `SimEvents` and `NetworkSim` skeleton** (`sim/core/`). Device
