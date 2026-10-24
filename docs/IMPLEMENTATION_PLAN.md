@@ -78,7 +78,7 @@ configure VLANs, a trunk and router-on-a-stick, and see PC-A ping PC-B.
 
 ### M1a — Sim core and connectivity
 
-- [ ] **1.1 Address helpers** (`sim/net/ipv4.gd`). Parse/format dotted quads,
+- [x] **1.1 Address helpers** (`sim/net/ipv4.gd`). Parse/format dotted quads,
   mask ↔ prefix length, `same_subnet(a, b, mask)`, network address, validate
   contiguous masks.
   *Tests:* valid/invalid parsing, /0 through /32, non-contiguous mask rejected.
