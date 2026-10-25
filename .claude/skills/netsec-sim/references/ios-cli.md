@@ -33,6 +33,9 @@ enum CliMode { USER_EXEC, PRIV_EXEC, GLOBAL_CONFIG, INTERFACE_CONFIG, VLAN_CONFI
   `conf t`, `sh ip int br`, and `int g0/1` must all work.
 - Argument tokens are typed: `<interface>`, `<ipv4>`, `<mask>`, `<vlan-id 1-4094>`,
   `<word>`, `<line-range>`. Validation happens at parse time.
+  `<line-range>` takes two words (`line vty 0 4` → first 0, last 4, both 0-15,
+  last >= first); the other types take one. Typed args live in `cli/cli_arg.gd`
+  and the line splitter in `cli/cli_tokenizer.gd`.
 - `no` as the first token negates the command that follows, if that command is
   registered as negatable.
 - `?` lists valid next tokens with one-line help. `sh ?` and `show ip ?` both work.

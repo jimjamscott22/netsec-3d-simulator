@@ -128,7 +128,7 @@ configure VLANs, a trunk and router-on-a-stick, and see PC-A ping PC-B.
 
 ### M1b — IOS CLI (M1 command set)
 
-- [ ] **1.9 Tokenizer + typed args** (`sim/cli/`): `<interface>`, `<ipv4>`,
+- [x] **1.9 Tokenizer + typed args** (`sim/cli/`): `<interface>`, `<ipv4>`,
   `<mask>`, `<vlan-id>`, `<word>`, `<line-range>`.
 - [ ] **1.10 `CommandRegistry`.** Per-mode token patterns, unique-prefix
   matching, `no` negation, `?` help, Tab completion, `do` from config modes,
