@@ -135,13 +135,13 @@ configure VLANs, a trunk and router-on-a-stick, and see PC-A ping PC-B.
   and the exact error strings from `ios-cli.md`.
   *Tests:* abbreviations; ambiguous prefix; incomplete; invalid with the `^`
   marker at the right column; `?` lists; Tab unique vs ambiguous.
-- [ ] **1.11 `CliSession`.** Mode stack, prompts using the live hostname,
+- [x] **1.11 `CliSession`.** Mode stack, prompts using the live hostname,
   `exit` / `end` / Ctrl+Z, sub-mode → global command context switch,
   history (up/down), `enable` password prompt.
   *Tests:* every mode transition in the `ios-cli.md` table; prompt after
   `hostname`.
-- [ ] **1.12 M1 config commands:** `enable`, `disable`, `configure terminal`,
-  `hostname`, `interface` (incl. subinterface creation), `[no] shutdown`,
+- [ ] **1.12 M1 config commands:** (`enable`, `disable`, `configure terminal`,
+  `exit`, `end` landed in 1.11 as `CliSession.register_core`.) `hostname`, `interface` (incl. subinterface creation), `[no] shutdown`,
   `ip address` / `no ip address`, `vlan` + `name`, `switchport mode
   access|trunk`, `switchport access vlan`, `encapsulation dot1Q`.
   Router-only / switch-only / subinterface-only rules enforced.

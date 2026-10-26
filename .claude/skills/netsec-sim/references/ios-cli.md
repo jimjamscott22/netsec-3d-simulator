@@ -15,7 +15,7 @@ enum CliMode { USER_EXEC, PRIV_EXEC, GLOBAL_CONFIG, INTERFACE_CONFIG, VLAN_CONFI
 | USER_EXEC | `R1>` | session start, `disable` | — (`exit` closes session) |
 | PRIV_EXEC | `R1#` | `enable` (asks for password if `enable_secret` set) | `disable` → USER_EXEC |
 | GLOBAL_CONFIG | `R1(config)#` | `configure terminal` | `exit` / `end` → PRIV_EXEC |
-| INTERFACE_CONFIG | `R1(config-if)#` | `interface <name>` | `exit` → GLOBAL_CONFIG, `end` → PRIV_EXEC |
+| INTERFACE_CONFIG | `R1(config-if)#` (`R1(config-subif)#` for a subinterface) | `interface <name>` | `exit` → GLOBAL_CONFIG, `end` → PRIV_EXEC |
 | VLAN_CONFIG | `S1(config-vlan)#` | `vlan <id>` (switches only) | same as above |
 | LINE_CONFIG | `R1(config-line)#` | `line vty 0 4`, `line console 0` | same as above |
 
@@ -24,6 +24,23 @@ enum CliMode { USER_EXEC, PRIV_EXEC, GLOBAL_CONFIG, INTERFACE_CONFIG, VLAN_CONFI
 - In a sub-mode, a GLOBAL_CONFIG command (e.g. `interface g0/2` while in
   `config-if`) switches context directly, as real IOS does.
 - `do <exec command>` runs a PRIV_EXEC command from any config mode.
+
+`CliSession` (`cli/cli_session.gd`) owns this: `submit(line)`, `prompt()`,
+`ctrl_z()`, `help(line)`, `complete(line)`, `history()` / `history_prev()` /
+`history_next()`. It is the `ctx` passed to command handlers, which call
+`enter_interface` / `enter_vlan` / `enter_line` to enter a sub-mode (from
+another sub-mode this replaces it instead of nesting). `CliSession.register_core`
+registers `enable`, `disable`, `configure terminal`, `exit`, `end` and the
+sub-mode fallbacks.
+
+- `enable` with an `enable_secret` set shows the `Password:` prompt
+  (`is_password_prompt()` tells the UI to mask input). A wrong password
+  re-prompts; the third wrong one prints `% Bad secrets` and stays in USER_EXEC.
+  Passwords never enter the history. `enable` in PRIV_EXEC is a no-op.
+- `exit` in USER/PRIV EXEC returns `ShellAction.CLOSE_SESSION`. `end` and
+  Ctrl+Z (config modes only) go straight to PRIV_EXEC.
+- History keeps the last 100 non-blank lines, skips consecutive duplicates,
+  and includes lines that failed.
 
 ## Token matching
 
