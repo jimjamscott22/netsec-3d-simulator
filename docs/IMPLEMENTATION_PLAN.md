@@ -130,7 +130,7 @@ configure VLANs, a trunk and router-on-a-stick, and see PC-A ping PC-B.
 
 - [x] **1.9 Tokenizer + typed args** (`sim/cli/`): `<interface>`, `<ipv4>`,
   `<mask>`, `<vlan-id>`, `<word>`, `<line-range>`.
-- [ ] **1.10 `CommandRegistry`.** Per-mode token patterns, unique-prefix
+- [x] **1.10 `CommandRegistry`.** Per-mode token patterns, unique-prefix
   matching, `no` negation, `?` help, Tab completion, `do` from config modes,
   and the exact error strings from `ios-cli.md`.
   *Tests:* abbreviations; ambiguous prefix; incomplete; invalid with the `^`

@@ -41,6 +41,27 @@ enum CliMode { USER_EXEC, PRIV_EXEC, GLOBAL_CONFIG, INTERFACE_CONFIG, VLAN_CONFI
 - `?` lists valid next tokens with one-line help. `sh ?` and `show ip ?` both work.
 - Tab completes a unique prefix; if it's ambiguous, Tab does nothing.
 
+`CommandRegistry` (`cli/command_registry.gd`) implements this. Patterns are
+strings (`"ip address <ipv4> <mask>"`); handlers are
+`func(ctx, args: Array, negated: bool) -> CliResult`. Details worth knowing:
+
+- A negatable command (`register(..., negatable = true)`) also accepts
+  `no <pattern>`, and for that form its trailing arguments are optional
+  (`no ip address` and `no ip address 10.0.0.1 255.255.255.0` both work).
+- `set_fallback(sub_mode, global_mode)` makes the fallback mode's commands
+  work in the sub-mode. Keywords from both modes are matched together, so `i`
+  in `config-if` is ambiguous (`ip`, `interface`), as on IOS. A keyword defined
+  in both (`ip address` / `ip route`) follows both branches.
+- `no` and `do` are pseudo-keywords of the first word. `do` exists in config
+  modes only and runs the PRIV_EXEC table.
+- `execute(mode, line, ctx, prompt_width)` takes the prompt width so the `^`
+  sits under the typed character. A single unknown word in USER/PRIV EXEC gets
+  the `Translating "<word>"...` message instead of the `^` marker.
+- `help(mode, line)` takes the text before the `?` (trailing space lists next
+  tokens plus `<cr>`, no space lists completions); `complete(mode, line)` is Tab.
+  `describe(mode, "show ip", "text")` sets the help line for a keyword prefix;
+  the help passed to `register` is shown on the pattern's last token.
+
 ## Error output
 
 Print these exactly, so the CLI stays consistent:
