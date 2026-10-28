@@ -12,6 +12,47 @@ func _lines(text: String) -> PackedStringArray:
 	return text.split("\n")
 
 
+# --- ping -------------------------------------------------------------------
+
+
+func test_ping_success_golden() -> void:
+	assert_str(CliFormatters.ping_output("192.168.10.10", PingResult.ok(["R1", "PC-A"]))).is_equal(_g([
+		"Type escape sequence to abort.",
+		"Sending 5, 100-byte ICMP Echos to 192.168.10.10, timeout is 2 seconds:",
+		"!!!!!",
+		"Success rate is 100 percent (5/5), round-trip min/avg/max = 1/2/4 ms",
+	]))
+
+
+func test_ping_round_trip_scales_with_the_link_count() -> void:
+	var two: String = CliFormatters.ping_output("10.0.0.9", PingResult.ok(["R1", "R2", "PC-B"]))
+	assert_str(two).ends_with("round-trip min/avg/max = 2/4/8 ms")
+	var three: String = CliFormatters.ping_output("10.0.0.9", PingResult.ok(["R1", "R2", "R3", "PC-B"]))
+	assert_str(three).ends_with("round-trip min/avg/max = 3/6/12 ms")
+
+
+func test_ping_to_the_device_itself_still_reports_one_link_of_time() -> void:
+	assert_str(CliFormatters.ping_output("10.0.0.1", PingResult.ok(["R1"]))).ends_with("min/avg/max = 1/2/4 ms")
+
+
+func test_ping_failure_golden() -> void:
+	assert_str(CliFormatters.ping_output("10.9.9.9", PingResult.fail(PingResult.FailReason.NO_ROUTE, "R1", ["R1"]))).is_equal(_g([
+		"Type escape sequence to abort.",
+		"Sending 5, 100-byte ICMP Echos to 10.9.9.9, timeout is 2 seconds:",
+		".....",
+		"Success rate is 0 percent (0/5)",
+	]))
+
+
+func test_ping_failure_text_never_reveals_the_reason() -> void:
+	var want: String = CliFormatters.ping_output("10.9.9.9", PingResult.fail(PingResult.FailReason.NO_ROUTE, "R1"))
+	for reason in PingResult.FailReason.values():
+		if reason == PingResult.FailReason.NONE:
+			continue
+		var got: String = CliFormatters.ping_output("10.9.9.9", PingResult.fail(reason, "R1", ["R1"]))
+		assert_str(got).override_failure_message(PingResult.reason_name(reason)).is_equal(want)
+
+
 # --- show ip interface brief ------------------------------------------------
 
 
