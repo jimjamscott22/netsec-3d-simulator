@@ -139,8 +139,9 @@ command that changes nothing emits nothing.
   that doesn't exist, it is invalid input under the name.
 - `vlan <id>` creates the VLAN with IOS's default name (`VLAN0010`) and
   enters VLAN_CONFIG; re-entering keeps the name. `switchport access vlan <id>`
-  does not create the VLAN: the port carries nothing until the VLAN exists
-  (`show vlan brief` will list it as inactive).
+  does not create the VLAN: the port carries nothing until the VLAN exists,
+  and `show vlan brief` lists it under no VLAN (`show running-config` still
+  shows the `switchport access vlan` line).
 - `ip address` / `no ip address` is router-only (also on subinterfaces).
   `no ip address` takes optional trailing arguments, as on IOS.
 - Not yet implemented: any other `no` form (`no vlan`, `no hostname`).
@@ -166,6 +167,40 @@ vty lines with `transport input ssh` + `login local`, and L3 reachability.
 `access-list <1-99> {permit|deny} <ipv4> <wildcard>`,
 `ip access-group <1-99> {in|out}`, `show ip nat translations`,
 `show access-lists`.
+
+## Show commands (M1)
+
+`show running-config`, `show ip interface brief` (routers and switches) and
+`show vlan brief` (switches only) live in PRIV_EXEC, so they also run from any
+config mode as `do show ...`. Registered in `IosCommands`; every line of output
+comes from `CliFormatters` (`cli/cli_formatters.gd`). They read state and never
+emit `config_changed`.
+
+- **Interface order** is socket order, with each physical interface's
+  subinterfaces right after it, lowest tag first.
+- **`show ip interface brief`:** columns `Interface` (27 wide, wider if a name
+  needs it), `IP-Address` (16), `OK?` (always `YES`), `Method` (`manual` with an
+  address, else `unset`), `Status` (22), `Protocol`. Status/Protocol is
+  `administratively down`/`down` when the interface or, for a subinterface, its
+  parent is shut; `up`/`up` when oper-up; otherwise `down`/`down` (no cable, or
+  the peer is shut).
+- **`show vlan brief`:** `VLAN`, `Name` (cut at 32 characters), `Status`,
+  `Ports`. Only access ports are listed, under their VLAN; trunk ports and ports
+  in a VLAN the switch lacks appear nowhere; shut ports still appear. Ports wrap
+  at 31 columns without trailing commas. The four legacy rows
+  (1002 to 1005, `act/unsup`) are always shown unless the switch defines that id.
+- **`show running-config`:** `Building configuration...`, a blank line,
+  `Current configuration : N bytes` (the size of the text from the first `!`
+  through `end`), then hostname, `enable secret 5 <hash>` (a stable stand-in for
+  the type 5 hash, never the secret), VLANs (`vlan N`, with ` name` only when it
+  isn't the default `VLANnnnn`; VLAN 1 is omitted), interfaces, static routes,
+  `end`. A router interface prints `encapsulation dot1Q` (subinterfaces with a
+  tag), then `ip address` or `no ip address`, then `shutdown`. A switch port
+  prints nothing at defaults; `switchport access vlan` plus `switchport mode
+  access` only for a port with a non-default VLAN (so a bare `switchport mode
+  access` on a default port doesn't show); `switchport trunk allowed vlan` (when
+  limited) and `switchport mode trunk` for a trunk; `shutdown` when shut. Users,
+  domain name, vty lines, NAT and ACL sections arrive with their M4/M5 commands.
 
 ## Show output style
 

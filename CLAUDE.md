@@ -13,8 +13,9 @@ The Godot project exists with GdUnit4, the purity check and a CI workflow
 interface-name helpers, device model catalog, `NetworkSim` with cabling and
 events, `PingResult`/`FailReason`, and the L2/L3 resolvers behind `ping`. M1b is
 under way: the tokenizer, `CommandRegistry`, `CliSession` and the M1 config
-commands (`IosCommands`, tasks 1.9 to 1.12) are done. The `show` formatters
-(task 1.13) are next.
+commands (`IosCommands`, tasks 1.9 to 1.12) and the `show` formatters and
+commands (`CliFormatters`, task 1.13) are done. The IOS `ping` command (task
+1.14) is next.
 
 ## Source of truth (read before working)
 
