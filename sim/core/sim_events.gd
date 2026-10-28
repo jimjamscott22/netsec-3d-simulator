@@ -6,6 +6,5 @@ extends RefCounted
 signal link_changed(a_port: String, b_port: String, connected: bool)
 @warning_ignore("unused_signal")
 signal interface_state_changed(port: String, oper_up: bool)
-## Declared now, emitted from M1b.
 @warning_ignore("unused_signal")
 signal config_changed(device_id: String)

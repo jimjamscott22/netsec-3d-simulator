@@ -210,9 +210,13 @@ func execute(mode: CliMode.Id, line: String, ctx: Variant = null, prompt_width: 
 				return CliResult.failure(ERR_UNKNOWN_WORD % tokens[0].text)
 			return CliResult.failure(" ".repeat(prompt_width + m.error_col) + "^\n" + ERR_INVALID)
 	var res: Variant = m.handler.call(ctx, m.args, m.negated)
-	if res is CliResult:
-		return res
-	return CliResult.ok_output("")
+	if not res is CliResult:
+		return CliResult.ok_output("")
+	var result: CliResult = res
+	if result.error_word >= 0:
+		var col: int = tokens[mini(result.error_word, tokens.size() - 1)].start
+		result.output = " ".repeat(prompt_width + col) + "^\n" + ERR_INVALID
+	return result
 
 
 ## Text for `?`. `line` is what was typed before the `?`: a trailing space

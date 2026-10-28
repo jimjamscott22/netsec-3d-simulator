@@ -177,3 +177,202 @@ func _emit_state_changes(list: Array[Interface], before: Array[bool]) -> void:
 
 func ping(src_id: String, dst_ip: String) -> PingResult:
 	return Resolver.ping(self, src_id, dst_ip)
+
+
+# --- configuration (the CLI's only way to change a device) ---------------------
+# Each call validates, changes state, then emits `config_changed` once; a valid
+# request that changes nothing emits nothing and returns `changed = false`.
+
+
+func set_hostname(device_id: String, hostname: String) -> ConfigResult:
+	var d: Device = get_device(device_id)
+	if d == null:
+		return ConfigResult.failure(ConfigResult.Reason.UNKNOWN_DEVICE)
+	if hostname.is_empty() or hostname.contains(" "):
+		return ConfigResult.failure(ConfigResult.Reason.INVALID_VALUE)
+	if d is Host:
+		return ConfigResult.failure(ConfigResult.Reason.WRONG_DEVICE_TYPE)
+	if d.hostname == hostname:
+		return ConfigResult.success(false)
+	d.hostname = hostname
+	events.config_changed.emit(d.id)
+	return ConfigResult.success(true)
+
+
+## `shutdown` / `no shutdown`. Also emits `interface_state_changed` for every
+## interface (and subinterface) whose oper state flips.
+func set_admin_up(port: String, up: bool) -> ConfigResult:
+	var i: Interface = interface_at(port)
+	if i == null:
+		return ConfigResult.failure(ConfigResult.Reason.UNKNOWN_INTERFACE)
+	if get_device(i.device_id) is Host:
+		return ConfigResult.failure(ConfigResult.Reason.WRONG_DEVICE_TYPE)
+	if i.admin_up == up:
+		return ConfigResult.success(false)
+	var affected: Array[Interface] = _with_subinterfaces(i)
+	var peer: Interface = interface_at(i.peer_port) if i.peer_port != "" else null
+	if peer != null:
+		affected += _with_subinterfaces(peer)
+	var before: Array[bool] = _oper_states(affected)
+	i.admin_up = up
+	_emit_state_changes(affected, before)
+	events.config_changed.emit(i.device_id)
+	return ConfigResult.success(true)
+
+
+## Router `ip address`. Hosts have their own address call (the PC shell).
+func set_ip_address(port: String, ip: String, mask: String) -> ConfigResult:
+	var i: Interface = _router_interface(port)
+	if i == null:
+		return _router_interface_failure(port)
+	if not IPv4.is_valid(ip) or IPv4.parse_mask(mask) == IPv4.INVALID:
+		return ConfigResult.failure(ConfigResult.Reason.INVALID_VALUE)
+	if i.ip == ip and i.mask == mask:
+		return ConfigResult.success(false)
+	i.ip = ip
+	i.mask = mask
+	events.config_changed.emit(i.device_id)
+	return ConfigResult.success(true)
+
+
+## Router `no ip address`.
+func clear_ip_address(port: String) -> ConfigResult:
+	var i: Interface = _router_interface(port)
+	if i == null:
+		return _router_interface_failure(port)
+	if i.ip.is_empty() and i.mask.is_empty():
+		return ConfigResult.success(false)
+	i.ip = ""
+	i.mask = ""
+	events.config_changed.emit(i.device_id)
+	return ConfigResult.success(true)
+
+
+## Router `interface <name>.<sub>`: creates the subinterface (admin up, as on
+## IOS) unless it exists. The parent must be an existing physical interface.
+func create_subinterface(device_id: String, name: String) -> ConfigResult:
+	var d: Device = get_device(device_id)
+	if d == null:
+		return ConfigResult.failure(ConfigResult.Reason.UNKNOWN_DEVICE)
+	if not d is Router:
+		return ConfigResult.failure(ConfigResult.Reason.WRONG_DEVICE_TYPE)
+	var full: String = IfName.normalize(name)
+	if not IfName.is_subinterface(full):
+		return ConfigResult.failure(ConfigResult.Reason.NOT_SUBINTERFACE)
+	if d.interfaces.has(full):
+		return ConfigResult.success(false)
+	if (d as Router).add_subinterface(full) == null:
+		return ConfigResult.failure(ConfigResult.Reason.UNKNOWN_INTERFACE)
+	events.config_changed.emit(d.id)
+	return ConfigResult.success(true)
+
+
+## Router `encapsulation dot1Q <id>`; subinterfaces only.
+func set_dot1q_vlan(port: String, vlan_id: int) -> ConfigResult:
+	var i: Interface = _router_interface(port)
+	if i == null:
+		return _router_interface_failure(port)
+	if not i.is_sub():
+		return ConfigResult.failure(ConfigResult.Reason.NOT_SUBINTERFACE)
+	if not _valid_vlan(vlan_id):
+		return ConfigResult.failure(ConfigResult.Reason.INVALID_VALUE)
+	if i.dot1q_vlan == vlan_id:
+		return ConfigResult.success(false)
+	i.dot1q_vlan = vlan_id
+	events.config_changed.emit(i.device_id)
+	return ConfigResult.success(true)
+
+
+## Switch `vlan <id>`: creates the VLAN with IOS's default name (`VLAN0010`)
+## unless it exists.
+func create_vlan(device_id: String, vlan_id: int) -> ConfigResult:
+	var s: Switch = _switch(device_id)
+	if s == null:
+		return _switch_failure(device_id)
+	if not _valid_vlan(vlan_id):
+		return ConfigResult.failure(ConfigResult.Reason.INVALID_VALUE)
+	if s.vlans.has(vlan_id):
+		return ConfigResult.success(false)
+	s.add_vlan(vlan_id, "VLAN%04d" % vlan_id)
+	events.config_changed.emit(s.id)
+	return ConfigResult.success(true)
+
+
+## Switch VLAN `name <word>`. The VLAN must exist.
+func set_vlan_name(device_id: String, vlan_id: int, vlan_name: String) -> ConfigResult:
+	var s: Switch = _switch(device_id)
+	if s == null:
+		return _switch_failure(device_id)
+	if not s.vlans.has(vlan_id) or vlan_name.is_empty() or vlan_name.contains(" "):
+		return ConfigResult.failure(ConfigResult.Reason.INVALID_VALUE)
+	if s.vlans[vlan_id] == vlan_name:
+		return ConfigResult.success(false)
+	s.vlans[vlan_id] = vlan_name
+	events.config_changed.emit(s.id)
+	return ConfigResult.success(true)
+
+
+func set_switchport_mode(port: String, mode: Interface.Mode) -> ConfigResult:
+	var i: Interface = _switch_interface(port)
+	if i == null:
+		return _switch_interface_failure(port)
+	if i.mode == mode:
+		return ConfigResult.success(false)
+	i.mode = mode
+	events.config_changed.emit(i.device_id)
+	return ConfigResult.success(true)
+
+
+## Switch `switchport access vlan <id>`. The VLAN need not exist yet; the port
+## carries nothing until it does.
+func set_access_vlan(port: String, vlan_id: int) -> ConfigResult:
+	var i: Interface = _switch_interface(port)
+	if i == null:
+		return _switch_interface_failure(port)
+	if not _valid_vlan(vlan_id):
+		return ConfigResult.failure(ConfigResult.Reason.INVALID_VALUE)
+	if i.access_vlan == vlan_id:
+		return ConfigResult.success(false)
+	i.access_vlan = vlan_id
+	events.config_changed.emit(i.device_id)
+	return ConfigResult.success(true)
+
+
+func _valid_vlan(vlan_id: int) -> bool:
+	return vlan_id >= 1 and vlan_id <= 4094
+
+
+func _switch(device_id: String) -> Switch:
+	return get_device(device_id) as Switch
+
+
+func _switch_failure(device_id: String) -> ConfigResult:
+	if get_device(device_id) == null:
+		return ConfigResult.failure(ConfigResult.Reason.UNKNOWN_DEVICE)
+	return ConfigResult.failure(ConfigResult.Reason.WRONG_DEVICE_TYPE)
+
+
+func _switch_interface(port: String) -> Interface:
+	var i: Interface = interface_at(port)
+	if i != null and get_device(i.device_id) is Switch:
+		return i
+	return null
+
+
+func _switch_interface_failure(port: String) -> ConfigResult:
+	if interface_at(port) == null:
+		return ConfigResult.failure(ConfigResult.Reason.UNKNOWN_INTERFACE)
+	return ConfigResult.failure(ConfigResult.Reason.WRONG_DEVICE_TYPE)
+
+
+func _router_interface(port: String) -> Interface:
+	var i: Interface = interface_at(port)
+	if i != null and get_device(i.device_id) is Router:
+		return i
+	return null
+
+
+func _router_interface_failure(port: String) -> ConfigResult:
+	if interface_at(port) == null:
+		return ConfigResult.failure(ConfigResult.Reason.UNKNOWN_INTERFACE)
+	return ConfigResult.failure(ConfigResult.Reason.WRONG_DEVICE_TYPE)

@@ -234,6 +234,19 @@ func test_marker_is_shifted_by_prompt_width() -> void:
 	assert_str(r.output).is_equal(_caret(8))
 
 
+func test_handler_invalid_input_puts_the_marker_under_that_word() -> void:
+	var reg := CommandRegistry.new()
+	reg.register(G, "interface <interface>", func(_c: Variant, _a: Array, _n: bool) -> CliResult:
+		return CliResult.invalid_input(1))
+	reg.register(G, "shutdown", func(_c: Variant, _a: Array, negated: bool) -> CliResult:
+		return CliResult.invalid_input(1 if negated else 0), "", true)
+	var r: CliResult = reg.execute(G, "int  g0/1", null, 6)
+	assert_bool(r.ok).is_false()
+	assert_str(r.output).is_equal(" ".repeat(6 + 5) + "^\n" + INVALID)
+	assert_str(reg.execute(G, "shut", null, 6).output).is_equal(" ".repeat(6) + "^\n" + INVALID)
+	assert_str(reg.execute(G, "no shut", null, 6).output).is_equal(" ".repeat(6 + 3) + "^\n" + INVALID)
+
+
 func test_wrong_mode_is_invalid_input() -> void:
 	assert_str(_run(P, "hostname foo").output).is_equal(_caret(0))
 	assert_str(_run(G, "disable").output).is_equal(_caret(0))

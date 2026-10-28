@@ -86,6 +86,16 @@ static func _h_end(ctx: CliSession, _args: Array, _negated: bool) -> CliResult:
 # --- state ----------------------------------------------------------------------
 
 
+## For command handlers: the sim to change state through, and the device this
+## terminal is open on.
+func sim() -> NetworkSim:
+	return _sim
+
+
+func device_id() -> String:
+	return _device_id
+
+
 func mode() -> CliMode.Id:
 	return _stack[_stack.size() - 1].mode
 

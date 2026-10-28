@@ -18,8 +18,8 @@ func _ok(text: String = "") -> CliResult:
 	return CliResult.ok_output(text)
 
 
-## The context-entering and hostname commands arrive with task 1.12; these
-## stand-ins call the same session methods the real handlers will.
+## Stand-in context-entering commands keep these tests about the session alone;
+## the real ones (IosCommands) are tested in test_ios_commands.gd.
 func before_test() -> void:
 	_topo = TopoBuilder.new()
 	_router = _topo.add("router_2port", "R1")

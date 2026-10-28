@@ -118,6 +118,33 @@ parse tests, state tests, and (for `show`) golden output tests.
 | GLOBAL_CONFIG | `interface <interface>.<sub>` | routers only: creates the subinterface if needed, → INTERFACE_CONFIG |
 | INTERFACE_CONFIG | `encapsulation dot1Q <vlan-id>` | subinterfaces only: sets `dot1q_vlan` (router-on-a-stick) |
 
+`IosCommands` (`cli/ios_commands.gd`) registers these. `IosCommands.registry_for(device)`
+returns the shared command table for a router or a switch (null for hosts and
+servers). Router and switch tables are separate, so a command that only exists
+on the other kind (`switchport` on a router, `ip address` or `encapsulation` on
+a switch) is rejected by the parser with the `^` marker under its first word, as
+on IOS, and is absent from `?` help. Handlers change state only through
+`NetworkSim` config calls (`set_hostname`, `set_admin_up`, `set_ip_address`,
+`clear_ip_address`, `create_subinterface`, `set_dot1q_vlan`, `create_vlan`,
+`set_vlan_name`, `set_switchport_mode`, `set_access_vlan`), which return a
+`ConfigResult` and emit `config_changed` once per real change. A repeated
+command that changes nothing emits nothing.
+
+- A handler that finds the input unusable in context (an `interface` name the
+  device doesn't have, `encapsulation` on a physical port) returns
+  `CliResult.invalid_input(word_index)`; `CommandRegistry.execute` turns it into
+  the `^` marker under that typed word (`no` counts as word 0).
+- `interface <name>` on a router creates a missing subinterface (admin up, no
+  `dot1q_vlan` yet) if its physical parent exists. On a switch, or for a port
+  that doesn't exist, it is invalid input under the name.
+- `vlan <id>` creates the VLAN with IOS's default name (`VLAN0010`) and
+  enters VLAN_CONFIG; re-entering keeps the name. `switchport access vlan <id>`
+  does not create the VLAN: the port carries nothing until the VLAN exists
+  (`show vlan brief` will list it as inactive).
+- `ip address` / `no ip address` is router-only (also on subinterfaces).
+  `no ip address` takes optional trailing arguments, as on IOS.
+- Not yet implemented: any other `no` form (`no vlan`, `no hostname`).
+
 Hosts don't use IOS; their terminal gets a tiny shell: `ipconfig`,
 `ipconfig /set <ip> <mask> <gw>` (game-specific; refused with
 `Access is denied. Network settings are managed by IT.` when the host's
