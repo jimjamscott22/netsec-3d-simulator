@@ -15,7 +15,7 @@ enum CliMode { USER_EXEC, PRIV_EXEC, GLOBAL_CONFIG, INTERFACE_CONFIG, VLAN_CONFI
 | USER_EXEC | `R1>` | session start, `disable` | — (`exit` closes session) |
 | PRIV_EXEC | `R1#` | `enable` (asks for password if `enable_secret` set) | `disable` → USER_EXEC |
 | GLOBAL_CONFIG | `R1(config)#` | `configure terminal` | `exit` / `end` → PRIV_EXEC |
-| INTERFACE_CONFIG | `R1(config-if)#` | `interface <name>` | `exit` → GLOBAL_CONFIG, `end` → PRIV_EXEC |
+| INTERFACE_CONFIG | `R1(config-if)#` (`R1(config-subif)#` for a subinterface) | `interface <name>` | `exit` → GLOBAL_CONFIG, `end` → PRIV_EXEC |
 | VLAN_CONFIG | `S1(config-vlan)#` | `vlan <id>` (switches only) | same as above |
 | LINE_CONFIG | `R1(config-line)#` | `line vty 0 4`, `line console 0` | same as above |
 
@@ -25,6 +25,23 @@ enum CliMode { USER_EXEC, PRIV_EXEC, GLOBAL_CONFIG, INTERFACE_CONFIG, VLAN_CONFI
   `config-if`) switches context directly, as real IOS does.
 - `do <exec command>` runs a PRIV_EXEC command from any config mode.
 
+`CliSession` (`cli/cli_session.gd`) owns this: `submit(line)`, `prompt()`,
+`ctrl_z()`, `help(line)`, `complete(line)`, `history()` / `history_prev()` /
+`history_next()`. It is the `ctx` passed to command handlers, which call
+`enter_interface` / `enter_vlan` / `enter_line` to enter a sub-mode (from
+another sub-mode this replaces it instead of nesting). `CliSession.register_core`
+registers `enable`, `disable`, `configure terminal`, `exit`, `end` and the
+sub-mode fallbacks.
+
+- `enable` with an `enable_secret` set shows the `Password:` prompt
+  (`is_password_prompt()` tells the UI to mask input). A wrong password
+  re-prompts; the third wrong one prints `% Bad secrets` and stays in USER_EXEC.
+  Passwords never enter the history. `enable` in PRIV_EXEC is a no-op.
+- `exit` in USER/PRIV EXEC returns `ShellAction.CLOSE_SESSION`. `end` and
+  Ctrl+Z (config modes only) go straight to PRIV_EXEC.
+- History keeps the last 100 non-blank lines, skips consecutive duplicates,
+  and includes lines that failed.
+
 ## Token matching
 
 - Input is split on whitespace. Matching is case-insensitive for keywords.
@@ -33,10 +50,34 @@ enum CliMode { USER_EXEC, PRIV_EXEC, GLOBAL_CONFIG, INTERFACE_CONFIG, VLAN_CONFI
   `conf t`, `sh ip int br`, and `int g0/1` must all work.
 - Argument tokens are typed: `<interface>`, `<ipv4>`, `<mask>`, `<vlan-id 1-4094>`,
   `<word>`, `<line-range>`. Validation happens at parse time.
+  `<line-range>` takes two words (`line vty 0 4` → first 0, last 4, both 0-15,
+  last >= first); the other types take one. Typed args live in `cli/cli_arg.gd`
+  and the line splitter in `cli/cli_tokenizer.gd`.
 - `no` as the first token negates the command that follows, if that command is
   registered as negatable.
 - `?` lists valid next tokens with one-line help. `sh ?` and `show ip ?` both work.
 - Tab completes a unique prefix; if it's ambiguous, Tab does nothing.
+
+`CommandRegistry` (`cli/command_registry.gd`) implements this. Patterns are
+strings (`"ip address <ipv4> <mask>"`); handlers are
+`func(ctx, args: Array, negated: bool) -> CliResult`. Details worth knowing:
+
+- A negatable command (`register(..., negatable = true)`) also accepts
+  `no <pattern>`, and for that form its trailing arguments are optional
+  (`no ip address` and `no ip address 10.0.0.1 255.255.255.0` both work).
+- `set_fallback(sub_mode, global_mode)` makes the fallback mode's commands
+  work in the sub-mode. Keywords from both modes are matched together, so `i`
+  in `config-if` is ambiguous (`ip`, `interface`), as on IOS. A keyword defined
+  in both (`ip address` / `ip route`) follows both branches.
+- `no` and `do` are pseudo-keywords of the first word. `do` exists in config
+  modes only and runs the PRIV_EXEC table.
+- `execute(mode, line, ctx, prompt_width)` takes the prompt width so the `^`
+  sits under the typed character. A single unknown word in USER/PRIV EXEC gets
+  the `Translating "<word>"...` message instead of the `^` marker.
+- `help(mode, line)` takes the text before the `?` (trailing space lists next
+  tokens plus `<cr>`, no space lists completions); `complete(mode, line)` is Tab.
+  `describe(mode, "show ip", "text")` sets the help line for a keyword prefix;
+  the help passed to `register` is shown on the pattern's last token.
 
 ## Error output
 
@@ -76,6 +117,33 @@ parse tests, state tests, and (for `show`) golden output tests.
 | INTERFACE_CONFIG | `switchport access vlan <vlan-id>` | switches only |
 | GLOBAL_CONFIG | `interface <interface>.<sub>` | routers only: creates the subinterface if needed, → INTERFACE_CONFIG |
 | INTERFACE_CONFIG | `encapsulation dot1Q <vlan-id>` | subinterfaces only: sets `dot1q_vlan` (router-on-a-stick) |
+
+`IosCommands` (`cli/ios_commands.gd`) registers these. `IosCommands.registry_for(device)`
+returns the shared command table for a router or a switch (null for hosts and
+servers). Router and switch tables are separate, so a command that only exists
+on the other kind (`switchport` on a router, `ip address` or `encapsulation` on
+a switch) is rejected by the parser with the `^` marker under its first word, as
+on IOS, and is absent from `?` help. Handlers change state only through
+`NetworkSim` config calls (`set_hostname`, `set_admin_up`, `set_ip_address`,
+`clear_ip_address`, `create_subinterface`, `set_dot1q_vlan`, `create_vlan`,
+`set_vlan_name`, `set_switchport_mode`, `set_access_vlan`), which return a
+`ConfigResult` and emit `config_changed` once per real change. A repeated
+command that changes nothing emits nothing.
+
+- A handler that finds the input unusable in context (an `interface` name the
+  device doesn't have, `encapsulation` on a physical port) returns
+  `CliResult.invalid_input(word_index)`; `CommandRegistry.execute` turns it into
+  the `^` marker under that typed word (`no` counts as word 0).
+- `interface <name>` on a router creates a missing subinterface (admin up, no
+  `dot1q_vlan` yet) if its physical parent exists. On a switch, or for a port
+  that doesn't exist, it is invalid input under the name.
+- `vlan <id>` creates the VLAN with IOS's default name (`VLAN0010`) and
+  enters VLAN_CONFIG; re-entering keeps the name. `switchport access vlan <id>`
+  does not create the VLAN: the port carries nothing until the VLAN exists
+  (`show vlan brief` will list it as inactive).
+- `ip address` / `no ip address` is router-only (also on subinterfaces).
+  `no ip address` takes optional trailing arguments, as on IOS.
+- Not yet implemented: any other `no` form (`no vlan`, `no hostname`).
 
 Hosts don't use IOS; their terminal gets a tiny shell: `ipconfig`,
 `ipconfig /set <ip> <mask> <gw>` (game-specific; refused with

@@ -128,23 +128,24 @@ configure VLANs, a trunk and router-on-a-stick, and see PC-A ping PC-B.
 
 ### M1b — IOS CLI (M1 command set)
 
-- [ ] **1.9 Tokenizer + typed args** (`sim/cli/`): `<interface>`, `<ipv4>`,
+- [x] **1.9 Tokenizer + typed args** (`sim/cli/`): `<interface>`, `<ipv4>`,
   `<mask>`, `<vlan-id>`, `<word>`, `<line-range>`.
-- [ ] **1.10 `CommandRegistry`.** Per-mode token patterns, unique-prefix
+- [x] **1.10 `CommandRegistry`.** Per-mode token patterns, unique-prefix
   matching, `no` negation, `?` help, Tab completion, `do` from config modes,
   and the exact error strings from `ios-cli.md`.
   *Tests:* abbreviations; ambiguous prefix; incomplete; invalid with the `^`
   marker at the right column; `?` lists; Tab unique vs ambiguous.
-- [ ] **1.11 `CliSession`.** Mode stack, prompts using the live hostname,
+- [x] **1.11 `CliSession`.** Mode stack, prompts using the live hostname,
   `exit` / `end` / Ctrl+Z, sub-mode → global command context switch,
   history (up/down), `enable` password prompt.
   *Tests:* every mode transition in the `ios-cli.md` table; prompt after
   `hostname`.
-- [ ] **1.12 M1 config commands:** `enable`, `disable`, `configure terminal`,
-  `hostname`, `interface` (incl. subinterface creation), `[no] shutdown`,
-  `ip address` / `no ip address`, `vlan` + `name`, `switchport mode
-  access|trunk`, `switchport access vlan`, `encapsulation dot1Q`.
-  Router-only / switch-only / subinterface-only rules enforced.
+- [x] **1.12 M1 config commands:** `hostname`, `interface` (incl.
+  subinterface creation), `[no] shutdown`, `ip address` / `no ip address`,
+  `vlan` + `name`, `switchport mode access|trunk`, `switchport access vlan`,
+  `encapsulation dot1Q`. (`enable`, `disable`, `configure terminal`, `exit`,
+  `end` landed in 1.11 as `CliSession.register_core`.) Router-only /
+  switch-only / subinterface-only rules enforced.
   *Tests:* parse (with abbreviations), state change, wrong-device rejection.
 - [ ] **1.13 Formatters + show commands** (`cli/formatters.gd`):
   `show running-config`, `show ip interface brief`, `show vlan brief`.
@@ -445,4 +446,9 @@ Ideas that are out of scope until a milestone pulls them in:
 - Diegetic terminal rendered on the monitor mesh instead of full-screen zoom.
 - Score / timer / hint penalties.
 - Localization.
+- `NetworkSim.open_session(device_id)` (SPEC §3.3) is in no task yet. Add it
+  with 1.15 (once hosts have a shell) or 1.17; `IosCommands.registry_for` is
+  what it will use for routers and switches.
+- `no vlan <id>`, `no hostname`, `no interface <subif>` and other `no` forms
+  not needed by `m1_vlan_ping`.
 - More missions: DHCP starvation, ARP spoofing, firewall rules, phishing.
