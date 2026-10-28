@@ -147,7 +147,7 @@ configure VLANs, a trunk and router-on-a-stick, and see PC-A ping PC-B.
   `end` landed in 1.11 as `CliSession.register_core`.) Router-only /
   switch-only / subinterface-only rules enforced.
   *Tests:* parse (with abbreviations), state change, wrong-device rejection.
-- [ ] **1.13 Formatters + show commands** (`cli/formatters.gd`):
+- [x] **1.13 Formatters + show commands** (`cli/formatters.gd`):
   `show running-config`, `show ip interface brief`, `show vlan brief`.
   *Tests:* golden strings, including after config changes.
 - [ ] **1.14 `ping` command** for IOS devices (SPEC §5.2 format).

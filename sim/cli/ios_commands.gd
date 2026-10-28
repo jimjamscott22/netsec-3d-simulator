@@ -6,6 +6,7 @@ extends RefCounted
 ## rules the parser can't see (a subinterface-only command on a physical port)
 ## are checked in the handlers. Handlers change state only through NetworkSim.
 
+const PRIV: CliMode.Id = CliMode.Id.PRIV_EXEC
 const G: CliMode.Id = CliMode.Id.GLOBAL_CONFIG
 const IFACE: CliMode.Id = CliMode.Id.INTERFACE_CONFIG
 const VLAN: CliMode.Id = CliMode.Id.VLAN_CONFIG
@@ -55,6 +56,8 @@ static func build_switch_registry() -> CommandRegistry:
 	reg.describe(IFACE, "switchport mode", "Set trunking mode of the interface")
 	reg.describe(IFACE, "switchport access", "Set access mode characteristics of the interface")
 	reg.describe(IFACE, "switchport access vlan", "Set VLAN when interface is in access mode")
+	_add(reg, PRIV, "show vlan brief", _h_show_vlan_brief, "VTP all VLAN status in brief", false)
+	reg.describe(PRIV, "show vlan", "VTP VLAN status")
 	return reg
 
 
@@ -62,6 +65,11 @@ static func _register_common(reg: CommandRegistry) -> void:
 	_add(reg, G, "hostname <word>", _h_hostname, "Set system's network name", false)
 	_add(reg, G, "interface <interface>", _h_interface, "Select an interface to configure", false)
 	_add(reg, IFACE, "shutdown", _h_shutdown, "Shutdown the selected interface", true)
+	_add(reg, PRIV, "show running-config", _h_show_running_config, "Current operating configuration", false)
+	_add(reg, PRIV, "show ip interface brief", _h_show_ip_interface_brief, "Brief summary of IP status and configuration", false)
+	reg.describe(PRIV, "show", "Show running system information")
+	reg.describe(PRIV, "show ip", "IP information")
+	reg.describe(PRIV, "show ip interface", "IP interface status and configuration")
 
 
 ## Command tables are built from code, so a rejected pattern is a programming
@@ -145,3 +153,15 @@ static func _h_mode_trunk(ctx: CliSession, _args: Array, _negated: bool) -> CliR
 
 static func _h_access_vlan(ctx: CliSession, args: Array, _negated: bool) -> CliResult:
 	return _rejected(ctx.sim().set_access_vlan(_port(ctx), args[0]), 0)
+
+
+static func _h_show_running_config(ctx: CliSession, _args: Array, _negated: bool) -> CliResult:
+	return CliResult.ok_output(CliFormatters.running_config(ctx.sim().get_device(ctx.device_id())))
+
+
+static func _h_show_ip_interface_brief(ctx: CliSession, _args: Array, _negated: bool) -> CliResult:
+	return CliResult.ok_output(CliFormatters.ip_interface_brief(ctx.sim(), ctx.device_id()))
+
+
+static func _h_show_vlan_brief(ctx: CliSession, _args: Array, _negated: bool) -> CliResult:
+	return CliResult.ok_output(CliFormatters.vlan_brief(ctx.sim().get_device(ctx.device_id())))
