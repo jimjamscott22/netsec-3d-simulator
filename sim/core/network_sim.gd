@@ -179,6 +179,22 @@ func ping(src_id: String, dst_ip: String) -> PingResult:
 	return Resolver.ping(self, src_id, dst_ip)
 
 
+## A terminal on a device: the IOS CLI for a router or switch, the Windows-style
+## shell for a PC. Null for an unknown id and for a server (its shell arrives
+## with M2).
+func open_session(device_id: String) -> CliSession:
+	var d: Device = get_device(device_id)
+	if d == null:
+		return null
+	var ios: CommandRegistry = IosCommands.registry_for(d)
+	if ios != null:
+		return CliSession.new(self, device_id, ios)
+	var host: CommandRegistry = HostCommands.registry_for(d)
+	if host != null:
+		return HostSession.new(self, device_id, host)
+	return null
+
+
 # --- configuration (the CLI's only way to change a device) ---------------------
 # Each call validates, changes state, then emits `config_changed` once; a valid
 # request that changes nothing emits nothing and returns `changed = false`.
@@ -335,6 +351,32 @@ func set_access_vlan(port: String, vlan_id: int) -> ConfigResult:
 		return ConfigResult.success(false)
 	i.access_vlan = vlan_id
 	events.config_changed.emit(i.device_id)
+	return ConfigResult.success(true)
+
+
+## PC shell `ipconfig /set`. A host the scenario locked refuses every change
+## (checked first, so a refusal says nothing about the values). The gateway need
+## not be on the host's subnet: WRONG_SUBNET is a fault the player can make.
+func set_host_network(device_id: String, ip: String, mask: String, gateway: String) -> ConfigResult:
+	var d: Device = get_device(device_id)
+	if d == null:
+		return ConfigResult.failure(ConfigResult.Reason.UNKNOWN_DEVICE)
+	if not d is Host:
+		return ConfigResult.failure(ConfigResult.Reason.WRONG_DEVICE_TYPE)
+	var host: Host = d
+	if host.locked:
+		return ConfigResult.failure(ConfigResult.Reason.LOCKED)
+	var nic: Interface = host.nic()
+	if nic == null:
+		return ConfigResult.failure(ConfigResult.Reason.UNKNOWN_INTERFACE)
+	if not IPv4.is_valid(ip) or IPv4.parse_mask(mask) == IPv4.INVALID or not IPv4.is_valid(gateway):
+		return ConfigResult.failure(ConfigResult.Reason.INVALID_VALUE)
+	if nic.ip == ip and nic.mask == mask and host.gateway == gateway:
+		return ConfigResult.success(false)
+	nic.ip = ip
+	nic.mask = mask
+	host.gateway = gateway
+	events.config_changed.emit(host.id)
 	return ConfigResult.success(true)
 
 

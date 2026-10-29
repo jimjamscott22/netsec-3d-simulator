@@ -152,7 +152,7 @@ configure VLANs, a trunk and router-on-a-stick, and see PC-A ping PC-B.
   *Tests:* golden strings, including after config changes.
 - [x] **1.14 `ping` command** for IOS devices (SPEC §5.2 format).
   *Tests:* success and failure goldens.
-- [ ] **1.15 PC mini shell:** `ipconfig`, `ipconfig /set`, `ping`, `help`,
+- [x] **1.15 PC mini shell:** `ipconfig`, `ipconfig /set`, `ping`, `help`,
   with Windows-style ping output. `ipconfig /set` is refused on a host with
   `locked: true`.
   *Tests:* parse, state change, locked-host refusal, output goldens.
@@ -446,9 +446,6 @@ Ideas that are out of scope until a milestone pulls them in:
 - Diegetic terminal rendered on the monitor mesh instead of full-screen zoom.
 - Score / timer / hint penalties.
 - Localization.
-- `NetworkSim.open_session(device_id)` (SPEC §3.3) is in no task yet. Add it
-  with 1.15 (once hosts have a shell) or 1.17; `IosCommands.registry_for` is
-  what it will use for routers and switches.
 - `no vlan <id>`, `no hostname`, `no interface <subif>` and other `no` forms
   not needed by `m1_vlan_ping`.
 - More missions: DHCP starvation, ARP spoofing, firewall rules, phishing.

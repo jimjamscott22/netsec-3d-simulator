@@ -53,6 +53,158 @@ func test_ping_failure_text_never_reveals_the_reason() -> void:
 		assert_str(got).override_failure_message(PingResult.reason_name(reason)).is_equal(want)
 
 
+# --- ipconfig ---------------------------------------------------------------
+
+
+func test_ipconfig_golden() -> void:
+	var t := TopoBuilder.stick()
+	assert_str(CliFormatters.ipconfig(t.sim, t.sim.get_device("PC-A"))).is_equal(_g([
+		"Windows IP Configuration",
+		"",
+		"Ethernet adapter Ethernet0:",
+		"",
+		"   Connection-specific DNS Suffix  . :",
+		"   IPv4 Address. . . . . . . . . . . : 192.168.10.10",
+		"   Subnet Mask . . . . . . . . . . . : 255.255.255.0",
+		"   Default Gateway . . . . . . . . . : 192.168.10.1",
+	]))
+
+
+func test_ipconfig_after_the_addressing_changes() -> void:
+	var t := TopoBuilder.stick()
+	t.set_host("PC-A", "10.1.2.3", "255.255.0.0", "10.1.0.1")
+	var rows: PackedStringArray = _lines(CliFormatters.ipconfig(t.sim, t.sim.get_device("PC-A")))
+	assert_array(rows.slice(5)).is_equal([
+		"   IPv4 Address. . . . . . . . . . . : 10.1.2.3",
+		"   Subnet Mask . . . . . . . . . . . : 255.255.0.0",
+		"   Default Gateway . . . . . . . . . : 10.1.0.1",
+	])
+
+
+func test_ipconfig_without_a_gateway_or_address_leaves_the_fields_blank() -> void:
+	var t := TopoBuilder.stick()
+	t.set_host("PC-A", "192.168.10.10", "255.255.255.0", "")
+	assert_str(_lines(CliFormatters.ipconfig(t.sim, t.sim.get_device("PC-A")))[7]).is_equal("   Default Gateway . . . . . . . . . :")
+	t.set_host("PC-A", "", "", "")
+	assert_array(_lines(CliFormatters.ipconfig(t.sim, t.sim.get_device("PC-A"))).slice(5)).is_equal([
+		"   IPv4 Address. . . . . . . . . . . :",
+		"   Subnet Mask . . . . . . . . . . . :",
+		"   Default Gateway . . . . . . . . . :",
+	])
+
+
+func test_ipconfig_media_disconnected_golden() -> void:
+	var t := TopoBuilder.stick()
+	t.sim.disconnect_link("PC-A:Ethernet0")
+	assert_str(CliFormatters.ipconfig(t.sim, t.sim.get_device("PC-A"))).is_equal(_g([
+		"Windows IP Configuration",
+		"",
+		"Ethernet adapter Ethernet0:",
+		"",
+		"   Media State . . . . . . . . . . . : Media disconnected",
+		"   Connection-specific DNS Suffix  . :",
+	]))
+
+
+func test_ipconfig_reads_disconnected_when_the_switch_port_is_shut() -> void:
+	var t := TopoBuilder.stick()
+	t.sim.set_admin_up("S1:Fa0/1", false)
+	assert_str(CliFormatters.ipconfig(t.sim, t.sim.get_device("PC-A"))).contains("Media disconnected").not_contains("192.168.10.10")
+
+
+# --- Windows ping -------------------------------------------------------------
+
+
+func test_windows_ping_direct_golden() -> void:
+	assert_str(CliFormatters.windows_ping("192.168.10.20", PingResult.ok(["PC-A", "PC-B"]))).is_equal(_g([
+		"Pinging 192.168.10.20 with 32 bytes of data:",
+		"Reply from 192.168.10.20: bytes=32 time<1ms TTL=128",
+		"Reply from 192.168.10.20: bytes=32 time<1ms TTL=128",
+		"Reply from 192.168.10.20: bytes=32 time<1ms TTL=128",
+		"Reply from 192.168.10.20: bytes=32 time<1ms TTL=128",
+		"",
+		"Ping statistics for 192.168.10.20:",
+		"    Packets: Sent = 4, Received = 4, Lost = 0 (0% loss),",
+		"Approximate round trip times in milli-seconds:",
+		"    Minimum = 0ms, Maximum = 0ms, Average = 0ms",
+	]))
+
+
+func test_windows_ping_through_a_router_golden() -> void:
+	assert_str(CliFormatters.windows_ping("192.168.20.10", PingResult.ok(["PC-A", "R1", "PC-B"]))).is_equal(_g([
+		"Pinging 192.168.20.10 with 32 bytes of data:",
+		"Reply from 192.168.20.10: bytes=32 time=1ms TTL=127",
+		"Reply from 192.168.20.10: bytes=32 time=1ms TTL=127",
+		"Reply from 192.168.20.10: bytes=32 time=1ms TTL=127",
+		"Reply from 192.168.20.10: bytes=32 time=1ms TTL=127",
+		"",
+		"Ping statistics for 192.168.20.10:",
+		"    Packets: Sent = 4, Received = 4, Lost = 0 (0% loss),",
+		"Approximate round trip times in milli-seconds:",
+		"    Minimum = 1ms, Maximum = 1ms, Average = 1ms",
+	]))
+
+
+func test_windows_ping_time_and_ttl_follow_the_routers_crossed() -> void:
+	var text: String = CliFormatters.windows_ping("10.0.0.9", PingResult.ok(["PC-A", "R1", "R2", "PC-B"]))
+	assert_str(text).contains("time=2ms TTL=126").ends_with("Minimum = 2ms, Maximum = 2ms, Average = 2ms")
+
+
+func test_windows_ping_to_itself_reads_like_a_local_reply() -> void:
+	assert_str(CliFormatters.windows_ping("10.0.0.1", PingResult.ok(["PC-A"]))).contains("time<1ms TTL=128").contains("Received = 4")
+
+
+func test_windows_ping_failure_golden() -> void:
+	assert_str(CliFormatters.windows_ping("10.9.9.9", PingResult.fail(PingResult.FailReason.NO_GATEWAY, "PC-A", ["PC-A"]))).is_equal(_g([
+		"Pinging 10.9.9.9 with 32 bytes of data:",
+		"Request timed out.",
+		"Request timed out.",
+		"Request timed out.",
+		"Request timed out.",
+		"",
+		"Ping statistics for 10.9.9.9:",
+		"    Packets: Sent = 4, Received = 0, Lost = 4 (100% loss),",
+	]))
+
+
+func test_windows_ping_failure_text_never_reveals_the_reason() -> void:
+	var want: String = CliFormatters.windows_ping("10.9.9.9", PingResult.fail(PingResult.FailReason.NO_ROUTE, "PC-A"))
+	for reason in PingResult.FailReason.values():
+		if reason == PingResult.FailReason.NONE:
+			continue
+		var got: String = CliFormatters.windows_ping("10.9.9.9", PingResult.fail(reason, "PC-A", ["PC-A"]))
+		assert_str(got).override_failure_message(PingResult.reason_name(reason)).is_equal(want)
+
+
+# --- host help ----------------------------------------------------------------
+
+
+func test_host_help_golden() -> void:
+	assert_str(CliFormatters.host_help()).is_equal(_g([
+		"For more information on a specific command, type HELP command-name",
+		"IPCONFIG       Displays the IP configuration of this computer.",
+		"PING           Tests the connection to another computer.",
+		"HELP           Provides help information for commands.",
+		"EXIT           Quits the command prompt.",
+	]))
+
+
+func test_host_help_for_a_command_and_for_an_unknown_one() -> void:
+	assert_str(CliFormatters.host_help_for("IPCONFIG")).is_equal(_g([
+		"Displays the IP configuration of this computer.",
+		"",
+		"ipconfig",
+		"ipconfig /set <ip> <mask> <gateway>",
+	]))
+	assert_str(CliFormatters.host_help_for("dir")).is_equal('This command is not supported by the help utility.  Try "dir /?".')
+
+
+func test_host_usage_lines() -> void:
+	assert_str(CliFormatters.host_usage("ping")).is_equal("Usage: ping <ip address>")
+	assert_str(CliFormatters.host_usage("IPCONFIG")).is_equal("Usage: ipconfig\n       ipconfig /set <ip> <mask> <gateway>")
+	assert_str(CliFormatters.host_usage("dir")).is_empty()
+
+
 # --- show ip interface brief ------------------------------------------------
 
 

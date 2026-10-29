@@ -247,6 +247,36 @@ func test_handler_invalid_input_puts_the_marker_under_that_word() -> void:
 	assert_str(reg.execute(G, "no shut", null, 6).output).is_equal(" ".repeat(6 + 3) + "^\n" + INVALID)
 
 
+func test_full_names_only_when_abbreviations_are_off() -> void:
+	var reg := CommandRegistry.new()
+	reg.allow_abbreviations = false
+	reg.register(P, "ipconfig", _h("ipconfig"))
+	reg.register(P, "ipconfig /set <ipv4>", _h("set"))
+	reg.register(P, "ping <word>", _h("ping"))
+	assert_str(reg.execute(P, "ipconfig").output).is_equal("ipconfig")
+	assert_str(reg.execute(P, "IPCONFIG /SET 10.0.0.1").output).is_equal("set")
+	assert_str(reg.execute(P, "ping x").output).is_equal("ping")
+	assert_str(reg.execute(P, "ipc", null, 2).output).is_equal("Translating \"ipc\"... % Unknown command or computer name, or unable to find computer address")
+	assert_str(reg.execute(P, "ipconfig /s 10.0.0.1", null, 2).output).is_equal(" ".repeat(2 + 9) + "^\n" + INVALID)
+	assert_str(reg.execute(P, "pin x", null, 2).output).is_equal(" ".repeat(2) + "^\n" + INVALID)
+
+
+func test_abbreviations_are_on_by_default() -> void:
+	assert_bool(CommandRegistry.new().allow_abbreviations).is_true()
+
+
+func test_help_and_tab_still_complete_prefixes_when_abbreviations_are_off() -> void:
+	var reg := CommandRegistry.new()
+	reg.allow_abbreviations = false
+	reg.register(P, "ipconfig", _h("ipconfig"), "Show addresses")
+	reg.register(P, "ipconfig /set <ipv4>", _h("set"))
+	reg.register(P, "ping <word>", _h("ping"))
+	assert_str(reg.complete(P, "ipc")).is_equal("ipconfig ")
+	assert_str(reg.complete(P, "ipconfig /s")).is_equal("ipconfig /set ")
+	assert_str(reg.complete(P, "p")).is_equal("ping ")
+	assert_str(reg.help(P, "ip")).is_equal("ipconfig")
+
+
 func test_wrong_mode_is_invalid_input() -> void:
 	assert_str(_run(P, "hostname foo").output).is_equal(_caret(0))
 	assert_str(_run(G, "disable").output).is_equal(_caret(0))

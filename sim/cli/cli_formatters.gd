@@ -29,6 +29,18 @@ const PING_COUNT: int = 5
 const PING_SIZE: int = 100
 const PING_TIMEOUT_SECONDS: int = 2
 
+const WIN_PING_COUNT: int = 4
+const WIN_PING_BYTES: int = 32
+const WIN_PING_TTL: int = 128
+
+## Windows-style shell. Each entry: summary for `help`, then usage lines.
+const HOST_COMMAND_HELP: Dictionary = {
+	"ipconfig": ["Displays the IP configuration of this computer.", ["ipconfig", "ipconfig /set <ip> <mask> <gateway>"]],
+	"ping": ["Tests the connection to another computer.", ["ping <ip address>"]],
+	"help": ["Provides help information for commands.", ["help", "help <command>"]],
+	"exit": ["Quits the command prompt.", ["exit"]],
+}
+
 
 ## Physical interfaces in socket order, each followed by its subinterfaces
 ## (lowest tag first). This is the "canonical order" for show output.
@@ -69,6 +81,81 @@ static func ping_output(dst_ip: String, result: PingResult) -> String:
 		lines.append(".".repeat(PING_COUNT))
 		lines.append("Success rate is 0 percent (0/%d)" % PING_COUNT)
 	return "\n".join(lines)
+
+
+# --- Windows-style host shell ---------------------------------------------------
+
+
+## `ipconfig`. A NIC with no cable (or a shut switch port) reads "Media
+## disconnected" and hides its addresses, as Windows does.
+static func ipconfig(sim: NetworkSim, host: Host) -> String:
+	var nic: Interface = host.nic()
+	var lines: PackedStringArray = ["Windows IP Configuration", ""]
+	lines.append("Ethernet adapter %s:" % (nic.full_name if nic != null else "Ethernet0"))
+	lines.append("")
+	if nic == null or not sim.is_oper_up(nic.port()):
+		lines.append(_win_field("Media State . . . . . . . . . . . ", "Media disconnected"))
+		lines.append(_win_field("Connection-specific DNS Suffix  . ", ""))
+		return "\n".join(lines)
+	lines.append(_win_field("Connection-specific DNS Suffix  . ", ""))
+	lines.append(_win_field("IPv4 Address. . . . . . . . . . . ", nic.ip if nic.has_address() else ""))
+	lines.append(_win_field("Subnet Mask . . . . . . . . . . . ", nic.mask if nic.has_address() else ""))
+	lines.append(_win_field("Default Gateway . . . . . . . . . ", host.gateway))
+	return "\n".join(lines)
+
+
+static func _win_field(label: String, value: String) -> String:
+	return "   " + label + ":" + ((" " + value) if not value.is_empty() else "")
+
+
+## Windows `ping`. All or nothing, like the IOS one, and the failure reason is
+## never shown. Times and TTL come from the routers crossed (hops minus the two
+## end hosts): under 1 ms and TTL 128 with none, then +1 ms and -1 TTL each.
+static func windows_ping(dst_ip: String, result: PingResult) -> String:
+	var lines: PackedStringArray = ["Pinging %s with %d bytes of data:" % [dst_ip, WIN_PING_BYTES]]
+	var routers: int = maxi(result.hops.size() - 2, 0)
+	for n in WIN_PING_COUNT:
+		if result.success:
+			var elapsed: String = "time<1ms" if routers == 0 else "time=%dms" % routers
+			lines.append("Reply from %s: bytes=%d %s TTL=%d" % [dst_ip, WIN_PING_BYTES, elapsed, WIN_PING_TTL - routers])
+		else:
+			lines.append("Request timed out.")
+	var received: int = WIN_PING_COUNT if result.success else 0
+	lines.append("")
+	lines.append("Ping statistics for %s:" % dst_ip)
+	lines.append("    Packets: Sent = %d, Received = %d, Lost = %d (%d%% loss)," % [
+		WIN_PING_COUNT, received, WIN_PING_COUNT - received, 0 if result.success else 100
+	])
+	if result.success:
+		lines.append("Approximate round trip times in milli-seconds:")
+		lines.append("    Minimum = %dms, Maximum = %dms, Average = %dms" % [routers, routers, routers])
+	return "\n".join(lines)
+
+
+## `help` with no topic: the command list.
+static func host_help() -> String:
+	var lines: PackedStringArray = ["For more information on a specific command, type HELP command-name"]
+	for name: String in HOST_COMMAND_HELP:
+		lines.append(name.to_upper().rpad(15) + str(HOST_COMMAND_HELP[name][0]))
+	return "\n".join(lines)
+
+
+## `help <command>`, or the Windows line for a command it doesn't know.
+static func host_help_for(topic: String) -> String:
+	var key: String = topic.to_lower()
+	if not HOST_COMMAND_HELP.has(key):
+		return 'This command is not supported by the help utility.  Try "%s /?".' % topic
+	var entry: Array = HOST_COMMAND_HELP[key]
+	return "%s\n\n%s" % [entry[0], "\n".join(PackedStringArray(entry[1]))]
+
+
+## One-line usage shown when a command is given arguments it can't use.
+static func host_usage(command: String) -> String:
+	var key: String = command.to_lower()
+	if not HOST_COMMAND_HELP.has(key):
+		return ""
+	var usage: Array = HOST_COMMAND_HELP[key][1]
+	return "Usage: " + "\n       ".join(PackedStringArray(usage))
 
 
 # --- show ip interface brief ------------------------------------------------------

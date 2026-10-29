@@ -10,6 +10,8 @@ enum Reason {
 	WRONG_DEVICE_TYPE,
 	NOT_SUBINTERFACE,
 	INVALID_VALUE,
+	## The scenario locked this host's addressing.
+	LOCKED,
 }
 
 var ok: bool = false

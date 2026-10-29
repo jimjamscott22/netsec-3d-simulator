@@ -281,3 +281,81 @@ func test_switchport_rejections() -> void:
 	_assert_fails(t.sim.set_access_vlan("S1:Fa0/1", 0), ConfigResult.Reason.INVALID_VALUE)
 	_assert_fails(t.sim.set_access_vlan("S1:Fa0/1", 4095), ConfigResult.Reason.INVALID_VALUE)
 	assert_int(t.sim.interface_at("S1:Fa0/1").access_vlan).is_equal(1)
+
+
+# --- host addressing (PC shell `ipconfig /set`) -------------------------------
+
+
+func _host_ip() -> String:
+	return "192.168.10.10"
+
+
+func test_set_host_network() -> void:
+	var t := _topo()
+	var r: ConfigResult = t.sim.set_host_network("PC-A", _host_ip(), "255.255.255.0", "192.168.10.1")
+	assert_bool(r.ok and r.changed).is_true()
+	var pc: Host = t.sim.get_device("PC-A")
+	assert_str(pc.nic().ip).is_equal(_host_ip())
+	assert_str(pc.nic().mask).is_equal("255.255.255.0")
+	assert_str(pc.gateway).is_equal("192.168.10.1")
+	assert_array(_configs).is_equal(["PC-A"])
+
+
+func test_set_host_network_repeat_is_silent() -> void:
+	var t := _topo()
+	t.sim.set_host_network("PC-A", _host_ip(), "255.255.255.0", "192.168.10.1")
+	_configs.clear()
+	var r: ConfigResult = t.sim.set_host_network("PC-A", _host_ip(), "255.255.255.0", "192.168.10.1")
+	assert_bool(r.ok).is_true()
+	assert_bool(r.changed).is_false()
+	assert_array(_configs).is_empty()
+	assert_bool(t.sim.set_host_network("PC-A", _host_ip(), "255.255.255.0", "192.168.10.2").changed).is_true()
+	assert_array(_configs).has_size(1)
+
+
+func test_set_host_network_allows_a_gateway_off_the_hosts_subnet() -> void:
+	var t := _topo()
+	var r: ConfigResult = t.sim.set_host_network("PC-A", _host_ip(), "255.255.255.0", "10.9.9.9")
+	assert_bool(r.ok).is_true()
+	assert_str((t.sim.get_device("PC-A") as Host).gateway).is_equal("10.9.9.9")
+
+
+func test_set_host_network_rejections() -> void:
+	var t := _topo()
+	_assert_fails(t.sim.set_host_network("nope", _host_ip(), "255.255.255.0", "192.168.10.1"), ConfigResult.Reason.UNKNOWN_DEVICE)
+	_assert_fails(t.sim.set_host_network("R1", _host_ip(), "255.255.255.0", "192.168.10.1"), ConfigResult.Reason.WRONG_DEVICE_TYPE)
+	_assert_fails(t.sim.set_host_network("S1", _host_ip(), "255.255.255.0", "192.168.10.1"), ConfigResult.Reason.WRONG_DEVICE_TYPE)
+	_assert_fails(t.sim.set_host_network("PC-A", "300.1.1.1", "255.255.255.0", "192.168.10.1"), ConfigResult.Reason.INVALID_VALUE)
+	_assert_fails(t.sim.set_host_network("PC-A", _host_ip(), "255.0.255.0", "192.168.10.1"), ConfigResult.Reason.INVALID_VALUE)
+	_assert_fails(t.sim.set_host_network("PC-A", _host_ip(), "255.255.255.0", "gateway"), ConfigResult.Reason.INVALID_VALUE)
+	_assert_fails(t.sim.set_host_network("PC-A", _host_ip(), "255.255.255.0", ""), ConfigResult.Reason.INVALID_VALUE)
+	assert_bool((t.sim.get_device("PC-A") as Host).nic().has_address()).is_false()
+
+
+func test_a_locked_host_refuses_addressing_changes() -> void:
+	var t := _topo()
+	var pc: Host = t.sim.get_device("PC-A")
+	t.set_host("PC-A", "192.168.10.10", "255.255.255.0", "192.168.10.1")
+	pc.locked = true
+	_assert_fails(t.sim.set_host_network("PC-A", "10.0.0.5", "255.0.0.0", "10.0.0.1"), ConfigResult.Reason.LOCKED)
+	assert_str(pc.nic().ip).is_equal("192.168.10.10")
+	assert_str(pc.nic().mask).is_equal("255.255.255.0")
+	assert_str(pc.gateway).is_equal("192.168.10.1")
+
+
+func test_a_locked_host_says_locked_before_it_checks_the_values() -> void:
+	var t := _topo()
+	(t.sim.get_device("PC-A") as Host).locked = true
+	_assert_fails(t.sim.set_host_network("PC-A", "junk", "junk", "junk"), ConfigResult.Reason.LOCKED)
+
+
+func test_no_other_config_call_can_readdress_a_host() -> void:
+	var t := _topo()
+	t.set_host("PC-A", "192.168.10.10", "255.255.255.0", "192.168.10.1")
+	(t.sim.get_device("PC-A") as Host).locked = true
+	_assert_fails(t.sim.set_ip_address("PC-A:Ethernet0", "10.0.0.5", "255.0.0.0"), ConfigResult.Reason.WRONG_DEVICE_TYPE)
+	_assert_fails(t.sim.clear_ip_address("PC-A:Ethernet0"), ConfigResult.Reason.WRONG_DEVICE_TYPE)
+	_assert_fails(t.sim.set_admin_up("PC-A:Ethernet0", false), ConfigResult.Reason.WRONG_DEVICE_TYPE)
+	_assert_fails(t.sim.set_hostname("PC-A", "Other"), ConfigResult.Reason.WRONG_DEVICE_TYPE)
+	assert_str((t.sim.get_device("PC-A") as Host).nic().ip).is_equal("192.168.10.10")
+	assert_bool(t.sim.interface_at("PC-A:Ethernet0").admin_up).is_true()

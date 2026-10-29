@@ -146,10 +146,43 @@ command that changes nothing emits nothing.
   `no ip address` takes optional trailing arguments, as on IOS.
 - Not yet implemented: any other `no` form (`no vlan`, `no hostname`).
 
-Hosts don't use IOS; their terminal gets a tiny shell: `ipconfig`,
-`ipconfig /set <ip> <mask> <gw>` (game-specific; refused with
-`Access is denied. Network settings are managed by IT.` when the host's
-scenario config sets `locked: true`), and `ping <ip>`.
+### PC shell (M1)
+
+Hosts don't use IOS; a PC's terminal is a Windows-style shell. `NetworkSim.open_session(device_id)`
+returns the right session: a `CliSession` for a router or switch, a `HostSession`
+(a `CliSession` subclass, so the UI binds to one type and gets history, `?` and
+Tab) for a PC, and null for a server (its Linux shell arrives in M2) or an
+unknown id. `HostCommands.registry_for(device)` is the PC command table.
+
+- **Prompt** `C:\>`. Commands run by their **full name only**, case-insensitive
+  (`ipc` is not `ipconfig`), as in Windows; `?` and Tab still complete prefixes.
+  The tokenizer accepts a double-quoted argument.
+- **Errors are Windows-style, not the IOS `^` marker:** an unknown first word is
+  `'foo' is not recognized as an internal or external command,` /
+  `operable program or batch file.`; a known command with unusable arguments prints
+  its `Usage:` lines (`CliFormatters.host_usage`).
+- `ipconfig`: adapter name, then DNS suffix (blank), `IPv4 Address`, `Subnet Mask`,
+  `Default Gateway`; blank values stay blank. A NIC that is not oper-up (no cable,
+  or the switch port is shut) prints `Media State . . . : Media disconnected`
+  and hides its addresses.
+- `ipconfig /set <ip> <mask> <gw>` (game-specific, prints `Ok.`) calls
+  `NetworkSim.set_host_network`. A host whose scenario sets `locked: true`
+  refuses it with `Access is denied. Network settings are managed by IT.`
+  (`ConfigResult.Reason.LOCKED`). The sim enforces this, and checks it before it
+  looks at the values. The gateway may be off the host's subnet (that is the
+  `WRONG_SUBNET` fault). No other config call can readdress a host.
+- `ping <ip>` is Windows-style: `Pinging ... with 32 bytes of data:`, four
+  `Reply from <ip>: bytes=32 time<1ms TTL=128` lines or four `Request timed out.`,
+  a blank line, then `Ping statistics for <ip>:` and the packet line (plus the
+  round-trip lines when it succeeded). All or nothing, and the `FailReason` is
+  never shown. Time and TTL come from the routers crossed (`hops` minus the two
+  end hosts): `time<1ms` / TTL 128 with none, then `time=Nms` / TTL `128-N`. The
+  reply lines are lines 2 to 5, so the terminal can reveal them one at a time. A
+  target that is not a dotted quad prints `Ping request could not find host X.
+  Please check the name and try again.`; `ping` alone prints its usage.
+- `help` lists the commands; `help <command>` explains one (an unknown one gets
+  `This command is not supported by the help utility.  Try "x /?".`). `exit`
+  returns `ShellAction.CLOSE_SESSION`.
 
 ### M4 — Remote access and routing (post-v1)
 
