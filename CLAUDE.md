@@ -14,8 +14,9 @@ interface-name helpers, device model catalog, `NetworkSim` with cabling and
 events, `PingResult`/`FailReason`, and the L2/L3 resolvers behind `ping`. M1b is
 under way: the tokenizer, `CommandRegistry`, `CliSession` and the M1 config
 commands (`IosCommands`, tasks 1.9 to 1.12), the `show` formatters and
-commands (`CliFormatters`, task 1.13) and the IOS `ping` command (task 1.14)
-are done. The PC mini shell (task 1.15) is next.
+commands (`CliFormatters`, task 1.13), the IOS `ping` command (task 1.14) and
+the PC mini shell (`HostCommands`/`HostSession`, task 1.15; M1b is complete) are
+done. The scenario validator (task 1.16) is next.
 
 ## Source of truth (read before working)
 

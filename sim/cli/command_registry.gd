@@ -36,6 +36,9 @@ enum _Hit { NONE, ONE, AMBIGUOUS }
 
 ## Host and server shells accept a double-quoted argument; the IOS CLI doesn't.
 var allow_quotes: bool = false
+## IOS accepts any unique prefix of a keyword. The host shells run commands only
+## by their full name, as Windows does; `?` and Tab still complete prefixes.
+var allow_abbreviations: bool = true
 
 var _roots: Dictionary = {}  # CliMode.Id -> _Node
 var _no_roots: Dictionary = {}  # same, negatable commands only
@@ -305,7 +308,7 @@ func _walk(mode: CliMode.Id, tokens: Array[CliToken], limit: int) -> _Walk:
 	while i < limit:
 		var tok: CliToken = tokens[i]
 		var extras: Array[String] = _extras(w)
-		var hit: Array = _resolve(tok.text.to_lower(), _keywords_at(w).keys())
+		var hit: Array = _resolve(tok.text.to_lower(), _keywords_at(w).keys(), allow_abbreviations)
 		if hit[0] == _Hit.AMBIGUOUS:
 			w.status = CliMatch.Status.AMBIGUOUS
 			w.error_col = tok.start
@@ -414,9 +417,11 @@ func _description(node: _Node) -> String:
 
 
 ## Exact keyword wins, else a unique prefix. Returns [_Hit, word].
-func _resolve(word: String, candidates: Array) -> Array:
+func _resolve(word: String, candidates: Array, prefixes: bool = true) -> Array:
 	if candidates.has(word):
 		return [_Hit.ONE, word]
+	if not prefixes:
+		return [_Hit.NONE, ""]
 	var found: Array = candidates.filter(func(c: String) -> bool: return c.begins_with(word))
 	if found.is_empty():
 		return [_Hit.NONE, ""]
