@@ -30,6 +30,13 @@ static func has_model(model: String) -> bool:
 	return _MODELS.has(model)
 
 
+## The Device.Kind a model builds, or -1 for an unknown model.
+static func kind_of(model: String) -> int:
+	if not _MODELS.has(model):
+		return -1
+	return _MODELS[model]["kind"]
+
+
 static func interface_names(model: String) -> Array[String]:
 	var names: Array[String] = []
 	if not _MODELS.has(model):

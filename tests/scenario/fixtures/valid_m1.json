@@ -1,0 +1,55 @@
+{
+  "schema_version": 1,
+  "id": "m1_vlan_ping",
+  "sequence": 1,
+  "title": "Day One: Get Them Talking",
+  "briefing": "Accounting (PC-A) and Sales (PC-B) can't reach each other. The router is racked and cabled to the switch. Make PC-A ping PC-B.",
+  "devices": [
+    { "id": "R1", "type": "router", "model": "router_2port", "hostname": "Router", "rack": "rack_a", "slot": 1, "config": {} },
+    { "id": "S1", "type": "switch", "model": "switch_24", "hostname": "Switch", "rack": "rack_a", "slot": 3,
+      "config": { "vlans": { "10": "ACCOUNTING" },
+                  "interfaces": { "Fa0/1": { "mode": "access", "access_vlan": 10 } } } },
+    { "id": "PC-A", "type": "host", "model": "pc", "hostname": "PC-A", "desk": "desk_1",
+      "config": { "ip": "192.168.10.10", "mask": "255.255.255.0", "gateway": "192.168.10.1", "locked": true } },
+    { "id": "PC-B", "type": "host", "model": "pc", "hostname": "PC-B", "desk": "desk_2",
+      "config": { "ip": "192.168.20.10", "mask": "255.255.255.0", "gateway": "192.168.20.1", "locked": true } }
+  ],
+  "links": [
+    { "a": "R1:Gi0/0", "b": "S1:Gi0/1", "locked": true },
+    { "a": "S1:Fa0/1", "b": "PC-A:Eth0", "locked": true }
+  ],
+  "spare_cables": 1,
+  "reserved_ports": ["R1:Gi0/1"],
+  "objectives": [
+    { "id": "ping_ab", "type": "ping", "from": "PC-A", "to_ip": "192.168.20.10", "to_device": "PC-B", "via": "R1",
+      "description": "PC-A can ping PC-B through the router" },
+    { "id": "trunk", "type": "config", "device": "S1", "path": ["interfaces", "Gi0/1", "mode"], "equals": "trunk",
+      "description": "S1 Gi0/1 is a trunk" },
+    { "id": "sub10", "type": "config", "device": "R1", "path": ["interfaces", "Gi0/0.10"],
+      "equals": { "dot1q_vlan": 10, "ip": "192.168.10.1", "mask": "255.255.255.0" },
+      "description": "Gi0/0.10 is VLAN 10's gateway (192.168.10.1/24)" },
+    { "id": "sub20", "type": "config", "device": "R1", "path": ["interfaces", "Gi0/0.20"],
+      "equals": { "dot1q_vlan": 20, "ip": "192.168.20.1", "mask": "255.255.255.0" },
+      "description": "Gi0/0.20 is VLAN 20's gateway (192.168.20.1/24)" },
+    { "id": "parent_noip", "type": "config", "device": "R1", "path": ["interfaces", "Gi0/0", "ip"], "equals": null,
+      "description": "Gi0/0 itself has no IP address" }
+  ],
+  "hints": [
+    { "reason": "NO_LINK", "text": "PC-B isn't cabled to anything yet." },
+    { "reason": "NO_GATEWAY", "text": "Hosts in different subnets need a router to reach each other." },
+    { "reason": "VLAN_MISMATCH", "text": "Check which VLAN each switch port is in." }
+  ],
+  "solution": [
+    { "link": { "a": "S1:Fa0/2", "b": "PC-B:Eth0" } },
+    { "device": "S1", "commands": [
+      "enable", "configure terminal",
+      "vlan 20", "name SALES", "exit",
+      "interface fa0/2", "switchport mode access", "switchport access vlan 20", "exit",
+      "interface gi0/1", "switchport mode trunk", "end" ] },
+    { "device": "R1", "commands": [
+      "enable", "configure terminal",
+      "interface gi0/0", "no shutdown", "exit",
+      "interface gi0/0.10", "encapsulation dot1Q 10", "ip address 192.168.10.1 255.255.255.0", "exit",
+      "interface gi0/0.20", "encapsulation dot1Q 20", "ip address 192.168.20.1 255.255.255.0", "end" ] }
+  ]
+}
