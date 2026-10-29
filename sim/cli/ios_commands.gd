@@ -67,6 +67,8 @@ static func _register_common(reg: CommandRegistry) -> void:
 	_add(reg, IFACE, "shutdown", _h_shutdown, "Shutdown the selected interface", true)
 	_add(reg, PRIV, "show running-config", _h_show_running_config, "Current operating configuration", false)
 	_add(reg, PRIV, "show ip interface brief", _h_show_ip_interface_brief, "Brief summary of IP status and configuration", false)
+	_add(reg, PRIV, "ping <ipv4>", _h_ping, "Target IP address", false)
+	reg.describe(PRIV, "ping", "Send echo messages")
 	reg.describe(PRIV, "show", "Show running system information")
 	reg.describe(PRIV, "show ip", "IP information")
 	reg.describe(PRIV, "show ip interface", "IP interface status and configuration")
@@ -165,3 +167,10 @@ static func _h_show_ip_interface_brief(ctx: CliSession, _args: Array, _negated: 
 
 static func _h_show_vlan_brief(ctx: CliSession, _args: Array, _negated: bool) -> CliResult:
 	return CliResult.ok_output(CliFormatters.vlan_brief(ctx.sim().get_device(ctx.device_id())))
+
+
+## Pings from the device this terminal is open on. An unreachable target is
+## still a successful command: the failure shows up as dots, not an error.
+static func _h_ping(ctx: CliSession, args: Array, _negated: bool) -> CliResult:
+	var dst: String = IPv4.format(args[0])
+	return CliResult.ok_output(CliFormatters.ping_output(dst, ctx.sim().ping(ctx.device_id(), dst)))

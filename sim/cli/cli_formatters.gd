@@ -25,6 +25,10 @@ const LEGACY_VLANS: Dictionary = {
 
 const STATUS_ADMIN_DOWN: String = "administratively down"
 
+const PING_COUNT: int = 5
+const PING_SIZE: int = 100
+const PING_TIMEOUT_SECONDS: int = 2
+
 
 ## Physical interfaces in socket order, each followed by its subinterfaces
 ## (lowest tag first). This is the "canonical order" for show output.
@@ -41,6 +45,30 @@ static func ordered_interfaces(device: Device) -> Array[Interface]:
 		subs.sort_custom(func(a: Interface, b: Interface) -> bool: return IfName.sub_id(a.full_name) < IfName.sub_id(b.full_name))
 		out.append_array(subs)
 	return out
+
+
+# --- ping -------------------------------------------------------------------------
+
+
+## IOS `ping` output. The core decides the outcome before anything is shown, so
+## it is all-or-nothing: five `!` or five `.`. The reason a ping failed is never
+## printed (the player works that out; mission hints read PingResult). The third
+## line holds the five reply characters, which the terminal UI may reveal one at
+## a time. Round-trip times are fixed multiples of the link count (1/2/4 ms per
+## link), so output is deterministic.
+static func ping_output(dst_ip: String, result: PingResult) -> String:
+	var lines: PackedStringArray = [
+		"Type escape sequence to abort.",
+		"Sending %d, %d-byte ICMP Echos to %s, timeout is %d seconds:" % [PING_COUNT, PING_SIZE, dst_ip, PING_TIMEOUT_SECONDS],
+	]
+	if result.success:
+		var links: int = maxi(result.hops.size() - 1, 1)
+		lines.append("!".repeat(PING_COUNT))
+		lines.append("Success rate is 100 percent (%d/%d), round-trip min/avg/max = %d/%d/%d ms" % [PING_COUNT, PING_COUNT, links, 2 * links, 4 * links])
+	else:
+		lines.append(".".repeat(PING_COUNT))
+		lines.append("Success rate is 0 percent (0/%d)" % PING_COUNT)
+	return "\n".join(lines)
 
 
 # --- show ip interface brief ------------------------------------------------------

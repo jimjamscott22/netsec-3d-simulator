@@ -202,6 +202,31 @@ emit `config_changed`.
   limited) and `switchport mode trunk` for a trunk; `shutdown` when shut. Users,
   domain name, vty lines, NAT and ACL sections arrive with their M4/M5 commands.
 
+## Ping (M1)
+
+`ping <ipv4>` is a PRIV_EXEC command on routers and switches (so `do ping ...`
+works in config modes). It calls `NetworkSim.ping(device_id, ip)` and prints
+`CliFormatters.ping_output`. Hostnames and the extended dialog aren't supported.
+
+```
+Type escape sequence to abort.
+Sending 5, 100-byte ICMP Echos to 192.168.10.10, timeout is 2 seconds:
+!!!!!
+Success rate is 100 percent (5/5), round-trip min/avg/max = 1/2/4 ms
+```
+
+- The outcome is all or nothing: five `!` with `Success rate is 100 percent`, or
+  five `.` with `Success rate is 0 percent (0/5)`. The ARP-style dropped first
+  reply (`.!!!!`) is cosmetic and belongs to the UI. The reply characters are the
+  third line, so the terminal can reveal them one at a time.
+- Round-trip min/avg/max is `n`/`2n`/`4n` ms for `n` links, where `n` is the
+  number of entries in `PingResult.hops` minus one (at least 1, so pinging the
+  device's own address reads 1/2/4).
+- The `FailReason` is never printed. Every failure looks the same, so the player
+  reasons from `show` output; mission hints read the `PingResult` instead.
+- A failed ping is still a successful command (`CliResult.ok` is true).
+- A switch has no address to ping from (no SVI in M1), so its pings always fail.
+
 ## Show output style
 
 - Column-aligned plain text with fixed widths, written in `cli/formatters.gd`.

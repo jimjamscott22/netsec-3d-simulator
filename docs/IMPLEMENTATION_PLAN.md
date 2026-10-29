@@ -150,7 +150,7 @@ configure VLANs, a trunk and router-on-a-stick, and see PC-A ping PC-B.
 - [x] **1.13 Formatters + show commands** (`cli/formatters.gd`):
   `show running-config`, `show ip interface brief`, `show vlan brief`.
   *Tests:* golden strings, including after config changes.
-- [ ] **1.14 `ping` command** for IOS devices (SPEC §5.2 format).
+- [x] **1.14 `ping` command** for IOS devices (SPEC §5.2 format).
   *Tests:* success and failure goldens.
 - [ ] **1.15 PC mini shell:** `ipconfig`, `ipconfig /set`, `ping`, `help`,
   with Windows-style ping output. `ipconfig /set` is refused on a host with
