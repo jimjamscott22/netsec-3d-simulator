@@ -173,6 +173,30 @@ An ordered objective is locked (shown greyed, never passes) until every
 objective with a lower `order` passes. By default, all objectives are
 visible and can be completed in any order.
 
+## Evaluation
+
+`NetworkSim.objective_states()` returns one `ObjectiveState` per objective, in
+file order, computed fresh from live state (empty until a scenario loads).
+`ObjectiveEvaluator` re-checks everything after every `link_changed` and
+`config_changed` (never polled), emits `objective_updated(id, passed)` for each
+objective whose `passed` changed, in file order, then `mission_completed(id)`
+once, the first time all pass. Loading signals nothing; reloading resets this.
+
+- `ping`: a failed ping sets `fail_reason` and the matching `hint`. A ping that
+  succeeds but misses a condition has `fail_reason` NONE and a `detail`:
+  `reached, but <last hop> answered, not <to_device>` (checked first), or
+  `reached, but not through <via>`.
+- `config` values: "not set" reads as null (no `ip`, `dot1q_vlan` 0, a trunk
+  that allows every VLAN, an empty host gateway), so `equals: null` passes
+  exactly then. A missing interface or VLAN is null too. An object `equals`
+  needs every key it names to match, and ignores the rest. `trunk_allowed`
+  compares as a set.
+- `order`: an objective is locked while any objective with a lower `order` has
+  not passed. A locked objective is never passed and has no `fail_reason`,
+  `hint` or ping result; a locked one holds back the ones above it too, so a
+  step re-locks if an earlier one stops passing. No `order` means never locked.
+- `failed` stays false in M1 (a report running out of attempts arrives in M2).
+
 ## Patch regions (M3)
 
 Each vuln's region is a 1-based inclusive range in its starting file. A

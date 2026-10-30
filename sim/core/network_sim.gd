@@ -10,6 +10,8 @@ var _spare_cables: int
 var _reserved: Dictionary[String, bool] = {}
 var _locked: Dictionary[String, bool] = {}
 var _scenario_view: ScenarioView
+var _evaluator: ObjectiveEvaluator
+var _mission_completed: bool = false
 
 
 func _init(spare_cables: int = 0) -> void:
@@ -37,12 +39,45 @@ func load_scenario(data: Dictionary, file_id: String = "") -> LoadResult:
 		add_fixed_link(link["a"], link["b"], link["locked"])
 	_spare_cables = ScenarioLoader.spare_cables(data)
 	_scenario_view = ScenarioLoader.build_view(data)
+	_evaluator = ObjectiveEvaluator.new(data)
+	_mission_completed = false
+	# Record where every objective starts, silently: loading signals nothing.
+	_evaluator.changes(_evaluator.evaluate(self))
 	return LoadResult.success()
 
 
 ## Static scenario data, or null until a scenario has loaded.
 func scenario_view() -> ScenarioView:
 	return _scenario_view
+
+
+## Every objective's live status, in file order; empty until a scenario has
+## loaded. Fresh copies on every call.
+func objective_states() -> Array[ObjectiveState]:
+	if _evaluator == null:
+		return []
+	return _evaluator.evaluate(self)
+
+
+## Re-checks every objective after a state change. Emits `objective_updated` for
+## each one whose result changed, then `mission_completed` the first time they
+## all pass. Called by the mutating methods below rather than by connecting to
+## our own signals, which would make a reference cycle with `events`.
+func _reevaluate() -> void:
+	if _evaluator == null:
+		return
+	var states: Array[ObjectiveState] = _evaluator.evaluate(self)
+	for s in _evaluator.changes(states):
+		events.objective_updated.emit(s.id, s.passed)
+	if not _mission_completed and ObjectiveEvaluator.all_passed(states):
+		_mission_completed = true
+		events.mission_completed.emit(_scenario_view.scenario_id())
+
+
+## Every `config_changed` goes through here so objectives are re-checked after it.
+func _emit_config_changed(device_id: String) -> void:
+	events.config_changed.emit(device_id)
+	_reevaluate()
 
 
 func add_device(d: Device) -> bool:
@@ -116,6 +151,7 @@ func connect_link(a: String, b: String) -> LinkResult:
 	_join(ia, ib)
 	events.link_changed.emit(ia.port(), ib.port(), true)
 	_emit_state_changes(affected, before)
+	_reevaluate()
 	return LinkResult.success()
 
 
@@ -137,6 +173,7 @@ func disconnect_link(port: String) -> LinkResult:
 	_spare_cables += 1
 	events.link_changed.emit(a_port, b_port, false)
 	_emit_state_changes(affected, before)
+	_reevaluate()
 	return LinkResult.success()
 
 
@@ -241,7 +278,7 @@ func set_hostname(device_id: String, hostname: String) -> ConfigResult:
 	if d.hostname == hostname:
 		return ConfigResult.success(false)
 	d.hostname = hostname
-	events.config_changed.emit(d.id)
+	_emit_config_changed(d.id)
 	return ConfigResult.success(true)
 
 
@@ -262,7 +299,7 @@ func set_admin_up(port: String, up: bool) -> ConfigResult:
 	var before: Array[bool] = _oper_states(affected)
 	i.admin_up = up
 	_emit_state_changes(affected, before)
-	events.config_changed.emit(i.device_id)
+	_emit_config_changed(i.device_id)
 	return ConfigResult.success(true)
 
 
@@ -277,7 +314,7 @@ func set_ip_address(port: String, ip: String, mask: String) -> ConfigResult:
 		return ConfigResult.success(false)
 	i.ip = ip
 	i.mask = mask
-	events.config_changed.emit(i.device_id)
+	_emit_config_changed(i.device_id)
 	return ConfigResult.success(true)
 
 
@@ -290,7 +327,7 @@ func clear_ip_address(port: String) -> ConfigResult:
 		return ConfigResult.success(false)
 	i.ip = ""
 	i.mask = ""
-	events.config_changed.emit(i.device_id)
+	_emit_config_changed(i.device_id)
 	return ConfigResult.success(true)
 
 
@@ -309,7 +346,7 @@ func create_subinterface(device_id: String, name: String) -> ConfigResult:
 		return ConfigResult.success(false)
 	if (d as Router).add_subinterface(full) == null:
 		return ConfigResult.failure(ConfigResult.Reason.UNKNOWN_INTERFACE)
-	events.config_changed.emit(d.id)
+	_emit_config_changed(d.id)
 	return ConfigResult.success(true)
 
 
@@ -325,7 +362,7 @@ func set_dot1q_vlan(port: String, vlan_id: int) -> ConfigResult:
 	if i.dot1q_vlan == vlan_id:
 		return ConfigResult.success(false)
 	i.dot1q_vlan = vlan_id
-	events.config_changed.emit(i.device_id)
+	_emit_config_changed(i.device_id)
 	return ConfigResult.success(true)
 
 
@@ -340,7 +377,7 @@ func create_vlan(device_id: String, vlan_id: int) -> ConfigResult:
 	if s.vlans.has(vlan_id):
 		return ConfigResult.success(false)
 	s.add_vlan(vlan_id, "VLAN%04d" % vlan_id)
-	events.config_changed.emit(s.id)
+	_emit_config_changed(s.id)
 	return ConfigResult.success(true)
 
 
@@ -354,7 +391,7 @@ func set_vlan_name(device_id: String, vlan_id: int, vlan_name: String) -> Config
 	if s.vlans[vlan_id] == vlan_name:
 		return ConfigResult.success(false)
 	s.vlans[vlan_id] = vlan_name
-	events.config_changed.emit(s.id)
+	_emit_config_changed(s.id)
 	return ConfigResult.success(true)
 
 
@@ -365,7 +402,7 @@ func set_switchport_mode(port: String, mode: Interface.Mode) -> ConfigResult:
 	if i.mode == mode:
 		return ConfigResult.success(false)
 	i.mode = mode
-	events.config_changed.emit(i.device_id)
+	_emit_config_changed(i.device_id)
 	return ConfigResult.success(true)
 
 
@@ -380,7 +417,7 @@ func set_access_vlan(port: String, vlan_id: int) -> ConfigResult:
 	if i.access_vlan == vlan_id:
 		return ConfigResult.success(false)
 	i.access_vlan = vlan_id
-	events.config_changed.emit(i.device_id)
+	_emit_config_changed(i.device_id)
 	return ConfigResult.success(true)
 
 
@@ -406,7 +443,7 @@ func set_host_network(device_id: String, ip: String, mask: String, gateway: Stri
 	nic.ip = ip
 	nic.mask = mask
 	host.gateway = gateway
-	events.config_changed.emit(host.id)
+	_emit_config_changed(host.id)
 	return ConfigResult.success(true)
 
 
