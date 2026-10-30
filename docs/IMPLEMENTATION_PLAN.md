@@ -163,7 +163,7 @@ configure VLANs, a trunk and router-on-a-stick, and see PC-A ping PC-B.
   in `scenario-schema.md`, errors with JSON paths, all errors reported at
   once (not just the first).
   *Tests:* one bad-file fixture per rule; a valid file has zero errors.
-- [ ] **1.17 Scenario loader.** Builds devices, applies starting config,
+- [x] **1.17 Scenario loader.** Builds devices, applies starting config,
   places locked/unlocked links, sets spare cables. Never builds state if
   validation fails. Exposes `scenario_view()` (SPEC §3.3).
   *Tests:* the M1 example loads; a broken file leaves the sim empty;
