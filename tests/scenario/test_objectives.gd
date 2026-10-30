@@ -81,8 +81,10 @@ func _state(sim: NetworkSim, id: String) -> ObjectiveState:
 	for s: ObjectiveState in sim.objective_states():
 		if s.id == id:
 			return s
+	# fail() doesn't stop the test, so hand back a blank state rather than null:
+	# a null here would crash the whole suite instead of reporting one failure.
 	fail("no objective %s" % id)
-	return null
+	return ObjectiveState.new()
 
 
 func _passes(sim: NetworkSim, id: String) -> bool:
@@ -196,6 +198,8 @@ func test_via_fails_when_the_ping_succeeds_without_the_named_router() -> void:
 	data["devices"][3]["config"]["ip"] = "192.168.10.20"
 	data["devices"][1]["config"]["interfaces"]["Fa0/2"] = {"mode": "access", "access_vlan": 10}
 	data["links"].append({"a": "S1:Fa0/2", "b": "PC-B:Eth0", "locked": true})
+	# PC-B is cabled from the start, so the solution's own cabling step would clash.
+	data["solution"].remove_at(LINK)
 	data["objectives"] = [_ping("l2_only", "PC-A", "192.168.10.20", {"to_device": "PC-B", "via": "R1"})]
 	var sim := _load(data)
 	assert_bool(sim.ping("PC-A", "192.168.10.20").success).is_true()
