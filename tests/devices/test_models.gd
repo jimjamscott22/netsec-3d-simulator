@@ -54,3 +54,11 @@ func test_interface_names_match_build(
 	assert_bool(DeviceModels.has_model(model)).is_true()
 	var d: Device = DeviceModels.build(model, "X")
 	assert_array(DeviceModels.interface_names(model)).is_equal(d.interfaces.keys())
+
+
+func test_kind_of_names_the_device_kind_a_model_builds() -> void:
+	assert_int(DeviceModels.kind_of("router_2port")).is_equal(Device.Kind.ROUTER)
+	assert_int(DeviceModels.kind_of("switch_24")).is_equal(Device.Kind.SWITCH)
+	assert_int(DeviceModels.kind_of("pc")).is_equal(Device.Kind.HOST)
+	assert_int(DeviceModels.kind_of("server")).is_equal(Device.Kind.SERVER)
+	assert_int(DeviceModels.kind_of("toaster")).is_equal(-1)

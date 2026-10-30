@@ -1,9 +1,21 @@
 # Scenario schema
 
 Each mission is one JSON file in `res://scenarios/`, named `<id>.json`.
-`sim/scenario/loader.gd` validates the whole file before building any state.
-If validation fails, it returns a list of errors with JSON paths, such as
-`devices[2].interfaces[0].name: unknown interface "Gi0/9"`.
+`sim/scenario/validator.gd` (`ScenarioValidator.validate(data, file_id)`)
+checks the whole file before the loader builds any state. It returns every
+problem at once as `<json path>: <problem>` strings, such as
+`devices[1].config.interfaces["Gi0/9"]: unknown interface "GigabitEthernet0/9" for model switch_24`
+(an empty list means valid). A mistake is reported once: a device with a bad
+model doesn't also flag its links and objectives. JSON numbers arrive as floats,
+and a whole-number float counts as an integer. Passing `file_id` checks `id`
+against the file name.
+
+Keys and objective types that belong to a later milestone are rejected with
+`is not supported yet (arrives in M<n>)` until that milestone adds their rules:
+`logs` and `report` (M2), server `files`/`services`/`vulns` (M3), router/switch
+`users`/`domain_name`/`lines` and `ssh` objectives (M4), `no_ping` (M5), plus the
+`report`, `vuln_patched` and `exploit_test` objective types. Any other
+unknown key is an error, which catches typos.
 
 ## Top level
 
@@ -46,14 +58,41 @@ If validation fails, it returns a list of errors with JSON paths, such as
   - `switch_24`: Fa0/1–Fa0/24, Gi0/1–Gi0/2
   - `pc`: Eth0
   - `server`: Eth0
-- `rack` + `slot` place it in the world. Hosts use `desk` instead of `rack`/`slot`.
+- `id` is letters, digits, `-` and `_` (ports are written `<id>:<interface>`),
+  unique. `hostname` is optional, one word. `type` and `model` must agree.
+- `rack` + `slot` (integer from 1) place a router, switch or server in the world.
+  Hosts use `desk` instead, never `rack`/`slot`. Two devices can't share a
+  rack slot or a desk.
 - `config` is the **starting** state, which is often deliberately broken:
-  - Router/switch: `interfaces` (by canonical or short name), `vlans`,
-    `routes`, `enable_secret`, `users`, `domain_name`, `lines`.
+  - Router: `interfaces`, `routes`, `enable_secret`. Switch: `interfaces`,
+    `vlans`, `enable_secret`. (`users`, `domain_name`, `lines` arrive in M4.)
   - Host: `ip`, `mask`, `gateway`, and `locked` (default false; true means
-    the player can't change the host's addressing).
+    the player can't change the host's addressing). `ip` and `mask` come together.
   - Server: as host, plus `files`, `services` and `vulns` (M3; see docs/SPEC.md §7.5).
 - Interface names in the file may be short form; the loader normalizes them.
+  Two spellings of one interface are an error.
+
+### Interface fields
+
+`interfaces` maps a name to an object of these fields (all optional):
+
+| Device | Field | Value |
+| --- | --- | --- |
+| router | `admin_up` | true / false (a router's physical ports start shut) |
+| router | `ip` + `mask` | an IPv4 address and a contiguous mask, given together |
+| router subinterface | `dot1q_vlan` | VLAN id 1 to 4094 (subinterfaces only) |
+| switch | `admin_up` | true / false |
+| switch | `mode` | `"access"` or `"trunk"` |
+| switch | `access_vlan` | VLAN id 1 to 4094 |
+| switch | `trunk_allowed` | non-empty list of VLAN ids, each once; leave out to allow all |
+
+A router may start with subinterfaces (`Gi0/0.10`) of its real ports; a switch
+may not. The same tables are `ScenarioFields.ROUTER_INTERFACE_FIELDS` /
+`SWITCH_INTERFACE_FIELDS` / `HOST_FIELDS`.
+
+`vlans` is `{ "<id>": "<name>" }` (a one-word name). `routes` is a list of
+`{ "network", "mask", "next_hop" }`; `network` must be a network address for
+`mask`.
 
 ## Links
 
@@ -62,9 +101,10 @@ If validation fails, it returns a list of errors with JSON paths, such as
 ```
 
 - `locked: true` means the player can't unplug it.
-- Every endpoint must exist, and each port can be used once.
+- Every endpoint must exist, and each port can be used once. Only physical
+  interfaces have sockets (not subinterfaces), and a cable joins two different devices.
 - No link may use a port listed in `reserved_ports`, and `connect_link`
-  rejects them during play.
+  rejects them during play. A port can be reserved once.
 
 ## Logs and reports (M2)
 
@@ -100,7 +140,24 @@ should also be paired with a `ping` objective that has to keep working
 (e.g. block Sales → Server while Accounting → Server still succeeds), so
 breaking the network wholesale fails the mission.
 
-Objectives can set `"order": n` for missions that unlock steps one at a time.
+Objective `id`s are snake_case and unique. `ping`: `from` must be a device that
+can send (not a switch), `to_ip` an IPv4 address, `via` a router.
+
+**`config` paths.** `path` is a key or a list of keys:
+
+| Device | Path | `equals` |
+| --- | --- | --- |
+| any | `["hostname"]` | one word |
+| router, switch | `["interfaces", <name>]` | an object of interface fields (each may be null), or null for "doesn't exist" |
+| router, switch | `["interfaces", <name>, <field>]` | that field's value, or null for "not set" |
+| switch | `["vlans", <id>]` | the VLAN's name, or null for "doesn't exist" |
+| host, server | `["ip"]`, `["mask"]`, `["gateway"]`, `["locked"]` | the value, or null |
+
+`<name>` may be short form. A router path may name a subinterface that doesn't
+exist yet (the player creates it). `dot1q_vlan` is for subinterfaces only.
+`equals` is required; `null` is a real value.
+
+Objectives can set `"order": n` (an integer from 1) for missions that unlock steps one at a time.
 An ordered objective is locked (shown greyed, never passes) until every
 objective with a lower `order` passes. By default, all objectives are
 visible and can be completed in any order.
@@ -124,12 +181,17 @@ Regions in different files are independent.
 
 When a `ping` objective fails, the HUD can show the hint matching the
 resolver's `fail_reason`. Hints are optional; reasons without one show nothing.
+`reason` is a `PingResult.FailReason` name other than `NONE`, with at most one
+hint per reason.
 
 ## Solution
 
-A list of `{ "device": "...", "commands": [ ... ] }` and/or
+A non-empty list of `{ "device": "...", "commands": [ ... ] }` and/or
 `{ "link": { "a": "...", "b": "..." } }` steps. The smoke test applies these
-in order, then asserts that every objective passes.
+in order, then asserts that every objective passes. The validator also checks
+that the solution is playable: a link step can't use a reserved port or a port
+that is already cabled (by a start link or an earlier step), and the link steps
+can't outnumber `spare_cables`.
 
 ## Full example (M1)
 

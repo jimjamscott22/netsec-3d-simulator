@@ -16,7 +16,8 @@ under way: the tokenizer, `CommandRegistry`, `CliSession` and the M1 config
 commands (`IosCommands`, tasks 1.9 to 1.12), the `show` formatters and
 commands (`CliFormatters`, task 1.13), the IOS `ping` command (task 1.14) and
 the PC mini shell (`HostCommands`/`HostSession`, task 1.15; M1b is complete) are
-done. The scenario validator (task 1.16) is next.
+done. M1c has begun with the scenario validator (`ScenarioValidator`, task 1.16).
+The scenario loader (task 1.17) is next.
 
 ## Source of truth (read before working)
 

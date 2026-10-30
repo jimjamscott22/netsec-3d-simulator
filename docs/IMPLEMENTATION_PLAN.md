@@ -159,7 +159,7 @@ configure VLANs, a trunk and router-on-a-stick, and see PC-A ping PC-B.
 
 ### M1c — Scenarios and objectives
 
-- [ ] **1.16 Scenario validator** (`sim/scenario/validator.gd`). Every rule
+- [x] **1.16 Scenario validator** (`sim/scenario/validator.gd`). Every rule
   in `scenario-schema.md`, errors with JSON paths, all errors reported at
   once (not just the first).
   *Tests:* one bad-file fixture per rule; a valid file has zero errors.
