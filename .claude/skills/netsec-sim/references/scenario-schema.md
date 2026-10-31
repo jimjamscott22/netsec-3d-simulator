@@ -17,6 +17,17 @@ Keys and objective types that belong to a later milestone are rejected with
 `report`, `vuln_patched` and `exploit_test` objective types. Any other
 unknown key is an error, which catches typos.
 
+## Loading
+
+`NetworkSim.load_scenario(data, file_id = "")` runs the validator and returns a
+`LoadResult` (`ok`, `errors`). A bad file changes nothing. A good one replaces
+the whole sim state: devices with their starting config (a router's physical
+ports start shut, hostname defaults to the id), start links (`locked` defaults
+to false), reserved ports and `spare_cables`. Loading emits no signals; the
+world reads `scenario_view()` (title, briefing, hints, each device's placement
+and ordered physical interface list, links, reserved ports, never objectives or
+`solution`) and `device_view()` afterwards.
+
 ## Top level
 
 | Key | Type | Required | Notes |

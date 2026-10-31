@@ -9,10 +9,40 @@ var _devices: Dictionary[String, Device] = {}
 var _spare_cables: int
 var _reserved: Dictionary[String, bool] = {}
 var _locked: Dictionary[String, bool] = {}
+var _scenario_view: ScenarioView
 
 
 func _init(spare_cables: int = 0) -> void:
 	_spare_cables = spare_cables
+
+
+## Validates `data` and, only if it is clean, replaces the whole state with the
+## scenario's devices, start cables, reserved ports and spare cables. A bad file
+## returns every error and changes nothing. Loading emits no signals: the world
+## reads `scenario_view()` and `device_view()` once afterwards. `file_id`, when
+## given, must equal the scenario's `id`.
+func load_scenario(data: Dictionary, file_id: String = "") -> LoadResult:
+	var errors: Array[String] = ScenarioValidator.validate(data, file_id)
+	if not errors.is_empty():
+		return LoadResult.failure(errors)
+	_devices.clear()
+	_reserved.clear()
+	_locked.clear()
+	for d: Device in ScenarioLoader.build_devices(data):
+		add_device(d)
+	for port: String in ScenarioLoader.reserved_ports(data):
+		reserve_port(port)
+	# The validator already guarantees every start link joins two free, real ports.
+	for link: Dictionary in ScenarioLoader.start_links(data):
+		add_fixed_link(link["a"], link["b"], link["locked"])
+	_spare_cables = ScenarioLoader.spare_cables(data)
+	_scenario_view = ScenarioLoader.build_view(data)
+	return LoadResult.success()
+
+
+## Static scenario data, or null until a scenario has loaded.
+func scenario_view() -> ScenarioView:
+	return _scenario_view
 
 
 func add_device(d: Device) -> bool:
