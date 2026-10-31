@@ -18,7 +18,9 @@ commands (`CliFormatters`, task 1.13), the IOS `ping` command (task 1.14) and
 the PC mini shell (`HostCommands`/`HostSession`, task 1.15; M1b is complete) are
 done. M1c is under way: the scenario validator (`ScenarioValidator`, task 1.16)
 and the scenario loader (`NetworkSim.load_scenario`, `ScenarioLoader`,
-`ScenarioView`, task 1.17) are done. The objective evaluator (task 1.18) is next.
+`ScenarioView`, task 1.17) and the objective evaluator (`ObjectiveEvaluator`,
+`ObjectiveState`, `NetworkSim.objective_states`, task 1.18) are done. The real
+`scenarios/m1_vlan_ping.json` with its shortcut-regression tests (task 1.19) is next.
 
 ## Source of truth (read before working)
 

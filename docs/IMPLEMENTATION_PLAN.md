@@ -172,7 +172,7 @@ configure VLANs, a trunk and router-on-a-stick, and see PC-A ping PC-B.
   answers or solution. `device_view` immediately reports each interface's
   admin/oper state and reciprocal peer port after the links and starting
   config have loaded.
-- [ ] **1.18 Objective evaluator.** `ping` (with optional `to_device` and `via`) and
+- [x] **1.18 Objective evaluator.** `ping` (with optional `to_device` and `via`) and
   `config` types; `order` locking (SPEC §7.2); re-evaluated on
   `link_changed` and `config_changed`; emits `objective_updated` on change
   and `mission_completed` once.
