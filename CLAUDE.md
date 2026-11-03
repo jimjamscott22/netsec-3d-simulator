@@ -19,8 +19,8 @@ the PC mini shell (`HostCommands`/`HostSession`, task 1.15; M1b is complete) are
 done. M1c is under way: the scenario validator (`ScenarioValidator`, task 1.16)
 and the scenario loader (`NetworkSim.load_scenario`, `ScenarioLoader`,
 `ScenarioView`, task 1.17) and the objective evaluator (`ObjectiveEvaluator`,
-`ObjectiveState`, `NetworkSim.objective_states`, task 1.18) are done. The real
-`scenarios/m1_vlan_ping.json` with its shortcut-regression tests (task 1.19) is next.
+`ObjectiveState`, `NetworkSim.objective_states`, task 1.18) and the real
+`scenarios/m1_vlan_ping.json` with its shortcut-regression tests (task 1.19) are done. The scenario smoke harness (task 1.20) is next.
 
 ## Source of truth (read before working)
 

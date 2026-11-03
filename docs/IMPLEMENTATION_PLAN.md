@@ -183,7 +183,7 @@ configure VLANs, a trunk and router-on-a-stick, and see PC-A ping PC-B.
   named device; an ordered objective whose predicate is true stays locked
   until lower orders pass, and re-locks if one of them stops passing;
   no duplicate signals.
-- [ ] **1.19 Write `scenarios/m1_vlan_ping.json`** from the schema example:
+- [x] **1.19 Write `scenarios/m1_vlan_ping.json`** from the schema example:
   a `ping` objective with `"to_device": "PC-B"` and `"via": "R1"`, `config`
   objectives for the S1 Gi0/1 trunk, both R1 subinterfaces (tag, IP and
   mask in one object `equals`), and no IP on Gi0/0, both PCs
