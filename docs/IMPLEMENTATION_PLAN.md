@@ -196,10 +196,19 @@ configure VLANs, a trunk and router-on-a-stick, and see PC-A ping PC-B.
   the native-VLAN path (PC-A's port in VLAN 1, 192.168.10.1 on the
   physical Gi0/0, `.10` with only a tag) fails `sub10` and `parent_noip`;
   overlapping masks (Gi0/0.10 as /8) fail `sub10`.
-- [ ] **1.20 Scenario smoke test harness.** Loads every file in
+- [x] **1.20 Scenario smoke test harness.** Loads every file in
   `res://scenarios/`, asserts at least one objective fails at start, applies
   `solution`, asserts all pass.
   *Done when:* `m1_vlan_ping` passes the smoke test.
+  *Built:* `tests/support/scenario_runner.gd` (`ScenarioRunner`: test-only,
+  reads the files, replays `solution` through `connect_link` and CLI
+  sessions, returns problems as strings instead of asserting) and
+  `tests/scenario/test_scenario_smoke.gd` (scans the folder, so a new
+  scenario file is covered with no registration). Beyond the brief it also
+  checks that the mission is not already complete at the start and that
+  `mission_completed` fires once for the scenario. The harness has its own
+  tests in `tests/support/test_scenario_runner.gd`, against deliberately
+  broken copies of the M1 fixture.
 - [ ] **1.21 `Sim` autoload** (`game/sim.gd`). Wraps one `NetworkSim`,
   re-emits signals, loads a scenario by id. It is the only code that reads
   scenario files.
