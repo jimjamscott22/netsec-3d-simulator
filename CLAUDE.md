@@ -20,9 +20,10 @@ done. M1c is under way: the scenario validator (`ScenarioValidator`, task 1.16)
 and the scenario loader (`NetworkSim.load_scenario`, `ScenarioLoader`,
 `ScenarioView`, task 1.17) and the objective evaluator (`ObjectiveEvaluator`,
 `ObjectiveState`, `NetworkSim.objective_states`, task 1.18) and the real
-`scenarios/m1_vlan_ping.json` with its shortcut-regression tests (task 1.19) and
-the scenario smoke harness (`ScenarioRunner` in `tests/support/`, task 1.20) are
-done. The `Sim` autoload (task 1.21) is next.
+`scenarios/m1_vlan_ping.json` with its shortcut-regression tests (task 1.19) the
+scenario smoke harness (`ScenarioRunner` in `tests/support/`, task 1.20) and the
+`Sim` autoload (`game/sim.gd`, task 1.21; M1c is complete) are done. M1d (the 3D
+world and cabling, starting with the greybox room, task 1.22) is next.
 
 ## Source of truth (read before working)
 

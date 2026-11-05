@@ -209,9 +209,23 @@ configure VLANs, a trunk and router-on-a-stick, and see PC-A ping PC-B.
   `mission_completed` fires once for the scenario. The harness has its own
   tests in `tests/support/test_scenario_runner.gd`, against deliberately
   broken copies of the M1 fixture.
-- [ ] **1.21 `Sim` autoload** (`game/sim.gd`). Wraps one `NetworkSim`,
+- [x] **1.21 `Sim` autoload** (`game/sim.gd`). Wraps one `NetworkSim`,
   re-emits signals, loads a scenario by id. It is the only code that reads
   scenario files.
+  *Built:* registered in `project.godot` as `Sim`. `load_scenario_id(id)`
+  reads `res://scenarios/<id>.json` (the id must be a bare snake_case stem,
+  so it can't walk out of the folder) and returns a `LoadResult`; a missing
+  file, bad JSON or an invalid scenario returns every problem and leaves the
+  current state alone. It re-emits all five `SimEvents` signals and adds
+  `scenario_loaded(scenario_id)`, because loading emits no core signals and
+  the world needs a cue to build from the views. It forwards the read views
+  (`scenario_view`, `device_view`, `objective_states`), `spare_cables`,
+  `connect_link`, `disconnect_link`, `ping` and `open_session`; the `set_*`
+  config methods are not forwarded, since devices change only through a
+  `CliSession`. No `class_name` (it would clash with the autoload name).
+  Tests in `tests/game/test_sim.gd` build instances from the script, plus
+  one check that the real autoload is registered.
+  `Sim.scenario_catalog()` (SPEC §3.2) waits for M2's `summarize_scenario`.
 
 ### M1d — 3D world and cabling
 
