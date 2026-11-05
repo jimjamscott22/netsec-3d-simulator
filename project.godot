@@ -14,6 +14,10 @@ config/name="NetSec 3D Simulator"
 run/main_scene="res://game/main.tscn"
 config/features=PackedStringArray("4.7", "GL Compatibility")
 
+[autoload]
+
+Sim="*res://game/sim.gd"
+
 [rendering]
 
 renderer/rendering_method="gl_compatibility"

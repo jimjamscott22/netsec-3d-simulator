@@ -117,7 +117,10 @@ These are hard rules. CI fails if any are broken.
 - Loads a scenario, re-emits core signals, and exposes the core's public API to
   the presentation layer.
 - Owns file access: it reads `res://scenarios/*.json`, so the core never does
-  IO. `Sim.scenario_catalog()` returns the valid scenarios'
+  IO. `Sim.load_scenario_id(id)` loads `res://scenarios/<id>.json` and emits
+  `scenario_loaded(scenario_id)` on success (loading emits no core signals,
+  so this is the cue for the world to build from the views).
+  `Sim.scenario_catalog()` returns the valid scenarios'
   `ScenarioSummary` list (via `summarize_scenario`) sorted by `sequence`,
   for mission select. Invalid files are skipped and logged.
 - The only path from `world/` and `ui/` into the core.

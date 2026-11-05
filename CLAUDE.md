@@ -20,7 +20,10 @@ done. M1c is under way: the scenario validator (`ScenarioValidator`, task 1.16)
 and the scenario loader (`NetworkSim.load_scenario`, `ScenarioLoader`,
 `ScenarioView`, task 1.17) and the objective evaluator (`ObjectiveEvaluator`,
 `ObjectiveState`, `NetworkSim.objective_states`, task 1.18) and the real
-`scenarios/m1_vlan_ping.json` with its shortcut-regression tests (task 1.19) are done. The scenario smoke harness (task 1.20) is next.
+`scenarios/m1_vlan_ping.json` with its shortcut-regression tests (task 1.19) the
+scenario smoke harness (`ScenarioRunner` in `tests/support/`, task 1.20) and the
+`Sim` autoload (`game/sim.gd`, task 1.21; M1c is complete) are done. M1d (the 3D
+world and cabling, starting with the greybox room, task 1.22) is next.
 
 ## Source of truth (read before working)
 
@@ -103,7 +106,9 @@ Dependencies only point inward: `world/` and `ui/` → `game/` (the `Sim` autolo
   or a `reject_fixtures` entry.
 - Every sim change ships with GdUnit4 tests in the same commit. A CLI command
   needs three kinds of test: parse (with abbreviations), state change, and
-  `show` golden. Every scenario file needs a smoke test: it fails at the
+  `show` golden. Every scenario file needs a smoke test; it gets one
+  automatically from `tests/scenario/test_scenario_smoke.gd`, which scans
+  `res://scenarios/` (the replay logic is `ScenarioRunner`). It fails at the
   start, then passes after applying its `solution`.
 - Use static typing everywhere, `class_name` on reusable scripts, and enums
   (never string literals) for modes and fail reasons.

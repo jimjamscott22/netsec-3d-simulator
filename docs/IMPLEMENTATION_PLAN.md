@@ -196,13 +196,36 @@ configure VLANs, a trunk and router-on-a-stick, and see PC-A ping PC-B.
   the native-VLAN path (PC-A's port in VLAN 1, 192.168.10.1 on the
   physical Gi0/0, `.10` with only a tag) fails `sub10` and `parent_noip`;
   overlapping masks (Gi0/0.10 as /8) fail `sub10`.
-- [ ] **1.20 Scenario smoke test harness.** Loads every file in
+- [x] **1.20 Scenario smoke test harness.** Loads every file in
   `res://scenarios/`, asserts at least one objective fails at start, applies
   `solution`, asserts all pass.
   *Done when:* `m1_vlan_ping` passes the smoke test.
-- [ ] **1.21 `Sim` autoload** (`game/sim.gd`). Wraps one `NetworkSim`,
+  *Built:* `tests/support/scenario_runner.gd` (`ScenarioRunner`: test-only,
+  reads the files, replays `solution` through `connect_link` and CLI
+  sessions, returns problems as strings instead of asserting) and
+  `tests/scenario/test_scenario_smoke.gd` (scans the folder, so a new
+  scenario file is covered with no registration). Beyond the brief it also
+  checks that the mission is not already complete at the start and that
+  `mission_completed` fires once for the scenario. The harness has its own
+  tests in `tests/support/test_scenario_runner.gd`, against deliberately
+  broken copies of the M1 fixture.
+- [x] **1.21 `Sim` autoload** (`game/sim.gd`). Wraps one `NetworkSim`,
   re-emits signals, loads a scenario by id. It is the only code that reads
   scenario files.
+  *Built:* registered in `project.godot` as `Sim`. `load_scenario_id(id)`
+  reads `res://scenarios/<id>.json` (the id must be a bare snake_case stem,
+  so it can't walk out of the folder) and returns a `LoadResult`; a missing
+  file, bad JSON or an invalid scenario returns every problem and leaves the
+  current state alone. It re-emits all five `SimEvents` signals and adds
+  `scenario_loaded(scenario_id)`, because loading emits no core signals and
+  the world needs a cue to build from the views. It forwards the read views
+  (`scenario_view`, `device_view`, `objective_states`), `spare_cables`,
+  `connect_link`, `disconnect_link`, `ping` and `open_session`; the `set_*`
+  config methods are not forwarded, since devices change only through a
+  `CliSession`. No `class_name` (it would clash with the autoload name).
+  Tests in `tests/game/test_sim.gd` build instances from the script, plus
+  one check that the real autoload is registered.
+  `Sim.scenario_catalog()` (SPEC §3.2) waits for M2's `summarize_scenario`.
 
 ### M1d — 3D world and cabling
 
