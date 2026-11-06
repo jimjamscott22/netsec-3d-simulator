@@ -23,7 +23,8 @@ and the scenario loader (`NetworkSim.load_scenario`, `ScenarioLoader`,
 `scenarios/m1_vlan_ping.json` with its shortcut-regression tests (task 1.19) the
 scenario smoke harness (`ScenarioRunner` in `tests/support/`, task 1.20) and the
 `Sim` autoload (`game/sim.gd`, task 1.21; M1c is complete) are done. M1d (the 3D
-world and cabling, starting with the greybox room, task 1.22) is next.
+world and cabling) is under way: the greybox room (`world/room.tscn`, `Room`,
+task 1.22) is done and the player controller (task 1.23) is next.
 
 ## Source of truth (read before working)
 

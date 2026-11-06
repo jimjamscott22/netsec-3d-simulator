@@ -229,7 +229,7 @@ configure VLANs, a trunk and router-on-a-stick, and see PC-A ping PC-B.
 
 ### M1d — 3D world and cabling
 
-- [ ] **1.22 Greybox room** (`world/room.tscn`): floor, walls, 2 racks with
+- [x] **1.22 Greybox room** (`world/room.tscn`): floor, walls, 2 racks with
   slot markers, 2 desks with desk markers, lighting within the budget in
   SPEC §2.
 - [ ] **1.23 Player controller:** WASD, mouse look, crouch, interact
