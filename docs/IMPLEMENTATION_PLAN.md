@@ -236,7 +236,7 @@ configure VLANs, a trunk and router-on-a-stick, and see PC-A ping PC-B.
   raycast, crosshair target label.
 - [x] **1.24 Device model scenes:** greybox `router_2port`, `switch_24`,
   `pc` with ordered socket markers and LEDs.
-- [ ] **1.25 Room builder** (`world/room_builder.gd`): spawns devices from
+- [x] **1.25 Room builder** (`world/room_builder.gd`): spawns devices from
   `Sim.scenario_view()` at their markers; assigns socket ids from each
   device's ordered interface list in that view (never from `models.gd`);
   draws the start links; puts a dust cap on each reserved port.

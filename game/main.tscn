@@ -3,9 +3,20 @@
 [ext_resource type="PackedScene" path="res://world/room.tscn" id="1"]
 [ext_resource type="PackedScene" path="res://world/player.tscn" id="2"]
 
+[ext_resource type="Script" path="res://game/main.gd" id="3"]
+[ext_resource type="Script" path="res://world/room_builder.gd" id="4"]
+
 [node name="Main" type="Node"]
+script = ExtResource("3")
 
 [node name="Room" parent="." instance=ExtResource("1")]
+
+[node name="RoomBuilder" type="Node3D" parent="Room"]
+script = ExtResource("4")
+
+[node name="Devices" type="Node3D" parent="Room/RoomBuilder"]
+
+[node name="Cables" type="Node3D" parent="Room/RoomBuilder"]
 
 [node name="Player" parent="." instance=ExtResource("2")]
 position = Vector3(-1.5, 0.05, 0)
