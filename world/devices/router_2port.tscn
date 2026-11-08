@@ -1,0 +1,34 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://world/devices/device_model.gd" id="1"]
+[ext_resource type="PackedScene" path="res://world/devices/port_socket.tscn" id="2"]
+
+[sub_resource type="StandardMaterial3D" id="chassis_material"]
+albedo_color = Color(0.30, 0.34, 0.39, 1)
+
+[sub_resource type="BoxMesh" id="chassis_mesh"]
+material = SubResource("chassis_material")
+size = Vector3(0.48, 0.105, 0.24)
+
+[sub_resource type="BoxShape3D" id="chassis_shape"]
+size = Vector3(0.48, 0.105, 0.24)
+
+[node name="Router2Port" type="Node3D"]
+script = ExtResource("1")
+
+[node name="Chassis" type="StaticBody3D" parent="."]
+position = Vector3(0, 0.0525, 0.12)
+
+[node name="Mesh" type="MeshInstance3D" parent="Chassis"]
+mesh = SubResource("chassis_mesh")
+
+[node name="Collision" type="CollisionShape3D" parent="Chassis"]
+shape = SubResource("chassis_shape")
+
+[node name="Sockets" type="Node3D" parent="."]
+
+[node name="Socket01" parent="Sockets" instance=ExtResource("2")]
+position = Vector3(-0.07, 0.05, 0.244)
+
+[node name="Socket02" parent="Sockets" instance=ExtResource("2")]
+position = Vector3(-0.03, 0.05, 0.244)

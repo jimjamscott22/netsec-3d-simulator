@@ -234,7 +234,7 @@ configure VLANs, a trunk and router-on-a-stick, and see PC-A ping PC-B.
   SPEC §2.
 - [x] **1.23 Player controller:** WASD, mouse look, crouch, interact
   raycast, crosshair target label.
-- [ ] **1.24 Device model scenes:** greybox `router_2port`, `switch_24`,
+- [x] **1.24 Device model scenes:** greybox `router_2port`, `switch_24`,
   `pc` with ordered socket markers and LEDs.
 - [ ] **1.25 Room builder** (`world/room_builder.gd`): spawns devices from
   `Sim.scenario_view()` at their markers; assigns socket ids from each

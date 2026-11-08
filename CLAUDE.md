@@ -25,7 +25,8 @@ scenario smoke harness (`ScenarioRunner` in `tests/support/`, task 1.20) and the
 `Sim` autoload (`game/sim.gd`, task 1.21; M1c is complete) are done. M1d (the 3D
 world and cabling) is under way: the greybox room (`world/room.tscn`, `Room`,
 task 1.22) and the player controller (`world/player.tscn`, task 1.23) are
-done. Device model scenes (task 1.24) are next.
+done. The router, switch, and PC scenes (`world/devices/`, task 1.24) are
+ready for the room builder (task 1.25).
 
 ## Source of truth (read before working)
 
