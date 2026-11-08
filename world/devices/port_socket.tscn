@@ -16,6 +16,9 @@ size = Vector3(0.008, 0.004, 0.006)
 resource_local_to_scene = true
 albedo_color = Color(0.09, 0.1, 0.11, 1)
 
+[sub_resource type="BoxShape3D" id="target_shape"]
+size = Vector3(0.03, 0.026, 0.014)
+
 [node name="PortSocket" type="Marker3D"]
 script = ExtResource("1")
 
@@ -26,3 +29,12 @@ mesh = SubResource("socket_mesh")
 position = Vector3(0, 0.014, 0)
 material_override = SubResource("led_material")
 mesh = SubResource("led_mesh")
+
+[node name="Target" type="Area3D" parent="."]
+position = Vector3(0, 0.003, 0.004)
+collision_mask = 0
+monitoring = false
+monitorable = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Target"]
+shape = SubResource("target_shape")

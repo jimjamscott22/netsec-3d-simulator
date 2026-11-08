@@ -243,9 +243,9 @@ configure VLANs, a trunk and router-on-a-stick, and see PC-A ping PC-B.
   *Done when:* M1's devices appear in the right racks and desks. Constructing
   the room after scenario load initializes an already-up link's LED green and
   an administratively down link's LED amber.
-- [ ] **1.26 Cabling interaction** (SPEC §8.2): pick up, plug, reject with
+- [x] **1.26 Cabling interaction** (SPEC §8.2): pick up, plug, reject with
   toast, unplug unlocked, cancel; spare cable count.
-- [ ] **1.27 Cable rendering + LEDs** initialized from current `device_view`
+- [x] **1.27 Cable rendering + LEDs** initialized from current `device_view`
   snapshots and then updated from `link_changed` and `interface_state_changed`.
   *Done when:* at mission start the R1–S1 link LEDs are amber (R1 Gi0/0 is
   shut down) and turn green after `no shutdown`; plugging PC-B into Fa0/2

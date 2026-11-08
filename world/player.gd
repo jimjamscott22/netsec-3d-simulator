@@ -18,6 +18,8 @@ const PITCH_LIMIT: float = deg_to_rad(89.0)
 @onready var _ray: RayCast3D = $Camera3D/InteractRay
 @onready var _prompt: Label = $HUD/TargetPrompt
 
+var cancel_action: Callable
+
 var _crouched: bool = false
 var _interact_requested: bool = false
 
@@ -42,7 +44,8 @@ func _unhandled_input(event: InputEvent) -> void:
 			-PITCH_LIMIT, PITCH_LIMIT
 		)
 	elif event.is_action_pressed("cancel"):
-		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+		if not cancel_action.is_valid() or not cancel_action.call():
+			Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 		_interact_requested = false
 		get_viewport().set_input_as_handled()
 	elif event.is_action_pressed("interact"):

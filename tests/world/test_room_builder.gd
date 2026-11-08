@@ -101,3 +101,82 @@ func test_build_reads_live_snapshots_and_replaces_visuals_on_scenario_reload() -
 		PortSocket.LED_AMBER
 	)).is_true()
 	assert_bool(_led(builder.socket_for("PC-B:Ethernet0")).emission_enabled).is_false()
+
+
+func _interact_with_port(builder: RoomBuilder, player: Player, port: String) -> void:
+	var target: Area3D = builder.socket_for(port).get_node("Target") as Area3D
+	player.interacted.emit(target)
+
+
+func test_cabling_places_and_unplugs_a_live_cable_and_updates_the_hud() -> void:
+	var builder: RoomBuilder = _build_room()
+	var player: Player = builder.get_node("../../Player") as Player
+	var status: Label = builder.get_node("../../CablingHUD/Status") as Label
+	var cables: Node = builder.get_node("Cables")
+	var switch_port: String = "S1:FastEthernet0/2"
+	var pc_port: String = "PC-B:Ethernet0"
+
+	_interact_with_port(builder, player, switch_port)
+	assert_str(status.text).contains("Cable from Fa0/2 — S1")
+	assert_int(Sim.spare_cables()).is_equal(1)
+
+	_interact_with_port(builder, player, pc_port)
+	assert_str(status.text).is_equal("Spare cables: 0")
+	assert_int(cables.get_child_count()).is_equal(3)
+	for port: String in [switch_port, pc_port]:
+		assert_bool(_led(builder.socket_for(port)).emission.is_equal_approx(PortSocket.LED_GREEN)).is_true()
+
+	var toast: Label = builder.get_node("../../CablingHUD/Toast") as Label
+	_interact_with_port(builder, player, "S1:FastEthernet0/3")
+	assert_str(toast.text).is_equal("No spare cables left.")
+
+	var cable_target: StaticBody3D = cables.get_child(2).get_child(0) as StaticBody3D
+	player.interacted.emit(cable_target)
+	assert_str(status.text).is_equal("Spare cables: 1")
+	assert_int(cables.get_child_count()).is_equal(2)
+	for port: String in [switch_port, pc_port]:
+		assert_bool(_led(builder.socket_for(port)).emission_enabled).is_false()
+
+
+func test_rejected_and_canceled_actions_leave_sim_and_cables_unchanged() -> void:
+	var builder: RoomBuilder = _build_room()
+	var player: Player = builder.get_node("../../Player") as Player
+	var status: Label = builder.get_node("../../CablingHUD/Status") as Label
+	var toast: Label = builder.get_node("../../CablingHUD/Toast") as Label
+	var free_port: String = "S1:FastEthernet0/2"
+
+	_interact_with_port(builder, player, free_port)
+	assert_bool(player.cancel_action.call()).is_true()
+	assert_bool(player.cancel_action.call()).is_false()
+	assert_str(status.text).is_equal("Spare cables: 1")
+
+	_interact_with_port(builder, player, free_port)
+	_interact_with_port(builder, player, "S1:FastEthernet0/3")
+	assert_str(toast.text).is_equal("Choose a port on another device.")
+	assert_str(status.text).is_equal("Spare cables: 1")
+
+	_interact_with_port(builder, player, free_port)
+	_interact_with_port(builder, player, "R1:GigabitEthernet0/1")
+	assert_str(toast.text).is_equal("That port is reserved.")
+
+	_interact_with_port(builder, player, "PC-B:Ethernet0")
+	_interact_with_port(builder, player, "S1:FastEthernet0/1")
+	assert_str(toast.text).is_equal("That port is already in use.")
+
+	_interact_with_port(builder, player, "S1:FastEthernet0/1")
+	assert_str(toast.text).is_equal("That cable is locked.")
+	assert_bool(toast.visible).is_true()
+	assert_int(Sim.spare_cables()).is_equal(1)
+	assert_int(builder.get_node("Cables").get_child_count()).is_equal(2)
+
+
+func test_admin_change_updates_both_ends_without_replacing_the_cable() -> void:
+	var builder: RoomBuilder = _build_room()
+	var cables: Node = builder.get_node("Cables")
+	var original: Array[Node] = cables.get_children()
+	var session: CliSession = Sim.open_session("R1")
+	for command: String in ["enable", "configure terminal", "interface gi0/0", "no shutdown"]:
+		assert_bool(session.submit(command).ok).is_true()
+	assert_array(cables.get_children()).is_equal(original)
+	for port: String in ["R1:GigabitEthernet0/0", "S1:GigabitEthernet0/1"]:
+		assert_bool(_led(builder.socket_for(port)).emission.is_equal_approx(PortSocket.LED_GREEN)).is_true()

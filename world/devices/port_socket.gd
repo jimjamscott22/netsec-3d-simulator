@@ -8,10 +8,15 @@ const LED_GREEN: Color = Color(0.18, 1.0, 0.34)
 ## Assigned by the room builder from the scenario view's socket order.
 var device_id: String
 var interface_name: String
+var reserved: bool = false
 
 
 func port_id() -> String:
 	return "%s:%s" % [device_id, interface_name]
+
+
+func set_interact_label(short_name: String) -> void:
+	$Target.set_meta("interact_label", "%s — %s" % [short_name, device_id])
 
 
 ## The caller supplies the current link state from Sim; the model only renders it.
