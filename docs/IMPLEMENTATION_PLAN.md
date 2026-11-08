@@ -232,7 +232,7 @@ configure VLANs, a trunk and router-on-a-stick, and see PC-A ping PC-B.
 - [x] **1.22 Greybox room** (`world/room.tscn`): floor, walls, 2 racks with
   slot markers, 2 desks with desk markers, lighting within the budget in
   SPEC §2.
-- [ ] **1.23 Player controller:** WASD, mouse look, crouch, interact
+- [x] **1.23 Player controller:** WASD, mouse look, crouch, interact
   raycast, crosshair target label.
 - [ ] **1.24 Device model scenes:** greybox `router_2port`, `switch_24`,
   `pc` with ordered socket markers and LEDs.

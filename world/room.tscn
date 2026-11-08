@@ -146,6 +146,7 @@ surface_material_override/0 = SubResource("mat_light")
 
 [node name="rack_a" type="StaticBody3D" parent="Racks"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 0, -2.5)
+metadata/interact_label = "Rack A"
 
 
 [node name="Frame" type="MeshInstance3D" parent="Racks/rack_a"]
@@ -210,6 +211,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.85, 0.4)
 
 [node name="rack_b" type="StaticBody3D" parent="Racks"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5, 0, -2.5)
+metadata/interact_label = "Rack B"
 
 
 [node name="Frame" type="MeshInstance3D" parent="Racks/rack_b"]
