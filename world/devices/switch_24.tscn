@@ -1,0 +1,106 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://world/devices/device_model.gd" id="1"]
+[ext_resource type="PackedScene" path="res://world/devices/port_socket.tscn" id="2"]
+
+[sub_resource type="StandardMaterial3D" id="chassis_material"]
+albedo_color = Color(0.24, 0.31, 0.35, 1)
+
+[sub_resource type="BoxMesh" id="chassis_mesh"]
+material = SubResource("chassis_material")
+size = Vector3(0.5, 0.115, 0.27)
+
+[sub_resource type="BoxShape3D" id="chassis_shape"]
+size = Vector3(0.5, 0.115, 0.27)
+
+[node name="Switch24" type="Node3D"]
+script = ExtResource("1")
+
+[node name="Chassis" type="StaticBody3D" parent="."]
+position = Vector3(0, 0.0575, 0.135)
+
+[node name="Mesh" type="MeshInstance3D" parent="Chassis"]
+mesh = SubResource("chassis_mesh")
+
+[node name="Collision" type="CollisionShape3D" parent="Chassis"]
+shape = SubResource("chassis_shape")
+
+[node name="Sockets" type="Node3D" parent="."]
+
+[node name="Socket01" parent="Sockets" instance=ExtResource("2")]
+position = Vector3(-0.226, 0.083, 0.274)
+
+[node name="Socket02" parent="Sockets" instance=ExtResource("2")]
+position = Vector3(-0.192, 0.083, 0.274)
+
+[node name="Socket03" parent="Sockets" instance=ExtResource("2")]
+position = Vector3(-0.158, 0.083, 0.274)
+
+[node name="Socket04" parent="Sockets" instance=ExtResource("2")]
+position = Vector3(-0.124, 0.083, 0.274)
+
+[node name="Socket05" parent="Sockets" instance=ExtResource("2")]
+position = Vector3(-0.09, 0.083, 0.274)
+
+[node name="Socket06" parent="Sockets" instance=ExtResource("2")]
+position = Vector3(-0.056, 0.083, 0.274)
+
+[node name="Socket07" parent="Sockets" instance=ExtResource("2")]
+position = Vector3(-0.022, 0.083, 0.274)
+
+[node name="Socket08" parent="Sockets" instance=ExtResource("2")]
+position = Vector3(0.012, 0.083, 0.274)
+
+[node name="Socket09" parent="Sockets" instance=ExtResource("2")]
+position = Vector3(0.046, 0.083, 0.274)
+
+[node name="Socket10" parent="Sockets" instance=ExtResource("2")]
+position = Vector3(0.08, 0.083, 0.274)
+
+[node name="Socket11" parent="Sockets" instance=ExtResource("2")]
+position = Vector3(0.114, 0.083, 0.274)
+
+[node name="Socket12" parent="Sockets" instance=ExtResource("2")]
+position = Vector3(0.148, 0.083, 0.274)
+
+[node name="Socket13" parent="Sockets" instance=ExtResource("2")]
+position = Vector3(-0.226, 0.034, 0.274)
+
+[node name="Socket14" parent="Sockets" instance=ExtResource("2")]
+position = Vector3(-0.192, 0.034, 0.274)
+
+[node name="Socket15" parent="Sockets" instance=ExtResource("2")]
+position = Vector3(-0.158, 0.034, 0.274)
+
+[node name="Socket16" parent="Sockets" instance=ExtResource("2")]
+position = Vector3(-0.124, 0.034, 0.274)
+
+[node name="Socket17" parent="Sockets" instance=ExtResource("2")]
+position = Vector3(-0.09, 0.034, 0.274)
+
+[node name="Socket18" parent="Sockets" instance=ExtResource("2")]
+position = Vector3(-0.056, 0.034, 0.274)
+
+[node name="Socket19" parent="Sockets" instance=ExtResource("2")]
+position = Vector3(-0.022, 0.034, 0.274)
+
+[node name="Socket20" parent="Sockets" instance=ExtResource("2")]
+position = Vector3(0.012, 0.034, 0.274)
+
+[node name="Socket21" parent="Sockets" instance=ExtResource("2")]
+position = Vector3(0.046, 0.034, 0.274)
+
+[node name="Socket22" parent="Sockets" instance=ExtResource("2")]
+position = Vector3(0.08, 0.034, 0.274)
+
+[node name="Socket23" parent="Sockets" instance=ExtResource("2")]
+position = Vector3(0.114, 0.034, 0.274)
+
+[node name="Socket24" parent="Sockets" instance=ExtResource("2")]
+position = Vector3(0.148, 0.034, 0.274)
+
+[node name="Socket25" parent="Sockets" instance=ExtResource("2")]
+position = Vector3(0.184, 0.083, 0.274)
+
+[node name="Socket26" parent="Sockets" instance=ExtResource("2")]
+position = Vector3(0.223, 0.083, 0.274)

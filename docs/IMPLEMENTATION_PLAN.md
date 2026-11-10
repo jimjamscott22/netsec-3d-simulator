@@ -232,20 +232,20 @@ configure VLANs, a trunk and router-on-a-stick, and see PC-A ping PC-B.
 - [x] **1.22 Greybox room** (`world/room.tscn`): floor, walls, 2 racks with
   slot markers, 2 desks with desk markers, lighting within the budget in
   SPEC §2.
-- [ ] **1.23 Player controller:** WASD, mouse look, crouch, interact
+- [x] **1.23 Player controller:** WASD, mouse look, crouch, interact
   raycast, crosshair target label.
-- [ ] **1.24 Device model scenes:** greybox `router_2port`, `switch_24`,
+- [x] **1.24 Device model scenes:** greybox `router_2port`, `switch_24`,
   `pc` with ordered socket markers and LEDs.
-- [ ] **1.25 Room builder** (`world/room_builder.gd`): spawns devices from
+- [x] **1.25 Room builder** (`world/room_builder.gd`): spawns devices from
   `Sim.scenario_view()` at their markers; assigns socket ids from each
   device's ordered interface list in that view (never from `models.gd`);
   draws the start links; puts a dust cap on each reserved port.
   *Done when:* M1's devices appear in the right racks and desks. Constructing
   the room after scenario load initializes an already-up link's LED green and
   an administratively down link's LED amber.
-- [ ] **1.26 Cabling interaction** (SPEC §8.2): pick up, plug, reject with
+- [x] **1.26 Cabling interaction** (SPEC §8.2): pick up, plug, reject with
   toast, unplug unlocked, cancel; spare cable count.
-- [ ] **1.27 Cable rendering + LEDs** initialized from current `device_view`
+- [x] **1.27 Cable rendering + LEDs** initialized from current `device_view`
   snapshots and then updated from `link_changed` and `interface_state_changed`.
   *Done when:* at mission start the R1–S1 link LEDs are amber (R1 Gi0/0 is
   shut down) and turn green after `no shutdown`; plugging PC-B into Fa0/2

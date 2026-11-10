@@ -24,7 +24,11 @@ and the scenario loader (`NetworkSim.load_scenario`, `ScenarioLoader`,
 scenario smoke harness (`ScenarioRunner` in `tests/support/`, task 1.20) and the
 `Sim` autoload (`game/sim.gd`, task 1.21; M1c is complete) are done. M1d (the 3D
 world and cabling) is under way: the greybox room (`world/room.tscn`, `Room`,
-task 1.22) is done and the player controller (task 1.23) is next.
+task 1.22) and the player controller (`world/player.tscn`, task 1.23) are
+done. The router, switch, and PC scenes (`world/devices/`, task 1.24) and
+the room builder (`world/room_builder.gd`, task 1.25) are done. Cabling
+interaction and live cable and LED updates (tasks 1.26–1.27) complete M1d.
+The terminal UI (task 1.28) is next.
 
 ## Source of truth (read before working)
 
