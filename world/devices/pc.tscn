@@ -13,8 +13,32 @@ size = Vector3(0.16, 0.32, 0.28)
 [sub_resource type="BoxShape3D" id="chassis_shape"]
 size = Vector3(0.16, 0.32, 0.28)
 
+[sub_resource type="StandardMaterial3D" id="monitor_material"]
+albedo_color = Color(0.13, 0.14, 0.15, 1)
+
+[sub_resource type="BoxMesh" id="monitor_mesh"]
+material = SubResource("monitor_material")
+size = Vector3(0.5, 0.3, 0.03)
+
+[sub_resource type="BoxMesh" id="stand_mesh"]
+material = SubResource("monitor_material")
+size = Vector3(0.05, 0.12, 0.03)
+
+[sub_resource type="StandardMaterial3D" id="screen_material"]
+albedo_color = Color(0.04, 0.09, 0.07, 1)
+emission_enabled = true
+emission = Color(0.05, 0.22, 0.12, 1)
+
+[sub_resource type="BoxMesh" id="screen_mesh"]
+material = SubResource("screen_material")
+size = Vector3(0.46, 0.26, 0.004)
+
+[sub_resource type="BoxShape3D" id="screen_shape"]
+size = Vector3(0.5, 0.3, 0.04)
+
 [node name="PC" type="Node3D"]
 script = ExtResource("1")
+console_label = "Screen"
 
 [node name="Chassis" type="StaticBody3D" parent="."]
 position = Vector3(0, 0.16, 0.14)
@@ -29,3 +53,27 @@ shape = SubResource("chassis_shape")
 
 [node name="Socket01" parent="Sockets" instance=ExtResource("2")]
 position = Vector3(0.04, 0.045, 0.284)
+
+[node name="Monitor" type="Node3D" parent="."]
+position = Vector3(-0.4, 0, 0.12)
+
+[node name="Stand" type="MeshInstance3D" parent="Monitor"]
+position = Vector3(0, 0.06, 0)
+mesh = SubResource("stand_mesh")
+
+[node name="Body" type="MeshInstance3D" parent="Monitor"]
+position = Vector3(0, 0.27, 0)
+mesh = SubResource("monitor_mesh")
+
+[node name="Screen" type="MeshInstance3D" parent="Monitor"]
+position = Vector3(0, 0.27, 0.017)
+mesh = SubResource("screen_mesh")
+
+[node name="Console" type="Area3D" parent="."]
+position = Vector3(-0.4, 0.27, 0.13)
+collision_mask = 0
+monitoring = false
+monitorable = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Console"]
+shape = SubResource("screen_shape")

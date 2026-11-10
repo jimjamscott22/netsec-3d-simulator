@@ -253,7 +253,7 @@ configure VLANs, a trunk and router-on-a-stick, and see PC-A ping PC-B.
 
 ### M1e — Terminal, HUD and game flow
 
-- [ ] **1.28 Terminal UI** (`ui/terminal/`): full-screen console bound to a
+- [x] **1.28 Terminal UI** (`ui/terminal/`): full-screen console bound to a
   `CliSession`; history, Tab, `?`, Ctrl+Z, Esc to close; cosmetic ping
   reveal; acts on `CliResult.action` (`CLOSE_SESSION` now, `OPEN_EDITOR` in
   M3). Opened by interacting with a device's console port or a PC screen.
@@ -472,3 +472,8 @@ Ideas that are out of scope until a milestone pulls them in:
 - `no vlan <id>`, `no hostname`, `no interface <subif>` and other `no` forms
   not needed by `m1_vlan_ping`.
 - More missions: DHCP starvation, ARP spoofing, firewall rules, phishing.
+- ARP-style first ping (`.!!!!` on the first IOS ping to a new target). It is
+  cosmetic, but the success-rate line would then need to read 80 percent, so
+  the terminal would have to rewrite core output. Left out of task 1.28.
+- Terminal sessions that survive closing the window (today each open starts a
+  fresh `CliSession`, like a console line that timed out).

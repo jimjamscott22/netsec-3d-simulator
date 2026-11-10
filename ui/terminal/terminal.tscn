@@ -1,0 +1,6 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://ui/terminal/terminal.gd" id="1"]
+
+[node name="Terminal" type="CanvasLayer"]
+script = ExtResource("1")

@@ -1,0 +1,23 @@
+[gd_scene format=3]
+
+[sub_resource type="StandardMaterial3D" id="console_material"]
+albedo_color = Color(0.35, 0.62, 0.86, 1)
+
+[sub_resource type="BoxMesh" id="console_mesh"]
+material = SubResource("console_material")
+size = Vector3(0.022, 0.014, 0.006)
+
+[sub_resource type="BoxShape3D" id="console_shape"]
+size = Vector3(0.03, 0.026, 0.014)
+
+[node name="Console" type="Area3D"]
+collision_mask = 0
+monitoring = false
+monitorable = false
+
+[node name="Jack" type="MeshInstance3D" parent="."]
+mesh = SubResource("console_mesh")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+position = Vector3(0, 0, 0.004)
+shape = SubResource("console_shape")

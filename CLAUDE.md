@@ -28,7 +28,9 @@ task 1.22) and the player controller (`world/player.tscn`, task 1.23) are
 done. The router, switch, and PC scenes (`world/devices/`, task 1.24) and
 the room builder (`world/room_builder.gd`, task 1.25) are done. Cabling
 interaction and live cable and LED updates (tasks 1.26–1.27) complete M1d.
-The terminal UI (task 1.28) is next.
+M1e is under way: the terminal UI (`ui/terminal/`, `Terminal`,
+`TerminalReveal`, task 1.28) is done, opened from a router or switch console
+port or a PC screen. The mission HUD (task 1.29) is next.
 
 ## Source of truth (read before working)
 

@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" path="res://world/devices/device_model.gd" id="1"]
 [ext_resource type="PackedScene" path="res://world/devices/port_socket.tscn" id="2"]
+[ext_resource type="PackedScene" path="res://world/devices/console_port.tscn" id="3"]
 
 [sub_resource type="StandardMaterial3D" id="chassis_material"]
 albedo_color = Color(0.24, 0.31, 0.35, 1)
@@ -104,3 +105,6 @@ position = Vector3(0.184, 0.083, 0.274)
 
 [node name="Socket26" parent="Sockets" instance=ExtResource("2")]
 position = Vector3(0.223, 0.083, 0.274)
+
+[node name="Console" parent="." instance=ExtResource("3")]
+position = Vector3(0.204, 0.034, 0.274)

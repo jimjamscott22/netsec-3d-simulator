@@ -180,3 +180,28 @@ func test_admin_change_updates_both_ends_without_replacing_the_cable() -> void:
 	assert_array(cables.get_children()).is_equal(original)
 	for port: String in ["R1:GigabitEthernet0/0", "S1:GigabitEthernet0/1"]:
 		assert_bool(_led(builder.socket_for(port)).emission.is_equal_approx(PortSocket.LED_GREEN)).is_true()
+
+
+func test_every_device_has_a_labeled_console_target() -> void:
+	var builder: RoomBuilder = _build_room()
+	var expected: Dictionary[String, String] = {
+		"R1": "Console — R1", "S1": "Console — S1", "PC-A": "Screen — PC-A", "PC-B": "Screen — PC-B",
+	}
+	for id: String in expected:
+		var model: DeviceModel = builder.get_node("Devices/" + id) as DeviceModel
+		var console: Area3D = model.console_target()
+		assert_object(console).is_not_null()
+		assert_str(str(console.get_meta("console_device"))).is_equal(id)
+		assert_str(str(console.get_meta("interact_label"))).is_equal(expected[id])
+
+
+func test_interacting_with_a_console_opens_the_terminal() -> void:
+	var builder: RoomBuilder = _build_room()
+	var main: Node = builder.get_parent().get_parent()
+	var terminal: Terminal = main.get_node("Terminal") as Terminal
+	var console: Area3D = (builder.get_node("Devices/S1") as DeviceModel).console_target()
+	(main.get_node("Player") as Player).interacted.emit(console)
+	assert_bool(terminal.is_open()).is_true()
+	assert_str(terminal.device_id()).is_equal("S1")
+	assert_str(terminal.prompt_text()).is_equal("Switch>")
+	terminal.close()
