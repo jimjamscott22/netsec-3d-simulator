@@ -30,7 +30,9 @@ the room builder (`world/room_builder.gd`, task 1.25) are done. Cabling
 interaction and live cable and LED updates (tasks 1.26–1.27) complete M1d.
 M1e is under way: the terminal UI (`ui/terminal/`, `Terminal`,
 `TerminalReveal`, task 1.28) is done, opened from a router or switch console
-port or a PC screen. The mission HUD (task 1.29) is next.
+port or a PC screen. The mission HUD (`ui/mission_hud.gd`, `MissionHud`, task
+1.29) is done: objectives with live ticks, spare cables and the H-key hint.
+Briefing and debrief cards (task 1.30) are next.
 
 ## Source of truth (read before working)
 

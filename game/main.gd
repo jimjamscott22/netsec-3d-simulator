@@ -2,12 +2,16 @@ extends Node
 
 @onready var _cabling: Cabling = $CablingHUD
 @onready var _terminal: Terminal = $Terminal
+@onready var _hud: MissionHud = $MissionHUD
 
 
 func _ready() -> void:
 	var player: Player = $Player
 	player.interacted.connect(_on_interacted)
 	player.cancel_action = _cabling.cancel
+	# The terminal covers the screen and owns Tab, so the HUD steps aside.
+	_terminal.opened.connect(_hud.hide.unbind(1))
+	_terminal.closed.connect(_hud.show)
 
 	# Temporary startup mission until the mission flow owns scenario selection.
 	if Sim.scenario_view() != null:

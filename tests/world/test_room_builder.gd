@@ -112,6 +112,7 @@ func test_cabling_places_and_unplugs_a_live_cable_and_updates_the_hud() -> void:
 	var builder: RoomBuilder = _build_room()
 	var player: Player = builder.get_node("../../Player") as Player
 	var status: Label = builder.get_node("../../CablingHUD/Status") as Label
+	var hud: MissionHud = builder.get_node("../../MissionHUD") as MissionHud
 	var cables: Node = builder.get_node("Cables")
 	var switch_port: String = "S1:FastEthernet0/2"
 	var pc_port: String = "PC-B:Ethernet0"
@@ -121,7 +122,8 @@ func test_cabling_places_and_unplugs_a_live_cable_and_updates_the_hud() -> void:
 	assert_int(Sim.spare_cables()).is_equal(1)
 
 	_interact_with_port(builder, player, pc_port)
-	assert_str(status.text).is_equal("Spare cables: 0")
+	assert_str(status.text).is_empty()
+	assert_str(hud.spare_text()).is_equal("Spare cables: 0")
 	assert_int(cables.get_child_count()).is_equal(3)
 	for port: String in [switch_port, pc_port]:
 		assert_bool(_led(builder.socket_for(port)).emission.is_equal_approx(PortSocket.LED_GREEN)).is_true()
@@ -132,7 +134,8 @@ func test_cabling_places_and_unplugs_a_live_cable_and_updates_the_hud() -> void:
 
 	var cable_target: StaticBody3D = cables.get_child(2).get_child(0) as StaticBody3D
 	player.interacted.emit(cable_target)
-	assert_str(status.text).is_equal("Spare cables: 1")
+	assert_str(status.text).is_empty()
+	assert_str(hud.spare_text()).is_equal("Spare cables: 1")
 	assert_int(cables.get_child_count()).is_equal(2)
 	for port: String in [switch_port, pc_port]:
 		assert_bool(_led(builder.socket_for(port)).emission_enabled).is_false()
@@ -142,18 +145,21 @@ func test_rejected_and_canceled_actions_leave_sim_and_cables_unchanged() -> void
 	var builder: RoomBuilder = _build_room()
 	var player: Player = builder.get_node("../../Player") as Player
 	var status: Label = builder.get_node("../../CablingHUD/Status") as Label
+	var hud: MissionHud = builder.get_node("../../MissionHUD") as MissionHud
 	var toast: Label = builder.get_node("../../CablingHUD/Toast") as Label
 	var free_port: String = "S1:FastEthernet0/2"
 
 	_interact_with_port(builder, player, free_port)
 	assert_bool(player.cancel_action.call()).is_true()
 	assert_bool(player.cancel_action.call()).is_false()
-	assert_str(status.text).is_equal("Spare cables: 1")
+	assert_str(status.text).is_empty()
+	assert_str(hud.spare_text()).is_equal("Spare cables: 1")
 
 	_interact_with_port(builder, player, free_port)
 	_interact_with_port(builder, player, "S1:FastEthernet0/3")
 	assert_str(toast.text).is_equal("Choose a port on another device.")
-	assert_str(status.text).is_equal("Spare cables: 1")
+	assert_str(status.text).is_empty()
+	assert_str(hud.spare_text()).is_equal("Spare cables: 1")
 
 	_interact_with_port(builder, player, free_port)
 	_interact_with_port(builder, player, "R1:GigabitEthernet0/1")
