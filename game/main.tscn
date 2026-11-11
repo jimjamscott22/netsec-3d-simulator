@@ -7,6 +7,7 @@
 [ext_resource type="Script" path="res://world/room_builder.gd" id="4"]
 
 [ext_resource type="PackedScene" path="res://ui/cabling_hud.tscn" id="5"]
+[ext_resource type="PackedScene" path="res://ui/terminal/terminal.tscn" id="6"]
 
 [node name="Main" type="Node"]
 script = ExtResource("3")
@@ -24,3 +25,5 @@ script = ExtResource("4")
 position = Vector3(-1.5, 0.05, 0)
 
 [node name="CablingHUD" parent="." instance=ExtResource("5")]
+
+[node name="Terminal" parent="." instance=ExtResource("6")]

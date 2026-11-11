@@ -138,6 +138,10 @@ func _place_device(placement: Dictionary, peers: Dictionary[String, String]) -> 
 	model.name = device_id
 	_devices.add_child(model)
 	model.global_transform = anchor.global_transform
+	var console: Area3D = model.console_target()
+	if console != null:
+		console.set_meta("console_device", device_id)
+		console.set_meta("interact_label", "%s — %s" % [model.console_label, device_id])
 	for index: int in interfaces.size():
 		var interface_name: String = interfaces[index]
 		var socket: PortSocket = sockets[index]
