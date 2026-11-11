@@ -33,7 +33,7 @@ var _title: Label
 var _output: RichTextLabel
 var _input_row: HBoxContainer
 var _prompt: Label
-var _input: LineEdit
+var _line: LineEdit
 
 
 func _ready() -> void:
@@ -43,13 +43,24 @@ func _ready() -> void:
 	Sim.scenario_loaded.connect(_on_scenario_loaded)
 
 
+## Esc is caught here, before the GUI, because the input box is hidden (and so
+## loses focus) while a ping reveal plays.
+func _input(event: InputEvent) -> void:
+	if not visible:
+		return
+	var key: InputEventKey = event as InputEventKey
+	if key != null and key.pressed and key.keycode == KEY_ESCAPE:
+		handle_key(key)
+		get_viewport().set_input_as_handled()
+
+
 func _process(delta: float) -> void:
 	if not visible:
 		return
 	if _busy:
 		_advance(delta)
-	elif not _input.has_focus():
-		_input.grab_focus()
+	elif not _line.has_focus():
+		_line.grab_focus()
 
 
 # --- public ---------------------------------------------------------------------
@@ -67,7 +78,7 @@ func open(device_id: String) -> bool:
 	show()
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	_refresh()
-	_input.grab_focus()
+	_line.grab_focus()
 	opened.emit(device_id)
 	return true
 
@@ -107,7 +118,7 @@ func submit_line(line: String) -> void:
 	if not _session.is_password_prompt():
 		echo += line
 	_append(echo + "\n")
-	_input.clear()
+	_line.clear()
 	_play(_session.submit(line))
 
 
@@ -122,10 +133,10 @@ func handle_key(key: InputEventKey) -> bool:
 		return true
 	var password: bool = _session.is_password_prompt()
 	if key.keycode == KEY_ENTER or key.keycode == KEY_KP_ENTER:
-		submit_line(_input.text)
+		submit_line(_line.text)
 	elif key.keycode == KEY_Z and key.ctrl_pressed:
-		_append(_session.prompt() + ("" if password else _input.text) + "^Z\n")
-		_input.clear()
+		_append(_session.prompt() + ("" if password else _line.text) + "^Z\n")
+		_line.clear()
 		_play(_session.ctrl_z())
 	elif password:
 		return false
@@ -134,7 +145,7 @@ func handle_key(key: InputEventKey) -> bool:
 	elif key.keycode == KEY_DOWN:
 		_set_line(_session.history_next())
 	elif key.keycode == KEY_TAB:
-		_set_line(_session.complete(_input.text))
+		_set_line(_session.complete(_line.text))
 	elif key.unicode == "?".unicode_at(0):
 		_show_help()
 	else:
@@ -144,7 +155,7 @@ func handle_key(key: InputEventKey) -> bool:
 
 ## The text in the input box, for tests.
 func input_text() -> String:
-	return _input.text
+	return _line.text
 
 
 func set_input_text(text: String) -> void:
@@ -163,7 +174,7 @@ func prompt_text() -> String:
 
 
 func _show_help() -> void:
-	var line: String = _input.text
+	var line: String = _line.text
 	_append(_session.prompt() + line + "?\n")
 	var help: String = _session.help(line)
 	if not help.is_empty():
@@ -215,13 +226,13 @@ func _refresh() -> void:
 	var hostname: String = view.hostname() if view != null else _device_id
 	_title.text = "%s  ·  %s" % [hostname, _device_id] if hostname != _device_id else hostname
 	_prompt.text = _session.prompt()
-	_input.secret = _session.is_password_prompt()
+	_line.secret = _session.is_password_prompt()
 	_input_row.visible = true
 
 
 func _set_line(text: String) -> void:
-	_input.text = text
-	_input.caret_column = text.length()
+	_line.text = text
+	_line.caret_column = text.length()
 
 
 func _append(text: String) -> void:
@@ -238,8 +249,8 @@ func _reset() -> void:
 	_busy = false
 	_pending = null
 	_output.clear()
-	_input.clear()
-	_input.secret = false
+	_line.clear()
+	_line.secret = false
 
 
 func _on_scenario_loaded(_scenario_id: String) -> void:
@@ -249,7 +260,7 @@ func _on_scenario_loaded(_scenario_id: String) -> void:
 func _on_input_gui_input(event: InputEvent) -> void:
 	var key: InputEventKey = event as InputEventKey
 	if key != null and handle_key(key):
-		_input.accept_event()
+		_line.accept_event()
 
 
 func _build() -> void:
@@ -304,13 +315,13 @@ func _build() -> void:
 	_prompt = Label.new()
 	_prompt.name = "Prompt"
 	_input_row.add_child(_prompt)
-	_input = LineEdit.new()
-	_input.name = "Input"
-	_input.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	_input.context_menu_enabled = false
-	_input.caret_blink = true
-	_input.gui_input.connect(_on_input_gui_input)
-	_input_row.add_child(_input)
+	_line = LineEdit.new()
+	_line.name = "Input"
+	_line.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_line.context_menu_enabled = false
+	_line.caret_blink = true
+	_line.gui_input.connect(_on_input_gui_input)
+	_input_row.add_child(_line)
 
 	column.add_child(HSeparator.new())
 	var footer := Label.new()

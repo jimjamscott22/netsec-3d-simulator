@@ -302,6 +302,24 @@ func test_ios_ping_reveals_one_mark_at_a_time() -> void:
 	assert_str(term.transcript()).ends_with("Success rate is 0 percent (0/5)\n")
 
 
+func test_escape_through_the_viewport_closes_during_reveal() -> void:
+	# The input box is hidden during a reveal, so Esc must not depend on it.
+	var term: Terminal = _terminal(true)
+	term.open("PC-A")
+	term.submit_line("ping 192.168.20.10")
+	assert_bool(term.is_revealing()).is_true()
+	term.get_viewport().push_input(_key(KEY_ESCAPE))
+	assert_bool(term.is_open()).is_false()
+	assert_bool(term.visible).is_false()
+
+
+func test_escape_through_the_viewport_closes() -> void:
+	var term: Terminal = _terminal()
+	term.open("R1")
+	term.get_viewport().push_input(_key(KEY_ESCAPE))
+	assert_bool(term.is_open()).is_false()
+
+
 func test_escape_during_reveal_closes() -> void:
 	var term: Terminal = _terminal(true)
 	term.open("PC-A")
