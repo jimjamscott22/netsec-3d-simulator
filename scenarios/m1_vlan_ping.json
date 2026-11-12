@@ -39,6 +39,7 @@
     { "reason": "NO_GATEWAY", "text": "Hosts in different subnets need a router to reach each other." },
     { "reason": "VLAN_MISMATCH", "text": "Check which VLAN each switch port is in." }
   ],
+  "debrief": "Accounting and Sales sit in different VLANs and subnets, so they need a router between them. You cabled PC-B into VLAN 20, made S1's uplink a trunk so it carries both VLANs, and gave R1 one dot1Q subinterface per VLAN as each subnet's gateway. That design is called router-on-a-stick.\n\nA real admin would type:\n  S1: vlan 20 / name SALES\n  S1: interface fa0/2 / switchport mode access / switchport access vlan 20\n  S1: interface gi0/1 / switchport mode trunk\n  R1: interface gi0/0 / no shutdown\n  R1: interface gi0/0.10 / encapsulation dot1Q 10 / ip address 192.168.10.1 255.255.255.0\n  R1: interface gi0/0.20 / encapsulation dot1Q 20 / ip address 192.168.20.1 255.255.255.0\n\nThen they would check their work with show vlan brief, show ip interface brief and show running-config, and test it with ping.",
   "solution": [
     { "link": { "a": "S1:Fa0/2", "b": "PC-B:Eth0" } },
     { "device": "S1", "commands": [

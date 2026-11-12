@@ -8,7 +8,8 @@ extends Node
 ## instantiate it through `preload("res://game/sim.gd")`.
 ##
 ## What it exposes is deliberately narrow. Reads come back as read-only views
-## (`scenario_view`, `device_view`, `objective_states`), never as `NetworkSim`
+## (`scenario_view`, `device_view`, `objective_states`,
+## `debrief_view`), never as `NetworkSim`
 ## internals. Device configuration changes only through a `CliSession` from
 ## `open_session`, so the `set_*` methods are not forwarded.
 
@@ -76,6 +77,11 @@ func device_view(id: String) -> DeviceView:
 
 func objective_states() -> Array[ObjectiveState]:
 	return _net.objective_states()
+
+
+## The end-of-mission record, or null until the mission has ended.
+func debrief_view() -> DebriefView:
+	return _net.debrief_view()
 
 
 func spare_cables() -> int:

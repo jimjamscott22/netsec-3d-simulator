@@ -260,7 +260,7 @@ configure VLANs, a trunk and router-on-a-stick, and see PC-A ping PC-B.
 - [x] **1.29 Mission HUD:** objectives from `Sim.objective_states()` with
   live ticks, locked steps greyed, `detail` text, spare cables; hint on H
   shows the `hint` of the first failing unlocked objective that has one.
-- [ ] **1.30 Briefing and debrief cards.** Briefing from `scenario_view`;
+- [x] **1.30 Briefing and debrief cards.** Briefing from `scenario_view`;
   debrief from `debrief_view()`.
   *Tests (sim):* `debrief_view` is `null` during play and filled after
   `mission_completed`.

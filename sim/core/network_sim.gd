@@ -12,6 +12,8 @@ var _locked: Dictionary[String, bool] = {}
 var _scenario_view: ScenarioView
 var _evaluator: ObjectiveEvaluator
 var _mission_completed: bool = false
+var _debrief_text: String = ""
+var _debrief: DebriefView
 
 
 func _init(spare_cables: int = 0) -> void:
@@ -41,6 +43,8 @@ func load_scenario(data: Dictionary, file_id: String = "") -> LoadResult:
 	_scenario_view = ScenarioLoader.build_view(data)
 	_evaluator = ObjectiveEvaluator.new(data)
 	_mission_completed = false
+	_debrief_text = data.get("debrief", "")
+	_debrief = null
 	# Record where every objective starts, silently: loading signals nothing.
 	_evaluator.changes(_evaluator.evaluate(self))
 	return LoadResult.success()
@@ -59,6 +63,12 @@ func objective_states() -> Array[ObjectiveState]:
 	return _evaluator.evaluate(self)
 
 
+## The end-of-mission record, or null until the mission has ended. Taken once,
+## as `mission_completed` fires; later changes don't alter it.
+func debrief_view() -> DebriefView:
+	return _debrief
+
+
 ## Re-checks every objective after a state change. Emits `objective_updated` for
 ## each one whose result changed, then `mission_completed` the first time they
 ## all pass. Called by the mutating methods below rather than by connecting to
@@ -71,6 +81,9 @@ func _reevaluate() -> void:
 		events.objective_updated.emit(s.id, s.passed)
 	if not _mission_completed and ObjectiveEvaluator.all_passed(states):
 		_mission_completed = true
+		_debrief = DebriefView.new(
+			_scenario_view.scenario_id(), _scenario_view.title(), true, _debrief_text, states
+		)
 		events.mission_completed.emit(_scenario_view.scenario_id())
 
 

@@ -32,7 +32,9 @@ M1e is under way: the terminal UI (`ui/terminal/`, `Terminal`,
 `TerminalReveal`, task 1.28) is done, opened from a router or switch console
 port or a PC screen. The mission HUD (`ui/mission_hud.gd`, `MissionHud`, task
 1.29) is done: objectives with live ticks, spare cables and the H-key hint.
-Briefing and debrief cards (task 1.30) are next.
+The briefing and debrief cards (`ui/mission_card.gd`, `MissionCard`, with
+`NetworkSim.debrief_view()`/`DebriefView`, task 1.30) are done. The main menu
+(task 1.31) is next.
 
 ## Source of truth (read before working)
 
