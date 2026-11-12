@@ -72,9 +72,10 @@ func _clear_held() -> void:
 
 
 func _refresh_status() -> void:
-	_status.text = "Spare cables: %d" % Sim.spare_cables()
+	# The spare count itself is on the mission HUD.
+	_status.text = ""
 	if not _held_port.is_empty():
-		_status.text += "\nCable from %s · aim at another port and interact · Esc to drop" % _held_label
+		_status.text = "Cable from %s · aim at another port and interact · Esc to drop" % _held_label
 
 
 func _show_result(result: LinkResult) -> void:
