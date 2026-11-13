@@ -68,3 +68,14 @@ func test_crouch_lowers_camera_and_requires_clearance_to_stand() -> void:
 	await _settle_physics()
 	player._update_crouch(false)
 	assert_float(camera.position.y).is_equal_approx(1.65, 0.001)
+
+
+func test_look_sensitivity_follows_the_setting() -> void:
+	var player: Player = _spawn_player()
+	assert_float(player.look_sensitivity).is_equal_approx(
+		Player.BASE_LOOK_SENSITIVITY * Progress.look_sensitivity(), 0.000001
+	)
+	Progress.set_look_sensitivity(2.0)
+	assert_float(player.look_sensitivity).is_equal_approx(Player.BASE_LOOK_SENSITIVITY * 2.0, 0.000001)
+	Progress.close()
+	assert_float(player.look_sensitivity).is_equal_approx(Player.BASE_LOOK_SENSITIVITY, 0.000001)
