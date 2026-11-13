@@ -264,28 +264,24 @@ configure VLANs, a trunk and router-on-a-stick, and see PC-A ping PC-B.
   debrief from `debrief_view()`.
   *Tests (sim):* `debrief_view` is `null` during play and filled after
   `mission_completed`.
-- [ ] **1.31 Main menu** with "Start mission" and settings (mouse
+- [x] **1.31 Main menu** with "Start mission" and settings (mouse
   sensitivity, fullscreen, volume). `game/progress.gd` saves completion.
-  *Notes from tasks 1.29–1.30:*
-  - `game/main.gd` loads `m1_vlan_ping` in `_ready()` as a stand-in; the
-    menu should own that load. If the menu becomes the startup scene, change
-    `run/main_scene` in `project.godot`. `test_room_builder.gd`,
-    `test_mission_hud.gd` and `test_mission_card.gd` instance `main.tscn` and
-    expect M1 loaded with the briefing card open: keep that or update them.
-  - Mouse sensitivity: `LOOK_SENSITIVITY` in `world/player.gd` is a `const`
-    and has to become a variable the settings can set.
-  - Volume: nothing plays sound yet and there is no custom audio bus, so the
-    setting can drive the Master bus (`AudioServer.set_bus_volume_db`).
-  - Saving (SPEC §8.5): `game/progress.gd` writes completed ids and settings
-    to `user://progress.json`, marking a mission done on
-    `Sim.mission_completed`. It does file IO, so it stays out of `sim/`. Tests
-    should point it at a temp path, the way `tests/game/test_sim.gd` swaps
-    `Sim.scenario_dir`.
-  - The debrief's Continue button only closes the card today. Send it back to
-    the menu via `MissionCard.closed(kind)` with `kind == DEBRIEF`.
-  - The player, `Terminal` and `MissionCard` each set `Input.mouse_mode`
-    themselves. A menu or pause screen that opens over the game should take
-    all input while open, as `MissionCard` does.
+  *Notes from task 1.31:*
+  - `ui/main_menu.tscn` (`MainMenu`) is the startup scene. It loads M1 to show
+    its title, and Start loads it again from scratch before switching to
+    `game/main.tscn`. `game/main.gd` still falls back to loading M1 when no
+    scenario is loaded, so the main scene runs on its own from the editor and
+    in tests. Task 2.10 replaces the single mission row with mission select.
+  - `Progress` is an autoload (`game/progress.gd`, no `class_name`, like
+    `Sim`). It starts in memory only and only touches `user://progress.json`
+    once `Progress.open()` is called, which the menu does on startup, so tests
+    never overwrite a real save. Tests open a temp path and `close()` it after.
+  - Settings: `SettingsPanel` (`ui/settings_panel.gd`) writes straight to
+    `Progress`, which applies and saves each change. Look sensitivity is a
+    multiplier on `Player.BASE_LOOK_SENSITIVITY`, set on the player by
+    `game/main.gd`. Volume drives the Master bus.
+  - The debrief's Continue goes back to the menu (`main.gd` emits
+    `menu_requested`, then switches scenes when it is the running scene).
 - [ ] **1.32 Art pass (light):** swap greybox for Kenney/Quaternius models,
   Poly Haven textures, simple rack and switch models from Blender.
 - [ ] **1.33 Playtest** with `docs/playtest/m1_vlan_ping.md` checklist;
@@ -499,5 +495,8 @@ Ideas that are out of scope until a milestone pulls them in:
   fails with at mission start (nothing owns PC-A's gateway yet), so pressing H
   at the start shows "No hint for this step". Its `NO_LINK` hint ("PC-B isn't
   cabled") is never reached first. Revisit the M1 hints in the playtest (1.33).
+- Pause menu over the game (Resume / Settings / Main menu). Today the only
+  way back to the menu mid-mission is to quit; `SettingsPanel` can be reused.
+  It should take all input while open, as `MissionCard` does.
 - Terminal sessions that survive closing the window (today each open starts a
   fresh `CliSession`, like a console line that timed out).

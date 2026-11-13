@@ -186,3 +186,19 @@ func test_debrief_shows_at_once_when_no_terminal_is_open() -> void:
 	# Plugging in PC-B is the last fix.
 	assert_bool(Sim.connect_link("S1:Fa0/2", "PC-B:Eth0").ok).is_true()
 	assert_int(card.kind()).is_equal(MissionCard.Kind.DEBRIEF)
+
+
+func test_continue_on_the_debrief_asks_for_the_menu_but_start_does_not() -> void:
+	var main: Node = _main()
+	var card: MissionCard = main.get_node("MissionCard") as MissionCard
+	var asked: Array[int] = [0]
+	main.menu_requested.connect(func() -> void: asked[0] += 1)
+	card.close()
+	assert_int(asked[0]).is_equal(0)
+
+	_run("R1", R1_FIX)
+	_run("S1", S1_FIX)
+	assert_bool(Sim.connect_link("S1:Fa0/2", "PC-B:Eth0").ok).is_true()
+	assert_int(card.kind()).is_equal(MissionCard.Kind.DEBRIEF)
+	card.close()
+	assert_int(asked[0]).is_equal(1)

@@ -34,7 +34,9 @@ port or a PC screen. The mission HUD (`ui/mission_hud.gd`, `MissionHud`, task
 1.29) is done: objectives with live ticks, spare cables and the H-key hint.
 The briefing and debrief cards (`ui/mission_card.gd`, `MissionCard`, with
 `NetworkSim.debrief_view()`/`DebriefView`, task 1.30) are done. The main menu
-(task 1.31) is next.
+(`ui/main_menu.tscn`, `MainMenu`, `SettingsPanel`, the startup scene) and the
+`Progress` autoload (`game/progress.gd`, saves to `user://progress.json`) are
+done (task 1.31). The light art pass (task 1.32) is next.
 
 ## Source of truth (read before working)
 

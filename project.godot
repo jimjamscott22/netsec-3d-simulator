@@ -11,12 +11,13 @@ config_version=5
 [application]
 
 config/name="NetSec 3D Simulator"
-run/main_scene="res://game/main.tscn"
+run/main_scene="res://ui/main_menu.tscn"
 config/features=PackedStringArray("4.7", "GL Compatibility")
 
 [autoload]
 
 Sim="*res://game/sim.gd"
+Progress="*res://game/progress.gd"
 
 [rendering]
 

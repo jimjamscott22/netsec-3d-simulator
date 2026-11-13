@@ -9,7 +9,8 @@ const CROUCH_SPEED: float = 2.0
 const STANDING_HEIGHT: float = 1.8
 const CROUCH_HEIGHT: float = 1.1
 const EYE_OFFSET: float = 0.15
-const LOOK_SENSITIVITY: float = 0.002
+## Radians of turn per pixel of mouse motion at a sensitivity setting of 1.
+const BASE_LOOK_SENSITIVITY: float = 0.002
 const PITCH_LIMIT: float = deg_to_rad(89.0)
 
 @onready var _collision: CollisionShape3D = $CollisionShape3D
@@ -19,6 +20,8 @@ const PITCH_LIMIT: float = deg_to_rad(89.0)
 @onready var _prompt: Label = $HUD/TargetPrompt
 
 var cancel_action: Callable
+## Radians per pixel. `game/main.gd` sets it from the player's settings.
+var look_sensitivity: float = BASE_LOOK_SENSITIVITY
 
 var _crouched: bool = false
 var _interact_requested: bool = false
@@ -38,9 +41,9 @@ func _unhandled_input(event: InputEvent) -> void:
 		return
 
 	if event is InputEventMouseMotion:
-		rotate_y(-event.screen_relative.x * LOOK_SENSITIVITY)
+		rotate_y(-event.screen_relative.x * look_sensitivity)
 		_camera.rotation.x = clampf(
-			_camera.rotation.x - event.screen_relative.y * LOOK_SENSITIVITY,
+			_camera.rotation.x - event.screen_relative.y * look_sensitivity,
 			-PITCH_LIMIT, PITCH_LIMIT
 		)
 	elif event.is_action_pressed("cancel"):
