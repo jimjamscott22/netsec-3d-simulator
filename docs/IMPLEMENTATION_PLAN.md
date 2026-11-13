@@ -260,12 +260,32 @@ configure VLANs, a trunk and router-on-a-stick, and see PC-A ping PC-B.
 - [x] **1.29 Mission HUD:** objectives from `Sim.objective_states()` with
   live ticks, locked steps greyed, `detail` text, spare cables; hint on H
   shows the `hint` of the first failing unlocked objective that has one.
-- [ ] **1.30 Briefing and debrief cards.** Briefing from `scenario_view`;
+- [x] **1.30 Briefing and debrief cards.** Briefing from `scenario_view`;
   debrief from `debrief_view()`.
   *Tests (sim):* `debrief_view` is `null` during play and filled after
   `mission_completed`.
 - [ ] **1.31 Main menu** with "Start mission" and settings (mouse
   sensitivity, fullscreen, volume). `game/progress.gd` saves completion.
+  *Notes from tasks 1.29–1.30:*
+  - `game/main.gd` loads `m1_vlan_ping` in `_ready()` as a stand-in; the
+    menu should own that load. If the menu becomes the startup scene, change
+    `run/main_scene` in `project.godot`. `test_room_builder.gd`,
+    `test_mission_hud.gd` and `test_mission_card.gd` instance `main.tscn` and
+    expect M1 loaded with the briefing card open: keep that or update them.
+  - Mouse sensitivity: `LOOK_SENSITIVITY` in `world/player.gd` is a `const`
+    and has to become a variable the settings can set.
+  - Volume: nothing plays sound yet and there is no custom audio bus, so the
+    setting can drive the Master bus (`AudioServer.set_bus_volume_db`).
+  - Saving (SPEC §8.5): `game/progress.gd` writes completed ids and settings
+    to `user://progress.json`, marking a mission done on
+    `Sim.mission_completed`. It does file IO, so it stays out of `sim/`. Tests
+    should point it at a temp path, the way `tests/game/test_sim.gd` swaps
+    `Sim.scenario_dir`.
+  - The debrief's Continue button only closes the card today. Send it back to
+    the menu via `MissionCard.closed(kind)` with `kind == DEBRIEF`.
+  - The player, `Terminal` and `MissionCard` each set `Input.mouse_mode`
+    themselves. A menu or pause screen that opens over the game should take
+    all input while open, as `MissionCard` does.
 - [ ] **1.32 Art pass (light):** swap greybox for Kenney/Quaternius models,
   Poly Haven textures, simple rack and switch models from Blender.
 - [ ] **1.33 Playtest** with `docs/playtest/m1_vlan_ping.md` checklist;

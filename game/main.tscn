@@ -9,6 +9,7 @@
 [ext_resource type="PackedScene" path="res://ui/cabling_hud.tscn" id="5"]
 [ext_resource type="PackedScene" path="res://ui/terminal/terminal.tscn" id="6"]
 [ext_resource type="PackedScene" path="res://ui/mission_hud.tscn" id="7"]
+[ext_resource type="PackedScene" path="res://ui/mission_card.tscn" id="8"]
 
 [node name="Main" type="Node"]
 script = ExtResource("3")
@@ -30,3 +31,5 @@ position = Vector3(-1.5, 0.05, 0)
 [node name="Terminal" parent="." instance=ExtResource("6")]
 
 [node name="MissionHUD" parent="." instance=ExtResource("7")]
+
+[node name="MissionCard" parent="." instance=ExtResource("8")]

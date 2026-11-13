@@ -201,6 +201,16 @@ func test_solving_the_mission_re_emits_objective_updates_and_completion() -> voi
 # --- pass-throughs ------------------------------------------------------------------------
 
 
+func test_debrief_view_is_null_until_the_mission_is_completed() -> void:
+	var sim: Node = _loaded()
+	assert_object(sim.debrief_view()).is_null()
+	_solve(sim)
+	var view: DebriefView = sim.debrief_view()
+	assert_object(view).is_not_null()
+	assert_str(view.scenario_id()).is_equal(SCENARIO)
+	assert_str(view.text()).contains("router-on-a-stick")
+
+
 func test_ping_runs_through_the_owned_network() -> void:
 	var sim: Node = _loaded()
 	assert_bool(sim.ping("PC-A", "192.168.20.10").success).is_false()
