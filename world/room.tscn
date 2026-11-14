@@ -1,21 +1,49 @@
-[gd_scene load_steps=23 format=3]
+[gd_scene load_steps=31 format=3]
 
 [ext_resource type="Script" path="res://world/room.gd" id="1"]
+[ext_resource type="Script" path="res://world/room_dressing.gd" id="2"]
+[ext_resource type="Texture2D" path="res://assets/textures/polyhaven/concrete_floor_02/concrete_floor_02_diff_1k.jpg" id="tex_floor_d"]
+[ext_resource type="Texture2D" path="res://assets/textures/polyhaven/concrete_floor_02/concrete_floor_02_nor_gl_1k.jpg" id="tex_floor_n"]
+[ext_resource type="Texture2D" path="res://assets/textures/polyhaven/concrete_floor_02/concrete_floor_02_rough_1k.jpg" id="tex_floor_r"]
+[ext_resource type="Texture2D" path="res://assets/textures/polyhaven/concrete_wall_008/concrete_wall_008_diff_1k.jpg" id="tex_wall_d"]
+[ext_resource type="Texture2D" path="res://assets/textures/polyhaven/concrete_wall_008/concrete_wall_008_nor_gl_1k.jpg" id="tex_wall_n"]
+[ext_resource type="Texture2D" path="res://assets/textures/polyhaven/concrete_wall_008/concrete_wall_008_rough_1k.jpg" id="tex_wall_r"]
+[ext_resource type="Texture2D" path="res://assets/textures/polyhaven/metal_plate/metal_plate_diff_1k.jpg" id="tex_metal_d"]
+[ext_resource type="Texture2D" path="res://assets/textures/polyhaven/metal_plate/metal_plate_nor_gl_1k.jpg" id="tex_metal_n"]
+[ext_resource type="Texture2D" path="res://assets/textures/polyhaven/metal_plate/metal_plate_rough_1k.jpg" id="tex_metal_r"]
 
 [sub_resource type="StandardMaterial3D" id="mat_floor"]
-albedo_color = Color(0.3, 0.31, 0.33, 1)
+albedo_color = Color(0.78, 0.79, 0.82, 1)
+albedo_texture = ExtResource("tex_floor_d")
+roughness_texture = ExtResource("tex_floor_r")
+normal_enabled = true
+normal_texture = ExtResource("tex_floor_n")
+uv1_scale = Vector3(0.5, 0.5, 0.5)
+uv1_triplanar = true
+uv1_world_triplanar = true
 
 [sub_resource type="StandardMaterial3D" id="mat_wall"]
-albedo_color = Color(0.62, 0.64, 0.66, 1)
+albedo_color = Color(0.95, 0.96, 1, 1)
+albedo_texture = ExtResource("tex_wall_d")
+roughness_texture = ExtResource("tex_wall_r")
+normal_enabled = true
+normal_texture = ExtResource("tex_wall_n")
+uv1_scale = Vector3(0.5, 0.5, 0.5)
+uv1_triplanar = true
+uv1_world_triplanar = true
 
 [sub_resource type="StandardMaterial3D" id="mat_ceiling"]
 albedo_color = Color(0.8, 0.8, 0.82, 1)
 
 [sub_resource type="StandardMaterial3D" id="mat_rack"]
-albedo_color = Color(0.1, 0.1, 0.12, 1)
-
-[sub_resource type="StandardMaterial3D" id="mat_desk"]
-albedo_color = Color(0.45, 0.35, 0.25, 1)
+albedo_color = Color(0.5, 0.52, 0.58, 1)
+albedo_texture = ExtResource("tex_metal_d")
+roughness_texture = ExtResource("tex_metal_r")
+normal_enabled = true
+normal_texture = ExtResource("tex_metal_n")
+uv1_scale = Vector3(1, 1, 1)
+uv1_triplanar = true
+uv1_world_triplanar = true
 
 [sub_resource type="StandardMaterial3D" id="mat_light"]
 albedo_color = Color(1, 1, 1, 1)
@@ -40,12 +68,6 @@ size = Vector3(1.2, 0.02, 0.4)
 [sub_resource type="BoxMesh" id="mesh_5"]
 size = Vector3(0.6, 2, 0.8)
 
-[sub_resource type="BoxMesh" id="mesh_6"]
-size = Vector3(1.4, 0.05, 0.7)
-
-[sub_resource type="BoxMesh" id="mesh_7"]
-size = Vector3(0.05, 0.7, 0.7)
-
 [sub_resource type="BoxShape3D" id="shape_0"]
 size = Vector3(8, 0.1, 6)
 
@@ -69,7 +91,7 @@ background_mode = 1
 background_color = Color(0.05, 0.05, 0.06, 1)
 ambient_light_source = 2
 ambient_light_color = Color(0.7, 0.72, 0.78, 1)
-ambient_light_energy = 0.6
+ambient_light_energy = 1.0
 
 [node name="Room" type="Node3D"]
 script = ExtResource("1")
@@ -281,28 +303,13 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.85, 0.4)
 transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -2, 0, 2.4)
 
 
-[node name="Top" type="MeshInstance3D" parent="Desks/desk_1"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.725, 0)
-mesh = SubResource("mesh_6")
-surface_material_override/0 = SubResource("mat_desk")
-
 [node name="TopShape" type="CollisionShape3D" parent="Desks/desk_1"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.725, 0)
 shape = SubResource("shape_4")
 
-[node name="PanelL" type="MeshInstance3D" parent="Desks/desk_1"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.675, 0.35, 0)
-mesh = SubResource("mesh_7")
-surface_material_override/0 = SubResource("mat_desk")
-
 [node name="PanelLShape" type="CollisionShape3D" parent="Desks/desk_1"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.675, 0.35, 0)
 shape = SubResource("shape_5")
-
-[node name="PanelR" type="MeshInstance3D" parent="Desks/desk_1"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.675, 0.35, 0)
-mesh = SubResource("mesh_7")
-surface_material_override/0 = SubResource("mat_desk")
 
 [node name="PanelRShape" type="CollisionShape3D" parent="Desks/desk_1"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.675, 0.35, 0)
@@ -316,28 +323,13 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.75, 0)
 transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 2, 0, 2.4)
 
 
-[node name="Top" type="MeshInstance3D" parent="Desks/desk_2"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.725, 0)
-mesh = SubResource("mesh_6")
-surface_material_override/0 = SubResource("mat_desk")
-
 [node name="TopShape" type="CollisionShape3D" parent="Desks/desk_2"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.725, 0)
 shape = SubResource("shape_4")
 
-[node name="PanelL" type="MeshInstance3D" parent="Desks/desk_2"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.675, 0.35, 0)
-mesh = SubResource("mesh_7")
-surface_material_override/0 = SubResource("mat_desk")
-
 [node name="PanelLShape" type="CollisionShape3D" parent="Desks/desk_2"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.675, 0.35, 0)
 shape = SubResource("shape_5")
-
-[node name="PanelR" type="MeshInstance3D" parent="Desks/desk_2"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.675, 0.35, 0)
-mesh = SubResource("mesh_7")
-surface_material_override/0 = SubResource("mat_desk")
 
 [node name="PanelRShape" type="CollisionShape3D" parent="Desks/desk_2"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.675, 0.35, 0)
@@ -346,6 +338,9 @@ shape = SubResource("shape_5")
 [node name="Marker" type="Marker3D" parent="Desks/desk_2"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.75, 0)
 
+
+[node name="Dressing" type="Node3D" parent="."]
+script = ExtResource("2")
 
 [node name="Sun" type="DirectionalLight3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 0.7071, 0.7071, 0, -0.7071, 0.7071, 0, 2.5, 0)
