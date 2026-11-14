@@ -36,7 +36,9 @@ The briefing and debrief cards (`ui/mission_card.gd`, `MissionCard`, with
 `NetworkSim.debrief_view()`/`DebriefView`, task 1.30) are done. The main menu
 (`ui/main_menu.tscn`, `MainMenu`, `SettingsPanel`, the startup scene) and the
 `Progress` autoload (`game/progress.gd`, saves to `user://progress.json`) are
-done (task 1.31). The light art pass (task 1.32) is next.
+done (task 1.31). The light art pass (task 1.32) is partly done: CC0 assets
+live in `assets/` (see `assets/CREDITS.md`), the room is textured and dressed by
+`world/room_dressing.gd`, and the Blender rack and switch models are left.
 
 ## Source of truth (read before working)
 

@@ -284,6 +284,21 @@ configure VLANs, a trunk and router-on-a-stick, and see PC-A ping PC-B.
     `menu_requested`, then switches scenes when it is the running scene).
 - [ ] **1.32 Art pass (light):** swap greybox for Kenney/Quaternius models,
   Poly Haven textures, simple rack and switch models from Blender.
+  *Done so far (untick stays until the Blender part lands):*
+  - Assets are in `assets/` (all CC0, sources in `assets/CREDITS.md`): Kenney
+    Furniture Kit GLBs, Quaternius Ultimate Modular Sci-Fi FBX files, and 1k
+    Poly Haven sets for `concrete_floor_02`, `concrete_wall_008`, `metal_plate`.
+  - `room.tscn` floor, walls and rack frames use the textures with triplanar
+    world-space UVs (the shell is `BoxMesh`, so face UVs would stretch).
+  - `world/room_dressing.gd` (`RoomDressing`) places the Kenney desks, chairs,
+    keyboards, lamps, plants and trash can and the Quaternius columns, shelves
+    and crates. It is visual only: no collision, and every anchor and collision
+    shape stays in `room.tscn`. Models are placed by bottom-centre, so each
+    entry is independent of the pack's origin; Kenney's are about half size.
+  - *Left:* simple rack and switch (and router) models from Blender to replace
+    the box racks and `world/devices/` chassis, and swapping the PC monitor for
+    Kenney's `computerScreen.glb`. Keep the console `Area3D` and socket markers
+    where they are when you do.
 - [ ] **1.33 Playtest** with `docs/playtest/m1_vlan_ping.md` checklist;
   fix what it finds.
 
