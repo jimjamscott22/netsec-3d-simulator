@@ -282,23 +282,30 @@ configure VLANs, a trunk and router-on-a-stick, and see PC-A ping PC-B.
     `game/main.gd`. Volume drives the Master bus.
   - The debrief's Continue goes back to the menu (`main.gd` emits
     `menu_requested`, then switches scenes when it is the running scene).
-- [ ] **1.32 Art pass (light):** swap greybox for Kenney/Quaternius models,
+- [x] **1.32 Art pass (light):** swap greybox for Kenney/Quaternius models,
   Poly Haven textures, simple rack and switch models from Blender.
-  *Done so far (untick stays until the Blender part lands):*
-  - Assets are in `assets/` (all CC0, sources in `assets/CREDITS.md`): Kenney
-    Furniture Kit GLBs, Quaternius Ultimate Modular Sci-Fi FBX files, and 1k
-    Poly Haven sets for `concrete_floor_02`, `concrete_wall_008`, `metal_plate`.
-  - `room.tscn` floor, walls and rack frames use the textures with triplanar
-    world-space UVs (the shell is `BoxMesh`, so face UVs would stretch).
+  *Notes from task 1.32:*
+  - Assets are in `assets/` (all CC0 except our own Blender output, sources in
+    `assets/CREDITS.md`): Kenney Furniture Kit GLBs, Quaternius Ultimate Modular
+    Sci-Fi FBX files, and 1k Poly Haven sets for `concrete_floor_02` and
+    `concrete_wall_008` (room) and `metal_plate` (baked into the rack GLB).
+  - `room.tscn` floor and walls use the textures with triplanar world-space
+    UVs (the shell is `BoxMesh`, so face UVs would stretch).
   - `world/room_dressing.gd` (`RoomDressing`) places the Kenney desks, chairs,
     keyboards, lamps, plants and trash can and the Quaternius columns, shelves
     and crates. It is visual only: no collision, and every anchor and collision
     shape stays in `room.tscn`. Models are placed by bottom-centre, so each
     entry is independent of the pack's origin; Kenney's are about half size.
-  - *Left:* simple rack and switch (and router) models from Blender to replace
-    the box racks and `world/devices/` chassis, and swapping the PC monitor for
-    Kenney's `computerScreen.glb`. Keep the console `Area3D` and socket markers
-    where they are when you do.
+  - The rack, switch and router are built by `tools/blender/build_models.py`
+    (Blender 4.x or newer: `blender --background --factory-startup --python
+    tools/blender/build_models.py -- .`) and exported to
+    `assets/models/blender/*.glb`. Commit the GLBs when you re-run it. The
+    device scenes keep their `Chassis` collision, `Sockets` and `Console`; only
+    the box mesh became a `Model` instance, so the models must keep the
+    envelope `tests/world/test_blender_models.gd` pins (origin back-bottom-centre
+    for devices, floor-centre with the front at z = +0.4 for the rack).
+  - Devices mount on the rack's front plane (slot markers at z = 0.4), so they
+    stand proud of the rails rather than inside the cabinet.
 - [ ] **1.33 Playtest** with `docs/playtest/m1_vlan_ping.md` checklist;
   fix what it finds.
 
@@ -498,6 +505,10 @@ Ideas that are out of scope until a milestone pulls them in:
 
 - `NetworkBackend` interface + real FRRouting/VyOS containers (SPEC §10).
 - Diegetic terminal rendered on the monitor mesh instead of full-screen zoom.
+- Swap the PC's box monitor for Kenney's `computerScreen.glb` (keep the
+  `Console` `Area3D` where the terminal opens), and a Blender PC chassis.
+- Rack interior depth: move the slot markers and device origins back so devices
+  sit between the rails instead of in front of them.
 - Score / timer / hint penalties.
 - Localization.
 - `no vlan <id>`, `no hostname`, `no interface <subif>` and other `no` forms

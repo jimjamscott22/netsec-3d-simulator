@@ -3,13 +3,7 @@
 [ext_resource type="Script" path="res://world/devices/device_model.gd" id="1"]
 [ext_resource type="PackedScene" path="res://world/devices/port_socket.tscn" id="2"]
 [ext_resource type="PackedScene" path="res://world/devices/console_port.tscn" id="3"]
-
-[sub_resource type="StandardMaterial3D" id="chassis_material"]
-albedo_color = Color(0.24, 0.31, 0.35, 1)
-
-[sub_resource type="BoxMesh" id="chassis_mesh"]
-material = SubResource("chassis_material")
-size = Vector3(0.5, 0.115, 0.27)
+[ext_resource type="PackedScene" path="res://assets/models/blender/switch_24.glb" id="4"]
 
 [sub_resource type="BoxShape3D" id="chassis_shape"]
 size = Vector3(0.5, 0.115, 0.27)
@@ -20,11 +14,10 @@ script = ExtResource("1")
 [node name="Chassis" type="StaticBody3D" parent="."]
 position = Vector3(0, 0.0575, 0.135)
 
-[node name="Mesh" type="MeshInstance3D" parent="Chassis"]
-mesh = SubResource("chassis_mesh")
-
 [node name="Collision" type="CollisionShape3D" parent="Chassis"]
 shape = SubResource("chassis_shape")
+
+[node name="Model" parent="." instance=ExtResource("4")]
 
 [node name="Sockets" type="Node3D" parent="."]
 
