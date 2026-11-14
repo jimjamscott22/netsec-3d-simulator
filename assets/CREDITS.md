@@ -9,6 +9,5 @@ required; this file records where they came from.
 | `models/quaternius_scifi/` | [Quaternius, Ultimate Modular Sci-Fi (Feb 2021)](https://opengameart.org/content/lowpoly-modular-sci-fi-environments) | FBX models only (walls, floor and roof tiles, props). Flat-colour materials, no texture files. Original `License.txt` kept. |
 | `textures/polyhaven/concrete_floor_02/` | [Poly Haven](https://polyhaven.com/a/concrete_floor_02) | 1k JPG: diffuse, GL normal, roughness. |
 | `textures/polyhaven/concrete_wall_008/` | [Poly Haven](https://polyhaven.com/a/concrete_wall_008) | 1k JPG: diffuse, GL normal, roughness. |
-| `textures/polyhaven/metal_plate/` | [Poly Haven](https://polyhaven.com/a/metal_plate) | 1k JPG: diffuse, GL normal, roughness. |
-
-Racks and switches are not in these packs. Task 1.32 builds them in Blender.
+| `textures/polyhaven/metal_plate/` | [Poly Haven](https://polyhaven.com/a/metal_plate) | 1k JPG: diffuse, GL normal, roughness. The diffuse and normal maps are baked into `models/blender/rack_frame.glb`; the room scene does not reference this folder. |
+| `models/blender/` | Our own, from `tools/blender/build_models.py` | Rack frame, 24-port switch and 2-port router. Regenerate with Blender, do not edit the GLBs by hand. |
