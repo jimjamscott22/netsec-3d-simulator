@@ -46,7 +46,10 @@ func _load_ordered_with_hint() -> void:
 			obj["order"] = 1
 		elif obj["id"] == "ping_ab":
 			obj["order"] = 2
-	data["hints"].append({"reason": "HOST_UNREACHABLE", "text": UNREACHABLE_HINT})
+	# The real scenario now has a HOST_UNREACHABLE hint; swap in a known text.
+	for hint: Dictionary in data["hints"]:
+		if hint["reason"] == "HOST_UNREACHABLE":
+			hint["text"] = UNREACHABLE_HINT
 	DirAccess.make_dir_recursive_absolute(TEMP_DIR)
 	var file := FileAccess.open("%s/%s.json" % [TEMP_DIR, MISSION], FileAccess.WRITE)
 	file.store_string(JSON.stringify(data))
