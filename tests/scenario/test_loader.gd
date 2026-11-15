@@ -227,6 +227,7 @@ func test_scenario_view_header_and_hints() -> void:
 	assert_int(view.spare_cables()).is_equal(1)
 	assert_array(view.hints()).is_equal([
 		{"reason": PingResult.FailReason.NO_LINK, "text": "PC-B isn't cabled to anything yet."},
+		{"reason": PingResult.FailReason.HOST_UNREACHABLE, "text": "Nothing answers at PC-A's gateway, 192.168.10.1. Which device should own that address?"},
 		{"reason": PingResult.FailReason.NO_GATEWAY, "text": "Hosts in different subnets need a router to reach each other."},
 		{"reason": PingResult.FailReason.VLAN_MISMATCH, "text": "Check which VLAN each switch port is in."},
 	])

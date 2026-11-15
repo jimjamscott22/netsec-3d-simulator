@@ -35,8 +35,8 @@ Setup: `godot --path .`, start from the main menu. Note machine, OS, build.
 - [ ] `ping` output and PC `ping` read well.
 
 ## 4. Hints (press H)
-- [ ] At mission start: a hint is shown (parking lot: HOST_UNREACHABLE has
-      none today, so H says "No hint for this step").
+- [ ] At mission start: H shows the gateway hint (nothing answers at
+      192.168.10.1), not "No hint for this step".
 - [ ] After cabling PC-B: hint is about the VLAN or gateway.
 - [ ] Hints never reveal the exact commands.
 

@@ -67,6 +67,16 @@ func test_the_mission_starts_incomplete() -> void:
 	assert_bool(_mission_done(sim)).is_false()
 
 
+func test_the_start_state_shows_the_gateway_hint() -> void:
+	# Nothing owns PC-A's gateway at the start, so the first failure is HOST_UNREACHABLE.
+	for s: ObjectiveState in _sim().objective_states():
+		if s.id == "ping_ab":
+			assert_int(s.fail_reason).is_equal(PingResult.FailReason.HOST_UNREACHABLE)
+			assert_str(s.hint).contains("gateway")
+			return
+	fail("no ping_ab objective")
+
+
 func test_it_lists_the_expected_objectives_and_locks_both_pcs() -> void:
 	var data: Dictionary = _data()
 	var ids: Array = data["objectives"].map(func(o: Dictionary) -> String: return o["id"])

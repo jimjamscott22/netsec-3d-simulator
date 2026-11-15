@@ -517,10 +517,6 @@ Ideas that are out of scope until a milestone pulls them in:
 - ARP-style first ping (`.!!!!` on the first IOS ping to a new target). It is
   cosmetic, but the success-rate line would then need to read 80 percent, so
   the terminal would have to rewrite core output. Left out of task 1.28.
-- M1 has no hint for `HOST_UNREACHABLE`, the reason its `ping_ab` objective
-  fails with at mission start (nothing owns PC-A's gateway yet), so pressing H
-  at the start shows "No hint for this step". Its `NO_LINK` hint ("PC-B isn't
-  cabled") is never reached first. Revisit the M1 hints in the playtest (1.33).
 - Pause menu over the game (Resume / Settings / Main menu). Today the only
   way back to the menu mid-mission is to quit; `SettingsPanel` can be reused.
   It should take all input while open, as `MissionCard` does.
