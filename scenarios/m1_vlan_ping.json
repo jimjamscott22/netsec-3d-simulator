@@ -36,6 +36,7 @@
   ],
   "hints": [
     { "reason": "NO_LINK", "text": "PC-B isn't cabled to anything yet." },
+    { "reason": "HOST_UNREACHABLE", "text": "Nothing answers at PC-A's gateway, 192.168.10.1. Which device should own that address?" },
     { "reason": "NO_GATEWAY", "text": "Hosts in different subnets need a router to reach each other." },
     { "reason": "VLAN_MISMATCH", "text": "Check which VLAN each switch port is in." }
   ],
