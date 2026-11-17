@@ -1,0 +1,233 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+WARNING: Failed to create wd.xic as the input method or its xim server may not have started yet.
+     at: _create_xic (platform/linuxbsd/x11/display_server_x11.cpp:6347)
+WARNING: Could not set V-Sync mode, as changing V-Sync mode is not supported by the graphics driver.
+     at: set_use_vsync (platform/linuxbsd/x11/gl_manager_x11.cpp:372)
+OpenGL API 4.5 (Core Profile) Mesa 26.0.8-1ubuntu0.3 - Compatibility - Using Device: Mesa - llvmpipe (LLVM 21.1.8, 256 bits)
+
+CHECK PASS Starts on mission menu | 
+CHECK PASS Settings opens from menu | 
+CHECK PASS Settings returns on Escape | 
+Menu to first rendered room frame ms 352.287
+CHECK PASS Briefing appears | 
+CHECK PASS Enter dismisses briefing | 
+CHECK PASS Initial HUD | 
+CHECK PASS Initial gateway hint | Nothing answers at PC-A's gateway, 192.168.10.1. Which device should own that address?
+Idle room FPS samples [16, 121, 121, 161, 161, 157]
+CHECK PASS Movement W | (0.0, 0.00079, -0.533333)
+CHECK PASS Movement A | (-0.6, 0.000001, 0.0)
+CHECK PASS Movement S | (0.0, -0.000002, 0.6)
+CHECK PASS Movement D | (0.6, 0.000001, 0.0)
+CHECK PASS Mouse look changes yaw and pitch | 
+CHECK PASS Ctrl crouches on floor | 0.94999998807907
+CHECK PASS Ctrl release restores height | 1.64999997615814
+CHECK PASS Locked cable cannot be unplugged | That cable is locked.
+Free port prompt | Eth0 — PC-B
+CHECK PASS Crosshair identifies port and device | Eth0 — PC-B
+CHECK FAIL Crosshair prompt includes free port state | Eth0 — PC-B
+CHECK PASS Can hold spare cable | Cable from Eth0 — PC-B · aim at another port and interact · Esc to drop
+CHECK PASS Escape cancels cable, keeps spare | 
+CHECK PASS Direct PC-B cable to reserved R1 port rejected | That port is reserved.
+Connected port prompt | Fa0/2 — S1
+CHECK PASS Spare cable plugs in with mesh and green LED | Spare cables: 0
+CHECK PASS Post-cabling hint concerns VLAN or gateway | Nothing answers at PC-A's gateway, 192.168.10.1. Which device should own that address?
+CHECK PASS Cable unplugs, spares and visuals reset | Spare cables: 1
+CHECK PASS Spare cable can be reused | Spare cables: 0
+Terminal interaction (plus physics wait) ms 52.273
+CHECK PASS PC-A console opens through ray and E | 
+CHECK PASS PC-A IP and gateway stay locked | C:\>ipconfig
+Windows IP Configuration
+
+Ethernet adapter Ethernet0:
+
+   Connection-specific DNS Suffix  . :
+   IPv4 Address. . . . . . . . . . . : 192.168.10.10
+   Subnet Mask . . . . . . . . . . . : 255.255.255.0
+   Default Gateway . . . . . . . . . : 192.168.10.1
+C:\>ipconfig /set 192.168.10.20 255.255.255.0 192.168.10.1
+Access is denied. Network settings are managed by IT.
+C:\>ipconfig
+Windows IP Configuration
+
+Ethernet adapter Ethernet0:
+
+   Connection-specific DNS Suffix  . :
+   IPv4 Address. . . . . . . . . . . : 192.168.10.10
+   Subnet Mask . . . . . . . . . . . : 255.255.255.0
+   Default Gateway . . . . . . . . . : 192.168.10.1
+
+CHECK PASS PC ping displays packet results | . . . . . . . . . : 192.168.10.1
+C:\>ipconfig /set 192.168.10.20 255.255.255.0 192.168.10.1
+Access is denied. Network settings are managed by IT.
+C:\>ipconfig
+Windows IP Configuration
+
+Ethernet adapter Ethernet0:
+
+   Connection-specific DNS Suffix  . :
+   IPv4 Address. . . . . . . . . . . : 192.168.10.10
+   Subnet Mask . . . . . . . . . . . : 255.255.255.0
+   Default Gateway . . . . . . . . . : 192.168.10.1
+C:\>ping 192.168.20.10
+Pinging 192.168.20.10 with 32 bytes of data:
+Request timed out.
+Request timed out.
+Request timed out.
+Request timed out.
+
+Ping statistics for 192.168.20.10:
+    Packets: Sent = 4, Received = 0, Lost = 4 (100% loss),
+
+CHECK PASS Escape closes terminal | 
+Terminal interaction (plus physics wait) ms 55.732
+CHECK PASS PC-B console opens through ray and E | 
+CHECK PASS PC-B IP and gateway stay locked | C:\>ipconfig
+Windows IP Configuration
+
+Ethernet adapter Ethernet0:
+
+   Connection-specific DNS Suffix  . :
+   IPv4 Address. . . . . . . . . . . : 192.168.20.10
+   Subnet Mask . . . . . . . . . . . : 255.255.255.0
+   Default Gateway . . . . . . . . . : 192.168.20.1
+C:\>ipconfig /set 192.168.10.20 255.255.255.0 192.168.10.1
+Access is denied. Network settings are managed by IT.
+C:\>ipconfig
+Windows IP Configuration
+
+Ethernet adapter Ethernet0:
+
+   Connection-specific DNS Suffix  . :
+   IPv4 Address. . . . . . . . . . . : 192.168.20.10
+   Subnet Mask . . . . . . . . . . . : 255.255.255.0
+   Default Gateway . . . . . . . . . : 192.168.20.1
+
+CHECK PASS Escape closes terminal | 
+Terminal interaction (plus physics wait) ms 49.336
+CHECK PASS S1 console opens through ray and E | 
+CHECK PASS Up recalls previous command | show vlan brief
+CHECK PASS Down returns to empty input | 
+CHECK PASS Tab completes show | show 
+CHECK PASS Question mark displays help |                                        Fa0/22, Fa0/23, Fa0/24, Gi0/1
+                                                Gi0/2
+10   ACCOUNTING                       active    Fa0/1
+1002 fddi-default                     act/unsup
+1003 token-ring-default               act/unsup
+1004 fddinet-default                  act/unsup
+1005 trnet-default                    act/unsup
+Switch#show ?
+  ip              IP information
+  running-config  Current operating configuration
+  vlan            VTP VLAN status
+
+CHECK PASS IOS-style invalid command | 005 trnet-default                    act/unsup
+Switch#show ?
+  ip              IP information
+  running-config  Current operating configuration
+  vlan            VTP VLAN status
+Switch#show bogus
+            ^
+% Invalid input detected at '^' marker.
+
+CHECK PASS Both switch access ports in VLAN 10 cannot win | 
+CHECK PASS S1 show output includes VLANs, assigned port and trunk | 
+CHECK PASS Escape closes terminal | 
+Terminal interaction (plus physics wait) ms 50.425
+CHECK PASS R1 console opens through ray and E | 
+CHECK PASS Physical router IP without subinterfaces cannot win | er line.  End with CNTL/Z.
+Router(config)#int g0/0
+Router(config-if)#no shut
+Router(config-if)#ip address 192.168.10.1 255.255.255.0
+Router(config-if)#end
+Router#sh ip int br
+Interface                  IP-Address      OK? Method Status                Protocol
+GigabitEthernet0/0         192.168.10.1    YES manual up                    up
+GigabitEthernet0/1         unassigned      YES unset  administratively down down
+
+CHECK PASS Router show output and ping succeed | Router#conf t
+Enter configuration commands, one per line.  End with CNTL/Z.
+Router(config)#int g0/0
+Router(config-if)#no ip address
+Router(config-if)#exit
+Router(config)#int g0/0.10
+Router(config-subif)#encapsulation dot1Q 10
+Router(config-subif)#ip address 192.168.10.1 255.255.255.0
+Router(config-subif)#exit
+Router(config)#int g0/0.20
+Router(config-subif)#encapsulation dot1Q 20
+Router(config-subif)#ip address 192.168.20.1 255.255.255.0
+Router(config-subif)#end
+Router#sh ip int br
+Interface                  IP-Address      OK? Method Status                Protocol
+GigabitEthernet0/0         unassigned      YES unset  up                    up
+GigabitEthernet0/0.10      192.168.10.1    YES manual up                    up
+GigabitEthernet0/0.20      192.168.20.1    YES manual up                    up
+GigabitEthernet0/1         unassigned      YES unset  administratively down down
+Router#show running-config
+Building configuration...
+
+Current configuration : 319 bytes
+!
+hostname Router
+!
+interface GigabitEthernet0/0
+ no ip address
+!
+interface GigabitEthernet0/0.10
+ encapsulation dot1Q 10
+ ip address 192.168.10.1 255.255.255.0
+!
+interface GigabitEthernet0/0.20
+ encapsulation dot1Q 20
+ ip address 192.168.20.1 255.255.255.0
+!
+interface GigabitEthernet0/1
+ no ip address
+ shutdown
+!
+end
+Router#ping 192.168.20.10
+Type escape sequence to abort.
+Sending 5, 100-byte ICMP Echos to 192.168.20.10, timeout is 2 seconds:
+!!!!!
+Success rate is 100 percent (5/5), round-trip min/avg/max = 1/2/4 ms
+
+CHECK PASS PC-A shell ping succeeds after full configuration | Pinging 192.168.20.10 with 32 bytes of data:
+Reply from 192.168.20.10: bytes=32 time=1ms TTL=127
+Reply from 192.168.20.10: bytes=32 time=1ms TTL=127
+Reply from 192.168.20.10: bytes=32 time=1ms TTL=127
+Reply from 192.168.20.10: bytes=32 time=1ms TTL=127
+
+Ping statistics for 192.168.20.10:
+    Packets: Sent = 4, Received = 4, Lost = 0 (0% loss),
+Approximate round trip times in milli-seconds:
+    Minimum = 1ms, Maximum = 1ms, Average = 1ms
+CHECK PASS Escape closes terminal | 
+CHECK PASS Day One debrief appears with all five objectives | [x] PC-A can ping PC-B through the router
+[x] S1 Gi0/1 is a trunk
+[x] Gi0/0.10 is VLAN 10's gateway (192.168.10.1/24)
+[x] Gi0/0.20 is VLAN 20's gateway (192.168.20.1/24)
+[x] Gi0/0 itself has no IP address
+CHECK PASS Mission written to progress.json | {
+	"completed": [
+		"m1_vlan_ping"
+	],
+	"settings": {
+		"fullscreen": false,
+		"look_sensitivity": 1.0,
+		"volume": 0.8
+	},
+	"version": 1
+}
+
+SCRIPT ERROR: Cannot call method 'set_input_as_handled' on a null value.
+          at: MissionCard._input (res://ui/mission_card.gd:51)
+          GDScript backtrace (most recent call first):
+              [0] _input (res://ui/mission_card.gd:51)
+              [1] key (res://playtest_probe.gd:28)
+              [2] tap (res://playtest_probe.gd:31)
+              [3] run (res://playtest_probe.gd:275)
+              [4] shot (res://playtest_probe.gd:45)
+CHECK PASS Debrief Continue returns to completed menu | Completed
+CHECK PASS Replay restores original briefing and spare cable | 
+Quit button focused: true | Total failed checks: 1
