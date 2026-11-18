@@ -18,11 +18,15 @@ Ubuntu 26.04.1 LTS, Intel Core i7-13700F, Godot 4.7.2, Compatibility renderer at
 
 | # | Area | What happened | Severity |
 |---|---|---|---|
-| 1 | Interaction | Aim at uncabled PC-B Eth0 or at S1 Fa0/2 after attaching the cable. The crosshair shows the port and device without a free or connected label. `PortSocket.set_interact_label()` builds the label from the port name and device ID. | Low |
-| 2 | Debrief | Complete the mission and press Enter on the debrief. The menu appears and retains completion, but `MissionCard._input()` logs a null-viewport script error at `ui/mission_card.gd:51`. The close signal switches scenes before the input handler calls `get_viewport()`. | Low |
+| 1 | Interaction | Aim at uncabled PC-B Eth0 or at S1 Fa0/2 after attaching the cable. The crosshair shows the port and device without a free or connected label. `PortSocket.set_interact_label()` builds the label from the port name and device ID. **Resolution: no change.** SPEC 8.1 specifies the prompt as the port and device ("Fa0/2 — S1"); the checklist wording "and its state" was wrong and is fixed. | Low |
+| 2 | Debrief | Complete the mission and press Enter on the debrief. The menu appears and retains completion, but `MissionCard._input()` logs a null-viewport script error at `ui/mission_card.gd:51`. The close signal switches scenes before the input handler calls `get_viewport()`. **Resolution: fixed.** `_input` now marks the key handled before closing; regression test `test_closing_that_removes_the_card_from_the_tree_raises_no_error`. | Low |
 
 Both findings reproduced in two rendered runs. The worktree and existing save were left untouched.
 
 All 828 GdUnit4 tests passed across 44 suites. The simulation purity check passed across 39 files. The GdUnit4 process reported object and resource cleanup warnings on exit.
 
-Evidence files in this directory include `playtest-confirm.log`, `playtest-restart.log`, `tests.log`, and `09-debrief.png`.
+Evidence kept in this directory: `playtest-confirm.log`, `04-hud.png` and `09-debrief.png`. The restart and test logs and the other screenshots cited in the original run were not committed.
+
+## Still open for a human
+
+This run was scripted under Xvfb with software rendering, so these are unverified: movement feel, frame rate and terminal hitching on the lowest-spec machine, and the new-player run. Task 1.33 stays unticked until they are done.

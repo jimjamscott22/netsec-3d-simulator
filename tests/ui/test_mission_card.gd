@@ -124,6 +124,17 @@ func test_enter_escape_and_the_button_close_it() -> void:
 	])
 
 
+func test_closing_that_removes_the_card_from_the_tree_raises_no_error() -> void:
+	# Closing the debrief switches scenes, so the card leaves the tree inside the
+	# `closed` signal. The key handler must not touch the viewport afterwards
+	# (playtest finding 2).
+	var card: MissionCard = _card()
+	card.closed.connect(func(_k: MissionCard.Kind) -> void: remove_child(card))
+	card.show_briefing()
+	await assert_error(func() -> void: card._input(_key(KEY_ENTER))).is_success()
+	assert_bool(card.is_inside_tree()).is_false()
+
+
 func test_other_keys_leave_it_open() -> void:
 	var card: MissionCard = _card()
 	card.show_briefing()

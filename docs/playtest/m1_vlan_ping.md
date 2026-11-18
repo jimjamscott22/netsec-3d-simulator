@@ -17,7 +17,7 @@ Setup: `godot --path .`, start from the main menu. Note machine, OS, build.
 
 ## 2. Movement and interaction
 - [ ] WASD, mouse look and crouch feel right; no falling through the floor.
-- [ ] Crosshair prompt names the target (port or device) and its state.
+- [ ] Crosshair prompt names the target (port and device, e.g. "Fa0/2 — S1").
 - [ ] Locked cables cannot be unplugged; the reason is shown.
 - [ ] The spare cable can be picked up, plugged in, unplugged and reused.
 - [ ] Plugging into `R1:Gi0/1` (reserved) is rejected with a clear message.
@@ -56,6 +56,8 @@ Setup: `godot --path .`, start from the main menu. Note machine, OS, build.
 - [ ] Where did they get stuck? ____
 
 ## Findings
+
+First scripted run: see `results/m1_vlan_ping/PLAYTEST.md`.
 | # | Area | What happened | Severity | Fix / test |
 |---|------|---------------|----------|------------|
 |   |      |               |          |            |
