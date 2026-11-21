@@ -14,6 +14,8 @@ var _evaluator: ObjectiveEvaluator
 var _mission_completed: bool = false
 var _debrief_text: String = ""
 var _debrief: DebriefView
+## source device id -> file path -> LogFile.
+var _logs: Dictionary = {}
 
 
 func _init(spare_cables: int = 0) -> void:
@@ -32,6 +34,7 @@ func load_scenario(data: Dictionary, file_id: String = "") -> LoadResult:
 	_devices.clear()
 	_reserved.clear()
 	_locked.clear()
+	_logs.clear()
 	for d: Device in ScenarioLoader.build_devices(data):
 		add_device(d)
 	for port: String in ScenarioLoader.reserved_ports(data):
@@ -91,6 +94,33 @@ func _reevaluate() -> void:
 func _emit_config_changed(device_id: String) -> void:
 	events.config_changed.emit(device_id)
 	_reevaluate()
+
+
+## Registers a log file on its source device. False, and nothing changes, when
+## that device does not exist or already has a file at that path.
+func add_log_file(f: LogFile) -> bool:
+	if not _devices.has(f.source()):
+		return false
+	var files: Dictionary = _logs.get_or_add(f.source(), {})
+	if files.has(f.file()):
+		return false
+	files[f.file()] = f
+	return true
+
+
+## The lines of `file` on `source_id` that pass `filter`, in file order, in a
+## fresh array. A null filter keeps every line. An unknown device or file gives
+## an empty array.
+func query_logs(source_id: String, file: String, filter: LogFilter) -> Array[LogLine]:
+	var out: Array[LogLine] = []
+	var files: Dictionary = _logs.get(source_id, {})
+	var f: LogFile = files.get(file)
+	if f == null:
+		return out
+	for line: LogLine in f.lines():
+		if filter == null or filter.matches(line):
+			out.append(line)
+	return out
 
 
 func add_device(d: Device) -> bool:

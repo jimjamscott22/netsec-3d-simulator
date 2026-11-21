@@ -320,10 +320,19 @@ the lowest machine available.
 Goal: `m2_log_triage`. A web server shows signs of attack. The player reads
 logs, works out who attacked, how and which account, and files a report.
 
-- [ ] **2.1 Log data model** (`sim/logs/`): `LogLine`, `LogFile`,
+- [x] **2.1 Log data model** (`sim/logs/`): `LogLine`, `LogFile`,
   `LogFilter` (substring, case-insensitive, regex, `src_ip`).
   `NetworkSim.query_logs`.
   *Tests:* each filter kind; file order kept.
+  - `LogLine`/`LogFile` are immutable; lines are numbered from 1, which is what
+    report evidence cites. Substring and regex filters test `full_text()` (the
+    timestamp, a space, then the text), so `grep` on a timestamp works.
+  - A filter that cannot be satisfied (bad regex, empty `src_ip`) is not
+    `is_valid()` and matches nothing; callers show the error. An empty
+    substring matches every line, as `grep ""` does.
+  - `NetworkSim.add_log_file` registers files (refusing an unknown device or a
+    repeated `(source, file)` pair); `load_scenario` clears them. Reading `logs`
+    from a scenario is task 2.2.
 - [ ] **2.2 Schema + validator** for `logs` and `report` (SPEC §7.4); update
   `scenario-schema.md`.
   *Tests:* one bad fixture per new rule; reject duplicate `(source, file)` log
