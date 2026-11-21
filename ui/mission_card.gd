@@ -45,10 +45,11 @@ func _input(event: InputEvent) -> void:
 	var key: InputEventKey = event as InputEventKey
 	if key == null:
 		return
+	# Keys never reach the world or HUD behind the card. Mark the event handled
+	# before closing: closing can switch scenes, and this node then has no viewport.
+	get_viewport().set_input_as_handled()
 	if key.pressed and not key.echo and key.keycode in [KEY_ENTER, KEY_KP_ENTER, KEY_ESCAPE]:
 		close()
-	# Keys never reach the world or HUD behind the card.
-	get_viewport().set_input_as_handled()
 
 
 # --- public ---------------------------------------------------------------------
