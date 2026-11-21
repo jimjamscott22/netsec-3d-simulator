@@ -45,6 +45,22 @@ static func log_files(data: Dictionary) -> Array[LogFile]:
 	return out
 
 
+## Each `report` objective's `equals`, by the field it checks.
+static func report_answers(data: Dictionary) -> Dictionary:
+	var out: Dictionary = {}
+	for obj: Dictionary in data["objectives"]:
+		if obj["type"] == "report":
+			out[obj["field"]] = obj["equals"]
+	return out
+
+
+## The player's report, or null when the scenario has none.
+static func build_report(data: Dictionary) -> ReportState:
+	if not data.has("report"):
+		return null
+	return ReportState.from_scenario(data["report"], report_answers(data))
+
+
 static func spare_cables(data: Dictionary) -> int:
 	return ScenarioFields.to_int(data.get("spare_cables", 0))
 
@@ -66,6 +82,20 @@ static func build_view(data: Dictionary) -> ScenarioView:
 	var hints: Array = []
 	for hint: Dictionary in data.get("hints", []):
 		hints.append({"reason": PingResult.FailReason[hint["reason"]], "text": hint["text"]})
+	var logs: Array = []
+	for entry: Dictionary in data.get("logs", []):
+		logs.append({"source": entry["source"], "file": entry["file"], "lines": (entry["lines"] as Array).size()})
+	var report: Dictionary = data.get("report", {})
+	var report_fields: Array = []
+	for field: Dictionary in report.get("fields", []):
+		var options: Array[String] = []
+		options.assign(field.get("options", []))
+		report_fields.append({
+			"id": field["id"],
+			"label": field["label"],
+			"kind": ReportState.Kind[(field["kind"] as String).to_upper()],
+			"options": options,
+		})
 	return ScenarioView.new(
 		data["id"],
 		data["title"],
@@ -75,6 +105,9 @@ static func build_view(data: Dictionary) -> ScenarioView:
 		devices,
 		start_links(data),
 		reserved_ports(data),
+		logs,
+		report_fields,
+		ScenarioFields.to_int(report.get("max_attempts", ReportState.DEFAULT_MAX_ATTEMPTS)) if report.has("fields") else 0,
 	)
 
 

@@ -142,6 +142,7 @@ func test_a_scenario_without_logs_loads_with_none() -> void:
 	var data: Dictionary = _m2()
 	data.erase("logs")
 	data.erase("report")
+	data["objectives"] = data["objectives"].filter(func(o: Dictionary) -> bool: return o["type"] != "report")
 	var sim := NetworkSim.new()
 	assert_array(sim.load_scenario(data).errors).is_empty()
 	assert_array(sim.query_logs("WEB1", "/var/log/auth.log", null)).is_empty()

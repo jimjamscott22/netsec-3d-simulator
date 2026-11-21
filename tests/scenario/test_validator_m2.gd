@@ -1,8 +1,9 @@
-class_name TestValidatorLogs
+class_name TestValidatorM2
 extends GdUnitTestSuite
-## Validator rules for `logs` and `report` (task 2.2, SPEC §7.4). Each test edits
-## the known-good M2 fixture in one way and asserts the exact error list, so it
-## also proves a mistake is reported once, at its JSON path.
+## Validator rules for `logs`, `report` and `report` objectives (tasks 2.2 and
+## 2.3, SPEC §7.4). Each test edits the known-good M2 fixture in one way and
+## asserts the exact error list, so it also proves a mistake is reported once, at
+## its JSON path.
 
 const FIXTURE: String = "res://tests/scenario/fixtures/valid_m2.json"
 const FILE_ID: String = "m2_fixture"
@@ -11,6 +12,11 @@ const FILE_ID: String = "m2_fixture"
 const WEB_AUTH: int = 0  # 5 lines
 const WEB_ACCESS: int = 1  # 3 lines
 const DB_AUTH: int = 2  # 2 lines
+
+# Objectives: 0 is a config objective, then one report objective per field.
+const OBJ_IP: int = 1
+const OBJ_TYPE: int = 2
+const OBJ_USER: int = 3
 
 const SNAKE: String = "must be snake_case (lowercase letters, digits and underscores, starting with a letter)"
 const PATH_RULE: String = "must be an absolute file path such as /var/log/auth.log (no spaces)"
@@ -50,6 +56,12 @@ func _edit(edit: Callable) -> Array[String]:
 	return ScenarioValidator.validate(d, FILE_ID)
 
 
+## Removes the report and every objective that answers it.
+func _drop_report(d: Dictionary) -> void:
+	d.erase("report")
+	d["objectives"] = d["objectives"].filter(func(o: Dictionary) -> bool: return o["type"] != "report")
+
+
 func _log(index: int) -> String:
 	return "logs[%d]" % index
 
@@ -84,8 +96,8 @@ func test_logs_and_report_are_both_optional() -> void:
 	])
 	assert_array(_edit(func(d: Dictionary) -> void:
 		d.erase("logs")
-		d.erase("report"))).is_empty()
-	assert_array(_without(["report"])).is_empty()
+		_drop_report(d))).is_empty()
+	assert_array(_edit(_drop_report)).is_empty()
 
 
 # --- logs: shape ------------------------------------------------------------
@@ -94,14 +106,14 @@ func test_logs_and_report_are_both_optional() -> void:
 func test_logs_must_be_an_array_of_objects() -> void:
 	assert_array(_edit(func(d: Dictionary) -> void:
 		d["logs"] = {}
-		d.erase("report"))).is_equal(["logs: must be an array"])
+		_drop_report(d))).is_equal(["logs: must be an array"])
 	assert_array(_with(["logs", 1], 5)).is_equal(["logs[1]: must be an object"])
 
 
 func test_an_empty_logs_array_is_fine_without_evidence() -> void:
 	assert_array(_edit(func(d: Dictionary) -> void:
 		d["logs"] = []
-		d.erase("report"))).is_empty()
+		_drop_report(d))).is_empty()
 
 
 func test_log_entry_keys() -> void:
@@ -435,10 +447,89 @@ func test_a_broken_log_identity_still_lets_other_evidence_be_checked() -> void:
 	])
 
 
-# --- report objectives stay for task 2.4 ------------------------------------
+# --- report objectives ------------------------------------------------------
 
 
-func test_report_objectives_are_still_not_supported() -> void:
-	assert_array(_with(["objectives", 0, "type"], "report")).is_equal(
-		['objectives[0].type: "report" is not supported yet (arrives in M2)']
+func _objective(index: int) -> String:
+	return "objectives[%d]" % index
+
+
+func test_a_report_objective_takes_field_and_equals_only() -> void:
+	assert_array(_with(["objectives", OBJ_IP, "extra"], 1)).is_equal([_objective(OBJ_IP) + ".extra: unknown key"])
+	assert_array(_with(["objectives", OBJ_IP, "order"], 2)).is_empty()
+
+
+func test_a_report_objective_needs_field_and_equals() -> void:
+	assert_array(_without(["objectives", OBJ_IP, "field"])).is_equal([_objective(OBJ_IP) + ".field: required"])
+	assert_array(_without(["objectives", OBJ_IP, "equals"])).is_equal([_objective(OBJ_IP) + ".equals: required"])
+
+
+func test_the_field_must_exist_in_the_report() -> void:
+	# The field the objective meant is not also reported as unchecked.
+	assert_array(_with(["objectives", OBJ_IP, "field"], "nope")).is_equal(
+		[_objective(OBJ_IP) + '.field: unknown report field "nope"']
 	)
+	assert_array(_with(["objectives", OBJ_IP, "field"], 5)).is_equal(
+		[_objective(OBJ_IP) + ".field: must be a report field id"]
+	)
+
+
+func test_a_report_objective_without_any_report_is_unknown() -> void:
+	var errors: Array[String] = _edit(func(d: Dictionary) -> void: d.erase("report"))
+	assert_array(errors).is_equal([
+		_objective(OBJ_IP) + '.field: unknown report field "attacker_ip"',
+		_objective(OBJ_TYPE) + '.field: unknown report field "attack_type"',
+		_objective(OBJ_USER) + '.field: unknown report field "compromised_user"',
+	])
+
+
+func test_an_ipv4_answer_must_be_an_address() -> void:
+	for bad: Variant in ["", "banana", "203.0.113", 5, null]:
+		assert_array(_with(["objectives", OBJ_IP, "equals"], bad)).override_failure_message(str(bad)).is_equal(
+			[_objective(OBJ_IP) + ".equals: must be an IPv4 address such as 192.168.10.1"]
+		)
+
+
+func test_a_choice_answer_must_be_one_of_the_options_exactly() -> void:
+	var rule: String = ".equals: must be one of the field's options (Brute force, SQL injection, Port scan, Phishing)"
+	for bad: Variant in ["Smishing", "brute force", "", 5]:
+		assert_array(_with(["objectives", OBJ_TYPE, "equals"], bad)).override_failure_message(str(bad)).is_equal(
+			[_objective(OBJ_TYPE) + rule]
+		)
+	assert_array(_with(["objectives", OBJ_TYPE, "equals"], "Phishing")).is_empty()
+
+
+func test_a_text_answer_must_be_non_empty() -> void:
+	for bad: Variant in ["", "   ", 5]:
+		assert_array(_with(["objectives", OBJ_USER, "equals"], bad)).override_failure_message(str(bad)).is_equal(
+			[_objective(OBJ_USER) + ".equals: must be a non-empty string"]
+		)
+
+
+func test_two_objectives_may_not_check_the_same_field() -> void:
+	var errors: Array[String] = _edit(func(d: Dictionary) -> void:
+		var copy: Dictionary = d["objectives"][OBJ_IP].duplicate(true)
+		copy["id"] = "found_ip_again"
+		d["objectives"].append(copy))
+	assert_array(errors).is_equal([
+		_objective(4) + '.field: a second objective for report field "attacker_ip" (same as objectives[1])',
+	])
+
+
+func test_every_report_field_needs_an_objective() -> void:
+	var errors: Array[String] = _edit(func(d: Dictionary) -> void: d["objectives"].remove_at(OBJ_USER))
+	assert_array(errors).is_equal([_field(2) + ': no "report" objective checks field "compromised_user"'])
+
+
+func test_a_malformed_field_does_not_also_flag_its_objective() -> void:
+	# The field list can't be trusted, so the objective's field isn't called unknown.
+	assert_array(_with(["report", "fields", 2, "id"], "Bad Id")).is_equal([_field(2) + ".id: " + SNAKE])
+	assert_array(_without(["report", "fields", 1, "options"])).is_equal([_field(1) + ".options: required for a choice field"])
+	assert_array(_with(["report", "fields"], [])).is_equal(["report.fields: needs at least one field"])
+
+
+func test_an_answer_is_not_checked_against_a_field_that_is_not_there() -> void:
+	var errors: Array[String] = _edit(func(d: Dictionary) -> void:
+		d["objectives"][OBJ_IP]["field"] = "nope"
+		d["objectives"][OBJ_IP]["equals"] = "banana")
+	assert_array(errors).is_equal([_objective(OBJ_IP) + '.field: unknown report field "nope"'])

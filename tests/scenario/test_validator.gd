@@ -566,7 +566,7 @@ func test_objective_type() -> void:
 
 
 func test_later_milestone_objective_types_say_when_they_arrive() -> void:
-	var due: Dictionary = {"report": "M2", "vuln_patched": "M3", "exploit_test": "M3", "ssh": "M4", "no_ping": "M5"}
+	var due: Dictionary = {"vuln_patched": "M3", "exploit_test": "M3", "ssh": "M4", "no_ping": "M5"}
 	for type: String in due:
 		assert_array(_with(["objectives", 0, "type"], type)).override_failure_message(type).is_equal(
 			['objectives[0].type: "%s" is not supported yet (arrives in %s)' % [type, due[type]]]

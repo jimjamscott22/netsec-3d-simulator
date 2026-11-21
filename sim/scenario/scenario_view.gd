@@ -1,9 +1,9 @@
 class_name ScenarioView
 extends RefCounted
 ## Read-only, static scenario data for the world and UI (SPEC §3.3): the header,
-## every device's placement and ordered interface list, the start links and the
-## reserved ports. It never holds objectives, `solution`, `debrief` or any
-## device config. Accessors return fresh copies, so a caller can't reach the
+## every device's placement and ordered interface list, the start links, the
+## reserved ports, and M2's log descriptors and report fields. It never holds
+## objectives, `solution`, `debrief`, report answers or any device config. Accessors return fresh copies, so a caller can't reach the
 ## view's data (or sim state) through them.
 
 var _id: String
@@ -14,6 +14,9 @@ var _hints: Array
 var _devices: Array
 var _links: Array
 var _reserved_ports: Array[String]
+var _logs: Array
+var _report_fields: Array
+var _report_max_attempts: int
 
 
 ## Takes normalized data from ScenarioLoader (canonical ports and names).
@@ -26,6 +29,9 @@ func _init(
 	p_devices: Array,
 	p_links: Array,
 	p_reserved_ports: Array[String],
+	p_logs: Array = [],
+	p_report_fields: Array = [],
+	p_report_max_attempts: int = 0,
 ) -> void:
 	_id = p_id
 	_title = p_title
@@ -35,6 +41,9 @@ func _init(
 	_devices = p_devices.duplicate(true)
 	_links = p_links.duplicate(true)
 	_reserved_ports = p_reserved_ports.duplicate()
+	_logs = p_logs.duplicate(true)
+	_report_fields = p_report_fields.duplicate(true)
+	_report_max_attempts = p_report_max_attempts
 
 
 func scenario_id() -> String:
@@ -74,3 +83,26 @@ func links() -> Array:
 
 func reserved_ports() -> Array[String]:
 	return _reserved_ports.duplicate()
+
+
+## Each log file in file order, as `{source: String, file: String, lines: int}`.
+## Read the lines themselves with `query_logs`.
+func logs() -> Array:
+	return _logs.duplicate(true)
+
+
+## True when the scenario has an incident report to fill in.
+func has_report() -> bool:
+	return not _report_fields.is_empty()
+
+
+## Each report field in file order, as `{id: String, label: String, kind:
+## ReportState.Kind, options: Array[String]}` (`options` is empty unless the
+## kind is CHOICE). Never the expected answers.
+func report_fields() -> Array:
+	return _report_fields.duplicate(true)
+
+
+## Wrong submissions each report field allows; 0 when there is no report.
+func report_max_attempts() -> int:
+	return _report_max_attempts

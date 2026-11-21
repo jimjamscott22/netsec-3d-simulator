@@ -54,7 +54,13 @@
   },
   "objectives": [
     { "id": "named", "type": "config", "device": "WEB1", "path": ["hostname"], "equals": "web1",
-      "description": "WEB1 is called web1" }
+      "description": "WEB1 is called web1" },
+    { "id": "found_ip", "type": "report", "field": "attacker_ip", "equals": "203.0.113.45",
+      "description": "Report the attacker's IP" },
+    { "id": "found_type", "type": "report", "field": "attack_type", "equals": "Brute force",
+      "description": "Report the attack type" },
+    { "id": "found_user", "type": "report", "field": "compromised_user", "equals": "deploy",
+      "description": "Report the compromised account" }
   ],
   "solution": [
     { "device": "WEB1", "commands": ["help"] }

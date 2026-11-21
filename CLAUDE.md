@@ -39,7 +39,12 @@ The briefing and debrief cards (`ui/mission_card.gd`, `MissionCard`, with
 done (task 1.31). The light art pass (task 1.32) is done: CC0 assets live in
 `assets/` (see `assets/CREDITS.md`), the room is textured and dressed by
 `world/room_dressing.gd`, and the rack, switch and router models come from
-`tools/blender/build_models.py`. The M1 playtest (task 1.33) is next.
+`tools/blender/build_models.py`. The M1 playtest (task 1.33) was not finished
+(the owner chose to carry on and fix what it finds later), and M2 is under way
+in plan order: the log model and `query_logs` (`sim/logs/`, task 2.1), the
+`logs`/`report` schema, validator and loader (task 2.2), and report state,
+`submit_report`, `report_view` and the `report` objective type (task 2.3) are
+done. Task 2.4 (a report field out of attempts failing the mission) is next.
 
 ## Source of truth (read before working)
 

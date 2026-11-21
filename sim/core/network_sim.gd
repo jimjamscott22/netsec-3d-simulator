@@ -16,6 +16,8 @@ var _debrief_text: String = ""
 var _debrief: DebriefView
 ## source device id -> file path -> LogFile.
 var _logs: Dictionary = {}
+## The player's incident report; null when the scenario has none.
+var _report: ReportState
 
 
 func _init(spare_cables: int = 0) -> void:
@@ -45,6 +47,7 @@ func load_scenario(data: Dictionary, file_id: String = "") -> LoadResult:
 	for link: Dictionary in ScenarioLoader.start_links(data):
 		add_fixed_link(link["a"], link["b"], link["locked"])
 	_spare_cables = ScenarioLoader.spare_cables(data)
+	_report = ScenarioLoader.build_report(data)
 	_scenario_view = ScenarioLoader.build_view(data)
 	_evaluator = ObjectiveEvaluator.new(data)
 	_mission_completed = false
@@ -123,6 +126,28 @@ func query_logs(source_id: String, file: String, filter: LogFilter) -> Array[Log
 		if filter == null or filter.matches(line):
 			out.append(line)
 	return out
+
+
+## Files `value` as the answer for report field `field`. A refusal (unknown field,
+## already solved, out of attempts, or a value that cannot be an answer) changes
+## nothing. Otherwise a right answer solves the field and a wrong one costs an
+## attempt; either way `report_submitted` fires and the objectives are re-checked.
+func submit_report(field: String, value: String) -> ReportResult:
+	if _report == null:
+		return ReportResult.refused(ReportResult.Reason.UNKNOWN_FIELD)
+	var result: ReportResult = _report.submit(field, value)
+	if result.ok:
+		events.report_submitted.emit(field, result.correct)
+		_reevaluate()
+	return result
+
+
+## Live report progress, with no answers. Has no fields until a scenario with a
+## report has loaded. Fresh copy on every call.
+func report_view() -> ReportView:
+	if _report == null:
+		return ReportView.new()
+	return _report.view()
 
 
 func add_device(d: Device) -> bool:

@@ -351,17 +351,32 @@ logs, works out who attacked, how and which account, and files a report.
   - The `report` objective type stays "not supported yet" until 2.4, which adds
     its validator rules (field exists, `choice` `equals` is one of `options`)
     with the evaluator, so no half-wired type exists in between.
-- [ ] **2.3 Report state + `submit_report`** with attempt limits and
+- [x] **2.3 Report state + `submit_report`** with attempt limits and
   `report_submitted` signal; `scenario_view` gains log descriptors and
   report fields, and `report_view()` gives live attempts left per field.
   *Tests:* correct, wrong, normalization (case, whitespace), out of
   attempts; the views list every log file and field and never contain the
   expected answers.
-- [ ] **2.4 `report` objective type**: validator entry (the `field` must exist
-  in `report.fields`; a `choice` objective's `equals` must be one of its
-  `options`; an `ipv4` field's must be an address), then the evaluator.
-  *Tests:* one bad fixture per validator rule; pass; wrong value; out of
-  attempts fails for good and emits `mission_failed` once.
+  - A field's expected answer is the `equals` of its `report` objective, so this
+    task also enables that objective type: the validator checks its `field` and
+    `equals` (exactly one per field, and every field needs one) and the
+    evaluator passes it once the field is solved. `ObjectiveState.Type.REPORT`;
+    `detail` reads "N attempts left".
+  - Matching trims, ignores case and collapses inner whitespace. A value that
+    cannot be an answer (empty text, a bad IPv4, a choice not in the options)
+    is refused with `INVALID_VALUE` and costs no attempt, as does any other
+    refusal. Only a well-formed wrong answer costs one.
+  - `Sim` forwards `query_logs`, `submit_report`, `report_view` and re-emits
+    `report_submitted`. The UI tasks (2.7, 2.8) read through those.
+- [ ] **2.4 Report objectives fail for good.** `ObjectiveState.failed` is true
+  once a report field is unsolved with no attempts left; `SimEvents.mission_failed`
+  (`scenario_id`, `objective_id`) fires once, the sim then refuses further
+  `submit_report` calls, and `debrief_view()` is filled (`completed()` false).
+  *Tests:* out of attempts fails for good and emits `mission_failed` once; a
+  field solved on its last attempt does not fail; reloading clears the failure.
+  - Moved into 2.3: the `report` objective's validator entry and its passing
+    evaluation, because a field's expected answer is its objective's `equals`;
+    the evaluator would otherwise have mishandled a `report` objective.
 - [ ] **2.5 Server mini shell:** `ls`, `cat`, `grep [-i]`, `tail [-n]`,
   `service <name> status`, `help`, over log files and (later) server files.
   Update `ios-cli.md` with the server shell section.
