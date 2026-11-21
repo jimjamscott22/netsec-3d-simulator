@@ -58,13 +58,32 @@ func _evaluate_one(sim: NetworkSim, obj: Dictionary) -> ObjectiveState:
 	s.id = obj["id"]
 	s.description = obj["description"]
 	s.order = ScenarioFields.to_int(obj.get("order", 0))
-	if obj["type"] == "ping":
-		s.type = ObjectiveState.Type.PING
-		_evaluate_ping(sim, obj, s)
-	else:
-		s.type = ObjectiveState.Type.CONFIG
-		s.passed = _config_matches(sim.device_view(obj["device"]), _path_keys(obj["path"]), obj["equals"])
+	match obj["type"]:
+		"ping":
+			s.type = ObjectiveState.Type.PING
+			_evaluate_ping(sim, obj, s)
+		"report":
+			s.type = ObjectiveState.Type.REPORT
+			_evaluate_report(sim, obj, s)
+		_:
+			s.type = ObjectiveState.Type.CONFIG
+			s.passed = _config_matches(sim.device_view(obj["device"]), _path_keys(obj["path"]), obj["equals"])
 	return s
+
+
+## Passes once the player has filed the right answer, and fails for good when the
+## field runs out of attempts first. Reads the public ReportView, so the answer
+## never leaves the report state.
+func _evaluate_report(sim: NetworkSim, obj: Dictionary, s: ObjectiveState) -> void:
+	var view: ReportView = sim.report_view()
+	var field: String = obj["field"]
+	s.passed = view.solved(field)
+	if s.passed:
+		return
+	var left: int = view.attempts_left(field)
+	# Out of attempts means the field can never be solved: this objective is lost.
+	s.failed = left <= 0
+	s.detail = "out of attempts" if s.failed else "%d attempt%s left" % [left, "" if left == 1 else "s"]
 
 
 func _evaluate_ping(sim: NetworkSim, obj: Dictionary, s: ObjectiveState) -> void:

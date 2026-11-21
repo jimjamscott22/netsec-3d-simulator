@@ -11,9 +11,9 @@ const SCHEMA_VERSION: int = 1
 
 const TOP_LEVEL_KEYS: Array[String] = [
 	"schema_version", "id", "sequence", "title", "briefing", "devices", "links",
-	"spare_cables", "reserved_ports", "objectives", "hints", "debrief", "solution",
+	"spare_cables", "reserved_ports", "logs", "report", "objectives", "hints", "debrief",
+	"solution",
 ]
-const FUTURE_TOP_LEVEL: Dictionary = {"logs": "M2", "report": "M2"}
 
 const DEVICE_KEYS: Array[String] = ["id", "type", "model", "hostname", "rack", "slot", "desk", "config"]
 const TYPE_KINDS: Dictionary = {
@@ -30,22 +30,52 @@ const OBJECTIVE_COMMON_KEYS: Array[String] = ["id", "type", "description", "orde
 const OBJECTIVE_PARAMS: Dictionary = {
 	"ping": ["from", "to_ip", "to_device", "via"],
 	"config": ["device", "path", "equals"],
+	"report": ["field", "equals"],
 }
 const FUTURE_OBJECTIVES: Dictionary = {
-	"report": "M2", "vuln_patched": "M3", "exploit_test": "M3", "ssh": "M4", "no_ping": "M5",
+	"vuln_patched": "M3", "exploit_test": "M3", "ssh": "M4", "no_ping": "M5",
 }
+const LOG_KEYS: Array[String] = ["source", "file", "lines"]
+const LOG_LINE_KEYS: Array[String] = ["t", "text", "src_ip", "geo"]
+const REPORT_KEYS: Array[String] = ["fields", "max_attempts"]
+const REPORT_FIELD_KEYS: Array[String] = ["id", "label", "kind", "options", "evidence"]
+const REPORT_KINDS: Array[String] = ["ipv4", "choice", "text"]
+const EVIDENCE_KEYS: Array[String] = ["source", "file", "line"]
 const ROUTE_KEYS: Array[String] = ["network", "mask", "next_hop"]
 const HOST_CONFIG_PATHS: Array[String] = ["hostname", "ip", "mask", "gateway", "locked"]
 
 static var _plain_key: RegEx = _compile("^[A-Za-z_][A-Za-z0-9_]*$")
 static var _scenario_id: RegEx = _compile("^[a-z][a-z0-9_]*$")
 static var _device_id: RegEx = _compile("^[A-Za-z0-9][A-Za-z0-9_-]*$")
+# \z, not $: PCRE's $ also matches before a trailing newline.
+static var _log_path: RegEx = _compile("^(/[^\\s/]+)+\\z")
+static var _geo_code: RegEx = _compile("^[A-Z]{2}\\z")
 
 var _errors: Array[String] = []
 ## device id -> {type, model}; either is "" when that field was itself invalid.
 var _devices: Dictionary = {}
 var _reserved: Dictionary = {}  # canonical port -> true
 var _start_ports: Dictionary = {}  # canonical port -> index of the link using it
+## "<source>:<file>" -> line count (-1 when that log's `lines` is itself invalid),
+## for every declared log. The first of a repeated pair defines it.
+var _log_lines: Dictionary = {}
+## source device id -> {file path -> index of the log entry}, for the server
+## shell's file tree: a path can't be both a file and a directory.
+var _log_paths: Dictionary = {}
+## True once a log entry's own `source` or `file` is invalid. Evidence that then
+## matches no log may have meant that one, so it is not flagged on top of it.
+var _log_identity_broken: bool = false
+## report field id -> {kind, options, path} for every well-formed field.
+var _report_fields: Dictionary = {}
+## False once anything about the report's field list is malformed. A `report`
+## objective naming a field that is not in the list is then not flagged, since
+## the field may be the malformed one.
+var _report_fields_ok: bool = true
+## report field id -> path of the `report` objective that checks it.
+var _report_objective_at: Dictionary = {}
+## False once a `report` objective's `field` could not be matched to a field. The
+## field it meant is then not also reported as unchecked.
+var _report_objectives_ok: bool = true
 
 
 static func _compile(pattern: String) -> RegEx:
@@ -146,12 +176,15 @@ func _check_root(data: Variant, file_id: String) -> void:
 	_check_links(d)
 	if d.has("spare_cables"):
 		_expect_int(d["spare_cables"], "spare_cables", 0)
+	_check_logs(d)
+	_check_report(d)
 	_check_objectives(d)
+	_check_every_report_field_is_checked()
 	_check_hints(d)
 	if d.has("debrief"):
 		_expect_string(d["debrief"], "debrief")
 	_check_solution(d)
-	_check_keys(d, "", TOP_LEVEL_KEYS, FUTURE_TOP_LEVEL)
+	_check_keys(d, "", TOP_LEVEL_KEYS)
 
 
 func _check_schema_version(d: Dictionary) -> void:
@@ -423,6 +456,220 @@ func _check_host_config(cfg: Dictionary, path: String, type: String) -> void:
 		_err(path, "ip and mask must be given together")
 
 
+# --- logs and report (M2) --------------------------------------------------------
+
+
+func _check_logs(d: Dictionary) -> void:
+	if not d.has("logs") or not _expect_array(d["logs"], "logs"):
+		return
+	var list: Array = d["logs"]
+	var first_at: Dictionary = {}  # "<source>:<file>" -> index of its first entry
+	for i in list.size():
+		_check_log(list[i], "logs[%d]" % i, i, first_at)
+
+
+func _check_log(entry: Variant, path: String, index: int, first_at: Dictionary) -> void:
+	if not _expect_dict(entry, path):
+		return
+	var log: Dictionary = entry
+	_check_keys(log, path, LOG_KEYS)
+	var source: String = _device_ref(log, "source", path, true)
+	var file: String = _check_log_file(log, path)
+	var lines_ok: bool = _need(log, "lines", path) and _expect_array(log["lines"], _key(path, "lines"))
+	if lines_ok:
+		var lines: Array = log["lines"]
+		for j in lines.size():
+			_check_log_line(lines[j], "%s.lines[%d]" % [path, j])
+	if source.is_empty() or file.is_empty():
+		_log_identity_broken = true
+		return
+	var pair: String = "%s:%s" % [source, file]
+	if first_at.has(pair):
+		_err(_key(path, "file"), 'duplicate log "%s" (same as logs[%d])' % [pair, first_at[pair]])
+		return
+	first_at[pair] = index
+	_log_lines[pair] = (log["lines"] as Array).size() if lines_ok else -1
+	_check_log_path_tree(source, file, index, path)
+
+
+## The shell lists the files of a device as one tree, so no log path may sit
+## inside another log path: `/var/log` can't be a file when `/var/log/auth.log`
+## exists. Reported on the later entry, against the first it clashes with.
+func _check_log_path_tree(source: String, file: String, index: int, path: String) -> void:
+	var seen: Dictionary = _log_paths.get_or_add(source, {})
+	for other: String in seen:
+		if other.begins_with(file + "/") or file.begins_with(other + "/"):
+			_err(_key(path, "file"), 'clashes with "%s" (logs[%d]): a path cannot be both a file and a directory' % [other, seen[other]])
+			break
+	seen[file] = index
+
+
+## The path if it is valid, else "".
+func _check_log_file(log: Dictionary, path: String) -> String:
+	if not _need(log, "file", path):
+		return ""
+	var v: Variant = log["file"]
+	if not v is String or _log_path.search(v) == null:
+		_err(_key(path, "file"), "must be an absolute file path such as /var/log/auth.log (no spaces)")
+		return ""
+	return v
+
+
+func _check_log_line(entry: Variant, path: String) -> void:
+	if not _expect_dict(entry, path):
+		return
+	var line: Dictionary = entry
+	_check_keys(line, path, LOG_LINE_KEYS)
+	if _need(line, "text", path):
+		_expect_one_line(line["text"], _key(path, "text"))
+	if line.has("t"):
+		_expect_one_line(line["t"], _key(path, "t"))
+	if line.has("src_ip"):
+		var bad: String = ScenarioFields.check_value(ScenarioFields.Kind.IPV4, line["src_ip"])
+		if not bad.is_empty():
+			_err(_key(path, "src_ip"), "must " + bad)
+	if line.has("geo") and not (line["geo"] is String and _geo_code.search(line["geo"]) != null):
+		_err(_key(path, "geo"), "must be a two-letter country code such as NL")
+
+
+## A non-empty string with no line breaks: one log line is one line.
+func _expect_one_line(value: Variant, path: String) -> void:
+	if not _expect_string(value, path):
+		return
+	var text: String = value
+	if text.contains("\n") or text.contains("\r"):
+		_err(path, "must be one line (no line breaks)")
+
+
+func _check_report(d: Dictionary) -> void:
+	if not d.has("report"):
+		return
+	if not _expect_dict(d["report"], "report"):
+		_report_fields_ok = false
+		return
+	var rep: Dictionary = d["report"]
+	_check_keys(rep, "report", REPORT_KEYS)
+	if _need(rep, "fields", "report") and _expect_array(rep["fields"], "report.fields"):
+		var list: Array = rep["fields"]
+		if list.is_empty():
+			_err("report.fields", "needs at least one field")
+			_report_fields_ok = false
+		var ids: Dictionary = {}
+		for i in list.size():
+			_check_report_field(list[i], "report.fields[%d]" % i, ids)
+	else:
+		_report_fields_ok = false
+	if rep.has("max_attempts"):
+		_expect_int(rep["max_attempts"], "report.max_attempts", 1)
+
+
+func _check_report_field(entry: Variant, path: String, ids: Dictionary) -> void:
+	if not _expect_dict(entry, path):
+		_report_fields_ok = false
+		return
+	var field: Dictionary = entry
+	_check_keys(field, path, REPORT_FIELD_KEYS)
+	var id: String = _check_report_field_id(field, path, ids)
+	if _need(field, "label", path):
+		_expect_string(field["label"], _key(path, "label"))
+	var kind: String = _check_report_kind(field, path)
+	var options_ok: bool = _check_report_options(field, path, kind)
+	if field.has("evidence"):
+		_check_evidence(field["evidence"], _key(path, "evidence"))
+	if id.is_empty() or kind.is_empty() or not options_ok:
+		_report_fields_ok = false
+		return
+	var options: Array[String] = []
+	options.assign(field.get("options", []))
+	_report_fields[id] = {"kind": kind, "options": options, "path": path}
+
+
+## The id if it is valid and not a repeat, else "".
+func _check_report_field_id(field: Dictionary, path: String, ids: Dictionary) -> String:
+	if not _need(field, "id", path):
+		return ""
+	var v: Variant = field["id"]
+	var p: String = _key(path, "id")
+	if not v is String or _scenario_id.search(v) == null:
+		_err(p, "must be snake_case (lowercase letters, digits and underscores, starting with a letter)")
+		return ""
+	if ids.has(v):
+		_err(p, 'duplicate report field id "%s"' % v)
+		return ""
+	ids[v] = true
+	return v
+
+
+## The kind if it is valid, else "".
+func _check_report_kind(field: Dictionary, path: String) -> String:
+	if not _need(field, "kind", path):
+		return ""
+	var v: Variant = field["kind"]
+	if not v is String or not REPORT_KINDS.has(v):
+		_err(_key(path, "kind"), "must be one of %s" % ", ".join(REPORT_KINDS))
+		return ""
+	return v
+
+
+## Only a choice field has options, and it must have them. True when the options
+## are right for the kind. Skipped (false) when the kind is itself invalid, so
+## that mistake is reported once.
+func _check_report_options(field: Dictionary, path: String, kind: String) -> bool:
+	if kind.is_empty():
+		return false
+	var p: String = _key(path, "options")
+	if kind != "choice":
+		if field.has("options"):
+			_err(p, "only choice fields have options")
+			return false
+		return true
+	if not field.has("options"):
+		_err(p, "required for a choice field")
+		return false
+	var v: Variant = field["options"]
+	var ok: bool = v is Array and (v as Array).size() >= 2
+	if ok:
+		var seen: Dictionary = {}
+		for option: Variant in v:
+			if not option is String or (option as String).is_empty() or seen.has(option):
+				ok = false
+				break
+			seen[option] = true
+	if not ok:
+		_err(p, "must be an array of at least 2 different non-empty strings")
+	return ok
+
+
+func _check_evidence(value: Variant, path: String) -> void:
+	if not _expect_array(value, path):
+		return
+	var list: Array = value
+	for i in list.size():
+		_check_evidence_ref(list[i], "%s[%d]" % [path, i])
+
+
+## A reference must name a declared log and a line inside it. A bad `line` and an
+## unknown log are independent mistakes, so both are reported.
+func _check_evidence_ref(entry: Variant, path: String) -> void:
+	if not _expect_dict(entry, path):
+		return
+	var ref: Dictionary = entry
+	_check_keys(ref, path, EVIDENCE_KEYS)
+	var source_ok: bool = _need(ref, "source", path) and _expect_string(ref["source"], _key(path, "source"))
+	var file_ok: bool = _need(ref, "file", path) and _expect_string(ref["file"], _key(path, "file"))
+	var line_ok: bool = _need(ref, "line", path) and _expect_int(ref["line"], _key(path, "line"), 1)
+	if not source_ok or not file_ok:
+		return
+	var pair: String = "%s:%s" % [ref["source"], ref["file"]]
+	if not _log_lines.has(pair):
+		if not _log_identity_broken:
+			_err(path, 'no log "%s" is declared' % pair)
+		return
+	var count: int = _log_lines[pair]
+	if line_ok and count >= 0 and ScenarioFields.to_int(ref["line"]) > count:
+		_err(_key(path, "line"), "must be at most %d (%s has %d line%s)" % [count, pair, count, "" if count == 1 else "s"])
+
+
 # --- ports, reserved ports, links ------------------------------------------------
 
 
@@ -544,10 +791,13 @@ func _check_objective(entry: Variant, path: String, ids: Dictionary) -> void:
 	var allowed: Array = OBJECTIVE_COMMON_KEYS.duplicate()
 	allowed.append_array(OBJECTIVE_PARAMS[type])
 	_check_keys(obj, path, allowed)
-	if type == "ping":
-		_check_ping_objective(obj, path)
-	else:
-		_check_config_objective(obj, path)
+	match type:
+		"ping":
+			_check_ping_objective(obj, path)
+		"report":
+			_check_report_objective(obj, path)
+		_:
+			_check_config_objective(obj, path)
 
 
 func _check_objective_id(obj: Dictionary, path: String, ids: Dictionary) -> void:
@@ -592,6 +842,60 @@ func _check_ping_objective(obj: Dictionary, path: String) -> void:
 	var via: String = _device_ref(obj, "via", path, false)
 	if not via.is_empty() and not _devices[via]["type"].is_empty() and _devices[via]["type"] != "router":
 		_err(_key(path, "via"), "must be a router (only routers forward packets)")
+
+
+# --- report objectives ---------------------------------------------------------------
+
+
+func _check_report_objective(obj: Dictionary, path: String) -> void:
+	var field_id: String = ""
+	if _need(obj, "field", path):
+		var v: Variant = obj["field"]
+		var p: String = _key(path, "field")
+		if not v is String:
+			_err(p, "must be a report field id")
+			_report_objectives_ok = false
+		elif _report_fields.has(v):
+			field_id = v
+			if _report_objective_at.has(v):
+				_err(p, 'a second objective for report field "%s" (same as %s)' % [v, _report_objective_at[v]])
+			else:
+				_report_objective_at[v] = path
+		else:
+			_report_objectives_ok = false
+			if _report_fields_ok:
+				_err(p, 'unknown report field "%s"' % v)
+	else:
+		_report_objectives_ok = false
+	if _need(obj, "equals", path) and not field_id.is_empty():
+		_check_report_answer(obj["equals"], _key(path, "equals"), _report_fields[field_id])
+
+
+## `equals` must be an answer the field could take: an IPv4 address, one of a
+## choice's options exactly as written, or some text.
+func _check_report_answer(value: Variant, path: String, field: Dictionary) -> void:
+	match field["kind"]:
+		"ipv4":
+			var bad: String = ScenarioFields.check_value(ScenarioFields.Kind.IPV4, value)
+			if not bad.is_empty():
+				_err(path, "must " + bad)
+		"choice":
+			var options: Array[String] = field["options"]
+			if not value is String or not options.has(value):
+				_err(path, "must be one of the field's options (%s)" % ", ".join(options))
+		_:
+			if not value is String or (value as String).strip_edges().is_empty():
+				_err(path, "must be a non-empty string")
+
+
+## A field with no `report` objective has no expected answer, so nothing could
+## ever file it correctly.
+func _check_every_report_field_is_checked() -> void:
+	if not _report_objectives_ok:
+		return
+	for id: String in _report_fields:
+		if not _report_objective_at.has(id):
+			_err(_report_fields[id]["path"], 'no "report" objective checks field "%s"' % id)
 
 
 # --- config objectives ---------------------------------------------------------------

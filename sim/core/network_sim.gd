@@ -12,8 +12,13 @@ var _locked: Dictionary[String, bool] = {}
 var _scenario_view: ScenarioView
 var _evaluator: ObjectiveEvaluator
 var _mission_completed: bool = false
+var _mission_failed: bool = false
 var _debrief_text: String = ""
 var _debrief: DebriefView
+## source device id -> file path -> LogFile.
+var _logs: Dictionary = {}
+## The player's incident report; null when the scenario has none.
+var _report: ReportState
 
 
 func _init(spare_cables: int = 0) -> void:
@@ -32,17 +37,22 @@ func load_scenario(data: Dictionary, file_id: String = "") -> LoadResult:
 	_devices.clear()
 	_reserved.clear()
 	_locked.clear()
+	_logs.clear()
 	for d: Device in ScenarioLoader.build_devices(data):
 		add_device(d)
+	for f: LogFile in ScenarioLoader.log_files(data):
+		add_log_file(f)
 	for port: String in ScenarioLoader.reserved_ports(data):
 		reserve_port(port)
 	# The validator already guarantees every start link joins two free, real ports.
 	for link: Dictionary in ScenarioLoader.start_links(data):
 		add_fixed_link(link["a"], link["b"], link["locked"])
 	_spare_cables = ScenarioLoader.spare_cables(data)
+	_report = ScenarioLoader.build_report(data)
 	_scenario_view = ScenarioLoader.build_view(data)
 	_evaluator = ObjectiveEvaluator.new(data)
 	_mission_completed = false
+	_mission_failed = false
 	_debrief_text = data.get("debrief", "")
 	_debrief = null
 	# Record where every objective starts, silently: loading signals nothing.
@@ -64,14 +74,15 @@ func objective_states() -> Array[ObjectiveState]:
 
 
 ## The end-of-mission record, or null until the mission has ended. Taken once,
-## as `mission_completed` fires; later changes don't alter it.
+## as `mission_completed` or `mission_failed` fires; later changes don't alter it.
 func debrief_view() -> DebriefView:
 	return _debrief
 
 
 ## Re-checks every objective after a state change. Emits `objective_updated` for
 ## each one whose result changed, then `mission_completed` the first time they
-## all pass. Called by the mutating methods below rather than by connecting to
+## all pass, or `mission_failed` the first time one can no longer pass. The
+## mission ends either way and neither fires again until the next load. Called by the mutating methods below rather than by connecting to
 ## our own signals, which would make a reference cycle with `events`.
 func _reevaluate() -> void:
 	if _evaluator == null:
@@ -79,18 +90,89 @@ func _reevaluate() -> void:
 	var states: Array[ObjectiveState] = _evaluator.evaluate(self)
 	for s in _evaluator.changes(states):
 		events.objective_updated.emit(s.id, s.passed)
-	if not _mission_completed and ObjectiveEvaluator.all_passed(states):
+	if _mission_completed or _mission_failed:
+		return
+	if ObjectiveEvaluator.all_passed(states):
 		_mission_completed = true
 		_debrief = DebriefView.new(
 			_scenario_view.scenario_id(), _scenario_view.title(), true, _debrief_text, states
 		)
 		events.mission_completed.emit(_scenario_view.scenario_id())
+		return
+	# An objective that can no longer pass ends the mission, once, on the first
+	# such objective in file order.
+	for s in states:
+		if s.failed:
+			_mission_failed = true
+			_debrief = DebriefView.new(
+				_scenario_view.scenario_id(), _scenario_view.title(), false, _debrief_text, states
+			)
+			events.mission_failed.emit(_scenario_view.scenario_id(), s.id)
+			return
 
 
 ## Every `config_changed` goes through here so objectives are re-checked after it.
 func _emit_config_changed(device_id: String) -> void:
 	events.config_changed.emit(device_id)
 	_reevaluate()
+
+
+## Registers a log file on its source device. False, and nothing changes, when
+## that device does not exist or already has a file at that path.
+func add_log_file(f: LogFile) -> bool:
+	if not _devices.has(f.source()):
+		return false
+	var files: Dictionary = _logs.get_or_add(f.source(), {})
+	if files.has(f.file()):
+		return false
+	files[f.file()] = f
+	return true
+
+
+## The paths of the log files on `source_id`, in declaration order.
+func log_paths(source_id: String) -> Array[String]:
+	var out: Array[String] = []
+	out.assign((_logs.get(source_id, {}) as Dictionary).keys())
+	return out
+
+
+## The lines of `file` on `source_id` that pass `filter`, in file order, in a
+## fresh array. A null filter keeps every line. An unknown device or file gives
+## an empty array.
+func query_logs(source_id: String, file: String, filter: LogFilter) -> Array[LogLine]:
+	var out: Array[LogLine] = []
+	var files: Dictionary = _logs.get(source_id, {})
+	var f: LogFile = files.get(file)
+	if f == null:
+		return out
+	for line: LogLine in f.lines():
+		if filter == null or filter.matches(line):
+			out.append(line)
+	return out
+
+
+## Files `value` as the answer for report field `field`. A refusal (unknown field,
+## already solved, out of attempts, a value that cannot be an answer, or a mission
+## that has already ended) changes nothing. Otherwise a right answer solves the field and a wrong one costs an
+## attempt; either way `report_submitted` fires and the objectives are re-checked.
+func submit_report(field: String, value: String) -> ReportResult:
+	if _report == null:
+		return ReportResult.refused(ReportResult.Reason.UNKNOWN_FIELD)
+	if _mission_completed or _mission_failed:
+		return ReportResult.refused(ReportResult.Reason.MISSION_OVER)
+	var result: ReportResult = _report.submit(field, value)
+	if result.ok:
+		events.report_submitted.emit(field, result.correct)
+		_reevaluate()
+	return result
+
+
+## Live report progress, with no answers. Has no fields until a scenario with a
+## report has loaded. Fresh copy on every call.
+func report_view() -> ReportView:
+	if _report == null:
+		return ReportView.new()
+	return _report.view()
 
 
 func add_device(d: Device) -> bool:
@@ -260,8 +342,7 @@ func ping(src_id: String, dst_ip: String) -> PingResult:
 
 
 ## A terminal on a device: the IOS CLI for a router or switch, the Windows-style
-## shell for a PC. Null for an unknown id and for a server (its shell arrives
-## with M2).
+## shell for a PC, the Linux-style shell for a server. Null for an unknown id.
 func open_session(device_id: String) -> CliSession:
 	var d: Device = get_device(device_id)
 	if d == null:
@@ -272,6 +353,9 @@ func open_session(device_id: String) -> CliSession:
 	var host: CommandRegistry = HostCommands.registry_for(d)
 	if host != null:
 		return HostSession.new(self, device_id, host)
+	var server: CommandRegistry = ServerCommands.registry_for(d)
+	if server != null:
+		return ServerSession.new(self, device_id, server)
 	return null
 
 

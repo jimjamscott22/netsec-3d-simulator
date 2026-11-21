@@ -28,8 +28,11 @@ func test_a_pc_gets_the_windows_shell() -> void:
 	assert_str(pc.prompt()).is_equal("C:\\>")
 
 
-func test_a_server_has_no_shell_yet() -> void:
-	assert_object(_topo().sim.open_session("SRV")).is_null()
+func test_a_server_gets_the_linux_shell() -> void:
+	var srv: CliSession = _topo().sim.open_session("SRV")
+	assert_bool(srv is ServerSession).is_true()
+	assert_bool(srv is HostSession).is_false()
+	assert_str(srv.prompt()).is_equal("analyst@SRV:/$")
 
 
 func test_an_unknown_device_has_no_session() -> void:

@@ -5,7 +5,7 @@ extends RefCounted
 ## changing one has no effect on the sim or on later calls. It carries no
 ## `equals` value or any other answer.
 
-enum Type { PING, CONFIG }
+enum Type { PING, CONFIG, REPORT }
 
 var id: String
 var type: Type = Type.PING
@@ -16,8 +16,8 @@ var order: int = 0
 ## A locked objective is never passed, and shows no reason or hint.
 var locked: bool = false
 var passed: bool = false
-## Can no longer pass. Nothing in M1 can fail for good (report attempts arrive
-## in M2), so this stays false for now.
+## Can no longer pass: a `report` objective whose field ran out of attempts.
+## Stays true until the scenario is reloaded, even while the objective is locked.
 var failed: bool = false
 ## `ping` objectives only: why the ping failed, else NONE.
 var fail_reason: PingResult.FailReason = PingResult.FailReason.NONE

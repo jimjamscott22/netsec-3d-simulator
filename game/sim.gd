@@ -8,8 +8,8 @@ extends Node
 ## instantiate it through `preload("res://game/sim.gd")`.
 ##
 ## What it exposes is deliberately narrow. Reads come back as read-only views
-## (`scenario_view`, `device_view`, `objective_states`,
-## `debrief_view`), never as `NetworkSim`
+## (`scenario_view`, `device_view`, `objective_states`, `report_view`,
+## `debrief_view`) or as log lines, never as `NetworkSim`
 ## internals. Device configuration changes only through a `CliSession` from
 ## `open_session`, so the `set_*` methods are not forwarded.
 
@@ -24,8 +24,10 @@ signal scenario_loaded(scenario_id: String)
 signal link_changed(a_port: String, b_port: String, connected: bool)
 signal interface_state_changed(port: String, oper_up: bool)
 signal config_changed(device_id: String)
+signal report_submitted(field: String, correct: bool)
 signal objective_updated(objective_id: String, passed: bool)
 signal mission_completed(scenario_id: String)
+signal mission_failed(scenario_id: String, objective_id: String)
 
 ## Where scenario files are read from. Tests point it at a temp folder to feed
 ## in broken files; nothing else should change it.
@@ -41,8 +43,10 @@ func _init() -> void:
 	events.link_changed.connect(link_changed.emit)
 	events.interface_state_changed.connect(interface_state_changed.emit)
 	events.config_changed.connect(config_changed.emit)
+	events.report_submitted.connect(report_submitted.emit)
 	events.objective_updated.connect(objective_updated.emit)
 	events.mission_completed.connect(mission_completed.emit)
+	events.mission_failed.connect(mission_failed.emit)
 
 
 ## Loads `res://scenarios/<scenario_id>.json`, replacing all sim state. A missing
@@ -79,9 +83,28 @@ func objective_states() -> Array[ObjectiveState]:
 	return _net.objective_states()
 
 
-## The end-of-mission record, or null until the mission has ended.
+## The end-of-mission record (completed or failed), or null until the mission
+## has ended.
 func debrief_view() -> DebriefView:
 	return _net.debrief_view()
+
+
+## Live incident-report progress (attempts left, last value, solved), with no
+## answers. Has no fields when the scenario has no report.
+func report_view() -> ReportView:
+	return _net.report_view()
+
+
+## Files `value` as the answer for report field `field`; see
+## `NetworkSim.submit_report`.
+func submit_report(field: String, value: String) -> ReportResult:
+	return _net.submit_report(field, value)
+
+
+## The lines of one log file that pass `filter` (null keeps every line), in file
+## order. The log viewer reads through this.
+func query_logs(source_id: String, file: String, filter: LogFilter) -> Array[LogLine]:
+	return _net.query_logs(source_id, file, filter)
 
 
 func spare_cables() -> int:

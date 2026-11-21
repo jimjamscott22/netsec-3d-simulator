@@ -466,7 +466,9 @@ after.
   supplied report evidence `(source, file)` pair must identify a declared log,
   and `line` must be an integer from 1 through that log's line count. Evidence
   may be omitted or empty, but every supplied reference must resolve to
-  exactly one log line.
+  exactly one log line. Each report field is checked by exactly one `report`
+  objective (its `equals` is the expected answer), so a field never lacks an
+  answer and two objectives never disagree about one.
 
 ### 7.5 Schema additions for M3 (files, services, vulns)
 

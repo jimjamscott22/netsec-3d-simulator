@@ -229,6 +229,53 @@ func test_a_session_works_on_the_owned_network() -> void:
 # --- the real autoload ------------------------------------------------------------------------
 
 
+# --- logs and the report (task 2.3) ---------------------------------------------
+
+const M2_FIXTURE: String = "res://tests/scenario/fixtures/valid_m2.json"
+
+
+func _m2() -> Node:
+	var sim: Node = _sim_with_file("m2_fixture", FileAccess.get_file_as_string(M2_FIXTURE))
+	assert_array(sim.load_scenario_id("m2_fixture").errors).is_empty()
+	return sim
+
+
+func test_logs_can_be_queried_through_sim() -> void:
+	var sim: Node = _m2()
+	var hits: Array[LogLine] = sim.query_logs("WEB1", "/var/log/auth.log", LogFilter.src_ip("198.51.100.7"))
+	assert_int(hits.size()).is_equal(1)
+	assert_int(hits[0].number()).is_equal(3)
+	assert_int(sim.query_logs("WEB1", "/var/log/auth.log", null).size()).is_equal(5)
+
+
+func test_filing_a_report_goes_through_sim_and_re_emits_the_signal() -> void:
+	var sim: Node = _m2()
+	var seen: Array[String] = []
+	_record(sim.report_submitted, "report", seen)
+	assert_bool(sim.submit_report("attacker_ip", "198.51.100.7").ok).is_true()
+	assert_bool(sim.submit_report("attacker_ip", "203.0.113.45").correct).is_true()
+	assert_array(seen).is_equal(["report:attacker_ip:false", "report:attacker_ip:true"])
+	assert_bool(sim.report_view().solved("attacker_ip")).is_true()
+	assert_int(sim.report_view().attempts_left("attacker_ip")).is_equal(2)
+
+
+func test_a_failed_mission_is_re_emitted_and_fills_the_debrief() -> void:
+	var sim: Node = _m2()
+	var seen: Array[String] = []
+	_record(sim.mission_failed, "failed", seen)
+	for wrong: String in ["Port scan", "Phishing", "SQL injection"]:
+		sim.submit_report("attack_type", wrong)
+	assert_array(seen).is_equal(["failed:m2_fixture:found_type"])
+	assert_bool(sim.debrief_view().completed()).is_false()
+
+
+func test_there_is_no_report_or_log_before_a_scenario_loads() -> void:
+	var sim: Node = _sim()
+	assert_array(sim.report_view().fields()).is_empty()
+	assert_array(sim.query_logs("WEB1", "/var/log/auth.log", null)).is_empty()
+	assert_bool(sim.submit_report("attacker_ip", "x").ok).is_false()
+
+
 func test_the_autoload_is_registered_as_sim() -> void:
 	var node: Node = (Engine.get_main_loop() as SceneTree).root.get_node_or_null("Sim")
 	assert_object(node).is_not_null()

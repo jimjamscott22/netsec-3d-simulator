@@ -320,30 +320,86 @@ the lowest machine available.
 Goal: `m2_log_triage`. A web server shows signs of attack. The player reads
 logs, works out who attacked, how and which account, and files a report.
 
-- [ ] **2.1 Log data model** (`sim/logs/`): `LogLine`, `LogFile`,
+- [x] **2.1 Log data model** (`sim/logs/`): `LogLine`, `LogFile`,
   `LogFilter` (substring, case-insensitive, regex, `src_ip`).
   `NetworkSim.query_logs`.
   *Tests:* each filter kind; file order kept.
-- [ ] **2.2 Schema + validator** for `logs` and `report` (SPEC §7.4); update
+  - `LogLine`/`LogFile` are immutable; lines are numbered from 1, which is what
+    report evidence cites. Substring and regex filters test `full_text()` (the
+    timestamp, a space, then the text), so `grep` on a timestamp works.
+  - A filter that cannot be satisfied (bad regex, empty `src_ip`) is not
+    `is_valid()` and matches nothing; callers show the error. An empty
+    substring matches every line, as `grep ""` does.
+  - `NetworkSim.add_log_file` registers files (refusing an unknown device or a
+    repeated `(source, file)` pair); `load_scenario` clears them. Reading `logs`
+    from a scenario is task 2.2.
+- [x] **2.2 Schema + validator** for `logs` and `report` (SPEC §7.4); update
   `scenario-schema.md`.
   *Tests:* one bad fixture per new rule; reject duplicate `(source, file)` log
   pairs (even when no evidence references them); reject unknown evidence
   source/file pairs, non-integer lines, line 0 and lines beyond the log length;
   accept the first and last valid line, and confirm debrief resolves each
   reference.
-- [ ] **2.3 Report state + `submit_report`** with attempt limits and
+  - Also in this task: `ScenarioLoader.log_files` and `load_scenario` install the
+    declared logs, so what the validator accepts is not silently dropped.
+  - Added rules beyond SPEC §7.4 (documented in `scenario-schema.md`): `file` is
+    an absolute path with no spaces; `text`/`t` are one line; `geo` is two
+    uppercase letters; `kind` is `ipv4`, `choice` or `text`; `options` needs at
+    least two different strings.
+  - "Confirm debrief resolves each reference" needs `debrief_view` evidence, so
+    that test is written with task 2.8b.
+  - The `report` objective type stays "not supported yet" until 2.4, which adds
+    its validator rules (field exists, `choice` `equals` is one of `options`)
+    with the evaluator, so no half-wired type exists in between.
+- [x] **2.3 Report state + `submit_report`** with attempt limits and
   `report_submitted` signal; `scenario_view` gains log descriptors and
   report fields, and `report_view()` gives live attempts left per field.
   *Tests:* correct, wrong, normalization (case, whitespace), out of
   attempts; the views list every log file and field and never contain the
   expected answers.
-- [ ] **2.4 `report` objective type** in the evaluator.
-  *Tests:* pass; wrong value; out of attempts fails for good and emits
-  `mission_failed` once.
-- [ ] **2.5 Server mini shell:** `ls`, `cat`, `grep [-i]`, `tail [-n]`,
+  - A field's expected answer is the `equals` of its `report` objective, so this
+    task also enables that objective type: the validator checks its `field` and
+    `equals` (exactly one per field, and every field needs one) and the
+    evaluator passes it once the field is solved. `ObjectiveState.Type.REPORT`;
+    `detail` reads "N attempts left".
+  - Matching trims, ignores case and collapses inner whitespace. A value that
+    cannot be an answer (empty text, a bad IPv4, a choice not in the options)
+    is refused with `INVALID_VALUE` and costs no attempt, as does any other
+    refusal. Only a well-formed wrong answer costs one.
+  - `Sim` forwards `query_logs`, `submit_report`, `report_view` and re-emits
+    `report_submitted`. The UI tasks (2.7, 2.8) read through those.
+- [x] **2.4 Report objectives fail for good.** `ObjectiveState.failed` is true
+  once a report field is unsolved with no attempts left; `SimEvents.mission_failed`
+  (`scenario_id`, `objective_id`) fires once, the sim then refuses further
+  `submit_report` calls, and `debrief_view()` is filled (`completed()` false).
+  *Tests:* out of attempts fails for good and emits `mission_failed` once; a
+  field solved on its last attempt does not fail; reloading clears the failure.
+  - Moved into 2.3: the `report` objective's validator entry and its passing
+    evaluation, because a field's expected answer is its objective's `equals`;
+    the evaluator would otherwise have mishandled a `report` objective.
+  - The mission is over once it has completed or failed, so `submit_report`
+    then returns `MISSION_OVER` (a spent field is therefore reported that way
+    through `NetworkSim`; `OUT_OF_ATTEMPTS` is `ReportState`'s own refusal).
+  - `DebriefView.objectives()` entries gain `failed`. The answers and evidence
+    for the failed card come with 2.8b, and the card itself is UI work.
+  - `Sim` re-emits `mission_failed`. Nothing in `game/main.gd` listens yet: the
+    failed card (2.8b) does.
+- [x] **2.5 Server mini shell:** `ls`, `cat`, `grep [-i]`, `tail [-n]`,
   `service <name> status`, `help`, over log files and (later) server files.
   Update `ios-cli.md` with the server shell section.
   *Tests:* parse, output goldens.
+  - `ServerSession` and `HostSession` now share the abstract `ShellSession`
+    (`submit`); each supplies its prompt and error text. `NetworkSim.open_session`
+    returns a `ServerSession` for a server.
+  - The shell has no working directory and no `cd` (not in the plan): it stands at
+    `/`, `ls` alone lists `/`, and subdirectories end in `/`. `ServerFiles` builds
+    one path tree per device from its log paths; M3 adds source files there.
+    `NetworkSim.log_paths` lists a device's log files. The validator rejects a
+    log path that is also a directory of another.
+  - `grep` takes a regular expression (via `LogFilter.regex`, `(?i)` for `-i`) over
+    the line as shown. `service <name> status` reads `Server.services`
+    (`id`, `port`), which M3 fills, so in M2 it always says "unrecognized service".
+  - `edit <file>` is task 3.6.
 - [ ] **2.6 Server model scene** (`server_1u`) and a SOC desk with a monitor.
 - [ ] **2.7 Log viewer UI:** file list from `scenario_view` log
   descriptors, lines via `query_logs`, scrolling monospace view, filter box
