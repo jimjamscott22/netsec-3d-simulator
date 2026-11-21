@@ -45,7 +45,8 @@ in plan order: the log model and `query_logs` (`sim/logs/`, task 2.1), the
 `logs`/`report` schema, validator and loader (task 2.2), and report state,
 `submit_report`, `report_view` and the `report` objective type (task 2.3), and
 a report field out of attempts failing the mission with `mission_failed` (task
-2.4) are done. Task 2.5 (the server mini shell) is next.
+2.4), and the server mini shell (`ServerSession`, `ServerCommands`, task 2.5) are
+done. Task 2.6 (the server model scene and a SOC desk) is next.
 
 ## Source of truth (read before working)
 

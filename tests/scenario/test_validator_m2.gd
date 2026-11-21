@@ -175,6 +175,46 @@ func test_a_duplicate_with_a_bad_source_is_reported_once() -> void:
 	assert_array(errors).is_equal(['logs[3].source: unknown device "NOPE"'])
 
 
+# --- logs: the server's file tree --------------------------------------------
+
+
+func _extra_log(file: String, source: String = "WEB1") -> Callable:
+	return func(d: Dictionary) -> void:
+		d["logs"].append({"source": source, "file": file, "lines": [{"text": "x"}]})
+
+
+func test_a_log_path_cannot_be_a_directory_of_another_log() -> void:
+	# /var/log is a directory because logs[0] is /var/log/auth.log.
+	assert_array(_edit(_extra_log("/var/log"))).is_equal([
+		'logs[3].file: clashes with "/var/log/auth.log" (logs[0]): a path cannot be both a file and a directory'
+	])
+
+
+func test_a_log_path_cannot_sit_inside_another_log() -> void:
+	assert_array(_edit(_extra_log("/var/log/auth.log/old"))).is_equal([
+		'logs[3].file: clashes with "/var/log/auth.log" (logs[0]): a path cannot be both a file and a directory'
+	])
+
+
+func test_only_the_first_clash_is_reported_for_an_entry() -> void:
+	assert_array(_edit(_extra_log("/var"))).is_equal([
+		'logs[3].file: clashes with "/var/log/auth.log" (logs[0]): a path cannot be both a file and a directory'
+	])
+
+
+func test_siblings_and_lookalike_names_do_not_clash() -> void:
+	assert_array(_edit(_extra_log("/var/log/auth.log.1"))).is_empty()
+	assert_array(_edit(_extra_log("/var/log/nginx"))).is_equal([
+		'logs[3].file: clashes with "/var/log/nginx/access.log" (logs[1]): a path cannot be both a file and a directory'
+	])
+	assert_array(_edit(_extra_log("/var/logs"))).is_empty()
+
+
+func test_each_device_has_its_own_tree() -> void:
+	# WEB1 has /var/log/nginx/access.log, so only WEB1 treats /var/log/nginx as a directory.
+	assert_array(_edit(_extra_log("/var/log/nginx", "DB1"))).is_empty()
+
+
 # --- logs: lines ------------------------------------------------------------
 
 

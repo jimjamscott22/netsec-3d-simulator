@@ -150,9 +150,11 @@ command that changes nothing emits nothing.
 
 Hosts don't use IOS; a PC's terminal is a Windows-style shell. `NetworkSim.open_session(device_id)`
 returns the right session: a `CliSession` for a router or switch, a `HostSession`
-(a `CliSession` subclass, so the UI binds to one type and gets history, `?` and
-Tab) for a PC, and null for a server (its Linux shell arrives in M2) or an
-unknown id. `HostCommands.registry_for(device)` is the PC command table.
+for a PC, a `ServerSession` for a server (see Server shell), and null for an
+unknown id. `HostSession` and `ServerSession` extend the abstract `ShellSession`
+(a `CliSession`, so the UI binds to one type and gets history, `?` and Tab), which
+owns `submit`; each shell supplies its prompt and its error text.
+`HostCommands.registry_for(device)` is the PC command table.
 
 - **Prompt** `C:\>`. Commands run by their **full name only**, case-insensitive
   (`ipc` is not `ipconfig`), as in Windows; `?` and Tab still complete prefixes.
@@ -183,6 +185,50 @@ unknown id. `HostCommands.registry_for(device)` is the PC command table.
 - `help` lists the commands; `help <command>` explains one (an unknown one gets
   `This command is not supported by the help utility.  Try "x /?".`). `exit`
   returns `ShellAction.CLOSE_SESSION`.
+
+### Server shell (M2)
+
+A server's terminal is a Linux-style shell. `ServerCommands.registry_for(device)`
+is its command table (null for any non-server), `ServerSession` the session.
+It is read-only: no command changes sim state. `edit <file>` arrives with M3.
+
+- **Prompt** `analyst@<hostname>:/$`, following the live hostname. There is no
+  working directory and no `cd`: the shell always stands at `/`, so a relative
+  path means the same as an absolute one.
+- Commands run by their **full name only** and may carry a double-quoted
+  argument (`grep "Failed password" /var/log/auth.log`). `?` and Tab still
+  complete prefixes.
+- **Errors are bash-style:** an unknown first word is `bash: foo: command not
+  found`; a known command with unusable arguments prints its `Usage:` lines
+  (`ServerFormatters.usage`).
+- **Files** (`ServerFiles`): one tree rooted at `/`, built from the device's file
+  paths (its log files today; M3 adds source files there). A directory exists only
+  because a file is under it. Paths are normalised, so `var/log/`, `/var//log` and
+  `/var/log` are the same. The validator keeps a path from being both a file and a
+  directory (`scenario-schema.md`).
+- `ls [path]`: lists a directory sorted, one name per line, a subdirectory
+  ending in `/` (`ls` alone is `ls /`); a file prints its path as typed; a missing
+  path is `ls: cannot access '<path>': No such file or directory`. Any option
+  (`-l`) or a second path prints the usage.
+- `cat <file>`: the file's lines, each as the player sees it (timestamp, a
+  space, text). `cat: <path>: No such file or directory` and `cat: <path>: Is a
+  directory` for the failures.
+- `grep [-i] <pattern> <file>`: the matching lines in file order. The pattern is
+  a regular expression tested against the line as shown (so it can match the
+  timestamp); `-i` ignores case. No match prints nothing and is not an error. A
+  bad pattern is `grep: invalid regular expression '<pattern>'`; missing files and
+  directories fail as for `cat`. Any other option (`-v`) or a missing pattern or
+  file prints the usage.
+- `tail [-n N] <file>`: the last N lines (10 by default; `-n 0` prints nothing, a
+  big N prints the file). N is digits only, else `tail: invalid number of lines:
+  '<N>'`. Failures as for `cat`.
+- `service <name> status`: for a service in the server's `services` (M3 fills
+  them; each has `id` and `port`), prints `● <id>.service`, then `Loaded`,
+  `Active: active (running)` and `Listen: <port>/tcp` lines. Anything else is
+  `<name>: unrecognized service`, and any other verb prints the usage.
+- `help` lists the commands; `help <command>` gives the summary and usage (an
+  unknown one is `bash: help: no help topics match '<x>'.`). `exit` returns
+  `ShellAction.CLOSE_SESSION`.
 
 ### M4 — Remote access and routing (post-v1)
 

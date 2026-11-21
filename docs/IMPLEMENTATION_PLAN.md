@@ -384,10 +384,22 @@ logs, works out who attacked, how and which account, and files a report.
     for the failed card come with 2.8b, and the card itself is UI work.
   - `Sim` re-emits `mission_failed`. Nothing in `game/main.gd` listens yet: the
     failed card (2.8b) does.
-- [ ] **2.5 Server mini shell:** `ls`, `cat`, `grep [-i]`, `tail [-n]`,
+- [x] **2.5 Server mini shell:** `ls`, `cat`, `grep [-i]`, `tail [-n]`,
   `service <name> status`, `help`, over log files and (later) server files.
   Update `ios-cli.md` with the server shell section.
   *Tests:* parse, output goldens.
+  - `ServerSession` and `HostSession` now share the abstract `ShellSession`
+    (`submit`); each supplies its prompt and error text. `NetworkSim.open_session`
+    returns a `ServerSession` for a server.
+  - The shell has no working directory and no `cd` (not in the plan): it stands at
+    `/`, `ls` alone lists `/`, and subdirectories end in `/`. `ServerFiles` builds
+    one path tree per device from its log paths; M3 adds source files there.
+    `NetworkSim.log_paths` lists a device's log files. The validator rejects a
+    log path that is also a directory of another.
+  - `grep` takes a regular expression (via `LogFilter.regex`, `(?i)` for `-i`) over
+    the line as shown. `service <name> status` reads `Server.services`
+    (`id`, `port`), which M3 fills, so in M2 it always says "unrecognized service".
+  - `edit <file>` is task 3.6.
 - [ ] **2.6 Server model scene** (`server_1u`) and a SOC desk with a monitor.
 - [ ] **2.7 Log viewer UI:** file list from `scenario_view` log
   descriptors, lines via `query_logs`, scrolling monospace view, filter box

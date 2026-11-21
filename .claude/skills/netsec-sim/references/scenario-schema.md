@@ -146,7 +146,10 @@ may not. The same tables are `ScenarioFields.ROUTER_INTERFACE_FIELDS` /
 identifies a single log. The same path on two devices is two logs.
 
 - `file`: an absolute path with no spaces and no trailing `/`
-  (`/var/log/auth.log`), so the server shell can take it as one token.
+  (`/var/log/auth.log`), so the server shell can take it as one token. The
+  shell shows a device's files as one tree, so no path may sit inside another on
+  the same device: `/var/log` can't be a log when `/var/log/auth.log` is one
+  (`/var/log/auth.log.1` is fine).
 - Each line is an object: `text` (required, one line), `t` (optional timestamp
   text, one line; display only, the sim never reads the clock), `src_ip`
   (optional IPv4, feeds the threat map and the `src_ip` filter), `geo`

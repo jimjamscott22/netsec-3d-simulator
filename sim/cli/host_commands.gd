@@ -13,7 +13,7 @@ static var _registry: CommandRegistry = null
 
 
 ## The shared command table for a PC, or null for any other device. (A server
-## gets its own Linux-style shell in M2.)
+## has its own Linux-style shell, ServerCommands.)
 static func registry_for(device: Device) -> CommandRegistry:
 	if device == null or device.kind() != Device.Kind.HOST:
 		return null

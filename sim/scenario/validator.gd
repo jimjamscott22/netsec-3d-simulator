@@ -59,6 +59,9 @@ var _start_ports: Dictionary = {}  # canonical port -> index of the link using i
 ## "<source>:<file>" -> line count (-1 when that log's `lines` is itself invalid),
 ## for every declared log. The first of a repeated pair defines it.
 var _log_lines: Dictionary = {}
+## source device id -> {file path -> index of the log entry}, for the server
+## shell's file tree: a path can't be both a file and a directory.
+var _log_paths: Dictionary = {}
 ## True once a log entry's own `source` or `file` is invalid. Evidence that then
 ## matches no log may have meant that one, so it is not flagged on top of it.
 var _log_identity_broken: bool = false
@@ -486,6 +489,19 @@ func _check_log(entry: Variant, path: String, index: int, first_at: Dictionary) 
 		return
 	first_at[pair] = index
 	_log_lines[pair] = (log["lines"] as Array).size() if lines_ok else -1
+	_check_log_path_tree(source, file, index, path)
+
+
+## The shell lists the files of a device as one tree, so no log path may sit
+## inside another log path: `/var/log` can't be a file when `/var/log/auth.log`
+## exists. Reported on the later entry, against the first it clashes with.
+func _check_log_path_tree(source: String, file: String, index: int, path: String) -> void:
+	var seen: Dictionary = _log_paths.get_or_add(source, {})
+	for other: String in seen:
+		if other.begins_with(file + "/") or file.begins_with(other + "/"):
+			_err(_key(path, "file"), 'clashes with "%s" (logs[%d]): a path cannot be both a file and a directory' % [other, seen[other]])
+			break
+	seen[file] = index
 
 
 ## The path if it is valid, else "".

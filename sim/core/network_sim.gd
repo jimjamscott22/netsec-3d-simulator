@@ -129,6 +129,13 @@ func add_log_file(f: LogFile) -> bool:
 	return true
 
 
+## The paths of the log files on `source_id`, in declaration order.
+func log_paths(source_id: String) -> Array[String]:
+	var out: Array[String] = []
+	out.assign((_logs.get(source_id, {}) as Dictionary).keys())
+	return out
+
+
 ## The lines of `file` on `source_id` that pass `filter`, in file order, in a
 ## fresh array. A null filter keeps every line. An unknown device or file gives
 ## an empty array.
@@ -335,8 +342,7 @@ func ping(src_id: String, dst_ip: String) -> PingResult:
 
 
 ## A terminal on a device: the IOS CLI for a router or switch, the Windows-style
-## shell for a PC. Null for an unknown id and for a server (its shell arrives
-## with M2).
+## shell for a PC, the Linux-style shell for a server. Null for an unknown id.
 func open_session(device_id: String) -> CliSession:
 	var d: Device = get_device(device_id)
 	if d == null:
@@ -347,6 +353,9 @@ func open_session(device_id: String) -> CliSession:
 	var host: CommandRegistry = HostCommands.registry_for(d)
 	if host != null:
 		return HostSession.new(self, device_id, host)
+	var server: CommandRegistry = ServerCommands.registry_for(d)
+	if server != null:
+		return ServerSession.new(self, device_id, server)
 	return null
 
 
