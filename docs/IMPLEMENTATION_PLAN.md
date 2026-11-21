@@ -333,22 +333,35 @@ logs, works out who attacked, how and which account, and files a report.
   - `NetworkSim.add_log_file` registers files (refusing an unknown device or a
     repeated `(source, file)` pair); `load_scenario` clears them. Reading `logs`
     from a scenario is task 2.2.
-- [ ] **2.2 Schema + validator** for `logs` and `report` (SPEC §7.4); update
+- [x] **2.2 Schema + validator** for `logs` and `report` (SPEC §7.4); update
   `scenario-schema.md`.
   *Tests:* one bad fixture per new rule; reject duplicate `(source, file)` log
   pairs (even when no evidence references them); reject unknown evidence
   source/file pairs, non-integer lines, line 0 and lines beyond the log length;
   accept the first and last valid line, and confirm debrief resolves each
   reference.
+  - Also in this task: `ScenarioLoader.log_files` and `load_scenario` install the
+    declared logs, so what the validator accepts is not silently dropped.
+  - Added rules beyond SPEC §7.4 (documented in `scenario-schema.md`): `file` is
+    an absolute path with no spaces; `text`/`t` are one line; `geo` is two
+    uppercase letters; `kind` is `ipv4`, `choice` or `text`; `options` needs at
+    least two different strings.
+  - "Confirm debrief resolves each reference" needs `debrief_view` evidence, so
+    that test is written with task 2.8b.
+  - The `report` objective type stays "not supported yet" until 2.4, which adds
+    its validator rules (field exists, `choice` `equals` is one of `options`)
+    with the evaluator, so no half-wired type exists in between.
 - [ ] **2.3 Report state + `submit_report`** with attempt limits and
   `report_submitted` signal; `scenario_view` gains log descriptors and
   report fields, and `report_view()` gives live attempts left per field.
   *Tests:* correct, wrong, normalization (case, whitespace), out of
   attempts; the views list every log file and field and never contain the
   expected answers.
-- [ ] **2.4 `report` objective type** in the evaluator.
-  *Tests:* pass; wrong value; out of attempts fails for good and emits
-  `mission_failed` once.
+- [ ] **2.4 `report` objective type**: validator entry (the `field` must exist
+  in `report.fields`; a `choice` objective's `equals` must be one of its
+  `options`; an `ipv4` field's must be an address), then the evaluator.
+  *Tests:* one bad fixture per validator rule; pass; wrong value; out of
+  attempts fails for good and emits `mission_failed` once.
 - [ ] **2.5 Server mini shell:** `ls`, `cat`, `grep [-i]`, `tail [-n]`,
   `service <name> status`, `help`, over log files and (later) server files.
   Update `ios-cli.md` with the server shell section.

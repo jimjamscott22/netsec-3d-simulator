@@ -37,6 +37,14 @@ static func reserved_ports(data: Dictionary) -> Array[String]:
 	return out
 
 
+## The scenario's log files in file order; empty when it declares none.
+static func log_files(data: Dictionary) -> Array[LogFile]:
+	var out: Array[LogFile] = []
+	for entry: Dictionary in data.get("logs", []):
+		out.append(LogFile.from_entries(entry["source"], entry["file"], entry["lines"]))
+	return out
+
+
 static func spare_cables(data: Dictionary) -> int:
 	return ScenarioFields.to_int(data.get("spare_cables", 0))
 

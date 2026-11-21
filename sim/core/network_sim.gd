@@ -37,6 +37,8 @@ func load_scenario(data: Dictionary, file_id: String = "") -> LoadResult:
 	_logs.clear()
 	for d: Device in ScenarioLoader.build_devices(data):
 		add_device(d)
+	for f: LogFile in ScenarioLoader.log_files(data):
+		add_log_file(f)
 	for port: String in ScenarioLoader.reserved_ports(data):
 		reserve_port(port)
 	# The validator already guarantees every start link joins two free, real ports.

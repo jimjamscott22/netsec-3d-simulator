@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "id": "m2_fixture",
+  "sequence": 2,
+  "title": "Fixture: logs and report",
+  "briefing": "A valid scenario that carries logs and a report, for the validator and loader tests.",
+  "devices": [
+    { "id": "WEB1", "type": "server", "model": "server", "hostname": "web1", "rack": "rack_a", "slot": 1, "config": {} },
+    { "id": "DB1", "type": "server", "model": "server", "hostname": "db1", "rack": "rack_a", "slot": 2, "config": {} }
+  ],
+  "links": [],
+  "logs": [
+    {
+      "source": "WEB1",
+      "file": "/var/log/auth.log",
+      "lines": [
+        { "t": "2026-03-14T02:11:05Z", "text": "sshd[811]: Failed password for root from 203.0.113.45 port 51122 ssh2", "src_ip": "203.0.113.45", "geo": "NL" },
+        { "t": "2026-03-14T02:11:06Z", "text": "sshd[811]: Failed password for root from 203.0.113.45 port 51124 ssh2", "src_ip": "203.0.113.45", "geo": "NL" },
+        { "t": "2026-03-14T02:11:40Z", "text": "sshd[902]: Accepted password for deploy from 198.51.100.7 port 40022 ssh2", "src_ip": "198.51.100.7", "geo": "US" },
+        { "t": "2026-03-14T02:12:03Z", "text": "sshd[955]: Accepted password for deploy from 203.0.113.45 port 51130 ssh2", "src_ip": "203.0.113.45", "geo": "NL" },
+        { "text": "cron[12]: session opened for user root" }
+      ]
+    },
+    {
+      "source": "WEB1",
+      "file": "/var/log/nginx/access.log",
+      "lines": [
+        { "t": "2026-03-14T02:13:00Z", "text": "GET /index.html 200", "src_ip": "198.51.100.7", "geo": "US" },
+        { "t": "2026-03-14T02:13:01Z", "text": "GET /admin 403", "src_ip": "203.0.113.45", "geo": "NL" },
+        { "t": "2026-03-14T02:13:02Z", "text": "GET /robots.txt 200", "src_ip": "198.51.100.7", "geo": "US" }
+      ]
+    },
+    {
+      "source": "DB1",
+      "file": "/var/log/auth.log",
+      "lines": [
+        { "text": "sshd[40]: Server listening on 0.0.0.0 port 22" },
+        { "text": "sshd[41]: Accepted publickey for backup from 10.0.0.5", "src_ip": "10.0.0.5" }
+      ]
+    }
+  ],
+  "report": {
+    "fields": [
+      { "id": "attacker_ip", "label": "Attacker IP", "kind": "ipv4",
+        "evidence": [
+          { "source": "WEB1", "file": "/var/log/auth.log", "line": 1 },
+          { "source": "WEB1", "file": "/var/log/auth.log", "line": 5 }
+        ] },
+      { "id": "attack_type", "label": "Attack type", "kind": "choice",
+        "options": ["Brute force", "SQL injection", "Port scan", "Phishing"] },
+      { "id": "compromised_user", "label": "Compromised account", "kind": "text", "evidence": [] }
+    ],
+    "max_attempts": 3
+  },
+  "objectives": [
+    { "id": "named", "type": "config", "device": "WEB1", "path": ["hostname"], "equals": "web1",
+      "description": "WEB1 is called web1" }
+  ],
+  "solution": [
+    { "device": "WEB1", "commands": ["help"] }
+  ]
+}

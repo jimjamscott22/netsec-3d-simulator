@@ -183,11 +183,6 @@ func test_unknown_top_level_keys() -> void:
 	assert_array(_with(["speare_cables"], 2)).is_equal(["speare_cables: unknown key"])
 
 
-func test_later_milestone_keys_say_when_they_arrive() -> void:
-	assert_array(_with(["logs"], [])).is_equal(["logs: is not supported yet (arrives in M2)"])
-	assert_array(_with(["report"], {})).is_equal(["report: is not supported yet (arrives in M2)"])
-
-
 # --- devices ---------------------------------------------------------------------
 
 

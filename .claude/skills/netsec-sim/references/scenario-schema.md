@@ -12,9 +12,9 @@ against the file name.
 
 Keys and objective types that belong to a later milestone are rejected with
 `is not supported yet (arrives in M<n>)` until that milestone adds their rules:
-`logs` and `report` (M2), server `files`/`services`/`vulns` (M3), router/switch
-`users`/`domain_name`/`lines` and `ssh` objectives (M4), `no_ping` (M5), plus the
-`report`, `vuln_patched` and `exploit_test` objective types. Any other
+the `report` objective type (M2), server `files`/`services`/`vulns` (M3),
+router/switch `users`/`domain_name`/`lines` and `ssh` objectives (M4), `no_ping`
+(M5), plus the `vuln_patched` and `exploit_test` objective types. Any other
 unknown key is an error, which catches typos.
 
 ## Loading
@@ -23,7 +23,8 @@ unknown key is an error, which catches typos.
 `LoadResult` (`ok`, `errors`). A bad file changes nothing. A good one replaces
 the whole sim state: devices with their starting config (a router's physical
 ports start shut, hostname defaults to the id), start links (`locked` defaults
-to false), reserved ports and `spare_cables`. Loading emits no signals; the
+to false), reserved ports, `spare_cables` and log files (read with
+`query_logs`). Loading emits no signals; the
 world reads `scenario_view()` (title, briefing, hints, each device's placement
 and ordered physical interface list, links, reserved ports, never objectives or
 `solution`) and `device_view()` afterwards.
@@ -41,8 +42,8 @@ and ordered physical interface list, links, reserved ports, never objectives or
 | `links` | array | yes | Cables present at start; may be empty |
 | `spare_cables` | int | no | Cables the player can place; default 0 |
 | `reserved_ports` | array of `"<device>:<port>"` | no | Ports no cable may use (start links included). Use them to block topology shortcuts |
-| `logs` | array | M2 | Log files; each entry has `source` (device id), `file` (path), and `lines` |
-| `report` | object | M2 | Report fields and optional `max_attempts`; see Logs and reports |
+| `logs` | array | no | Log files; each entry has `source` (device id), `file` (path), and `lines`. See Logs and reports |
+| `report` | object | no | Report `fields` and optional `max_attempts`. See Logs and reports |
 | `objectives` | array | yes | At least one |
 | `hints` | array | no | Keyed by fail reason (see Hints) |
 | `debrief` | string | no | Shown after the mission ends, via `debrief_view()`: what was fixed and how a real admin would do it |
@@ -119,15 +120,54 @@ may not. The same tables are `ScenarioFields.ROUTER_INTERFACE_FIELDS` /
 
 ## Logs and reports (M2)
 
-A log entry has a `source` device id, a `file` path, and a `lines` array. Every
-declared `(source, file)` pair must be unique across `logs`, whether or not any
-report `evidence` references it, so `query_logs(source_id, file, ...)` always
-identifies a single log. Each report field may include `evidence`, an array of
-`{ "source", "file", "line" }` references. Every supplied pair must identify a
-declared log, and `line` must be an integer from 1 through that log's line
-count. Evidence may be omitted or empty; every supplied reference must resolve
-to exactly one line. The loader rejects duplicate `(source, file)` pairs and
-invalid evidence references before building state.
+```json
+"logs": [
+  { "source": "WEB1", "file": "/var/log/auth.log",
+    "lines": [
+      { "t": "2026-03-14T02:11:05Z", "text": "sshd[811]: Failed password for root from 203.0.113.45", "src_ip": "203.0.113.45", "geo": "NL" }
+    ] }
+],
+"report": {
+  "fields": [
+    { "id": "attacker_ip", "label": "Attacker IP", "kind": "ipv4",
+      "evidence": [ { "source": "WEB1", "file": "/var/log/auth.log", "line": 1 } ] },
+    { "id": "attack_type", "label": "Attack type", "kind": "choice", "options": ["Brute force", "Port scan"] }
+  ],
+  "max_attempts": 3
+}
+```
+
+**Logs.** A log entry has a `source` device id (any device in the file), a
+`file` path, and a `lines` array (it may be empty). Every declared
+`(source, file)` pair must be unique across `logs`, whether or not any report
+`evidence` references it, so `query_logs(source_id, file, ...)` always
+identifies a single log. The same path on two devices is two logs.
+
+- `file`: an absolute path with no spaces and no trailing `/`
+  (`/var/log/auth.log`), so the server shell can take it as one token.
+- Each line is an object: `text` (required, one line), `t` (optional timestamp
+  text, one line; display only, the sim never reads the clock), `src_ip`
+  (optional IPv4, feeds the threat map and the `src_ip` filter), `geo`
+  (optional, two uppercase letters, ISO 3166 alpha-2).
+- Lines are numbered from 1 in file order. `LogFilter` substring and regex
+  filters test the line as the player sees it: `t`, a space, then `text`.
+
+**Report.** `fields` is a non-empty array; `max_attempts` (integer from 1,
+default 3) limits wrong submissions per field.
+
+- `id`: snake_case, unique. `label`: non-empty string.
+- `kind`: `ipv4`, `choice` or `text`. A `choice` field needs `options`, an array
+  of at least two different non-empty strings; other kinds must not have them.
+- `evidence` (optional, may be empty): an array of
+  `{ "source", "file", "line" }` references. Every supplied pair must identify a
+  declared log, and `line` must be an integer from 1 through that log's line
+  count. The loader rejects invalid evidence references before building state.
+
+The validator reports each mistake once: when a log's own `source` or `file` is
+invalid, evidence that matches no log is not flagged on top of it, and a bad
+report `kind` doesn't also flag `options`. `report` objectives, filing answers
+and the report views arrive with tasks 2.3 and 2.4; until then a `report` block
+validates but is not loaded.
 
 ## Objectives
 

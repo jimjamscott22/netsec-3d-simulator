@@ -97,3 +97,60 @@ func test_querying_changes_no_state_and_emits_nothing() -> void:
 	sim.events.config_changed.connect(func(id: String) -> void: seen.append(id))
 	sim.query_logs("WEB1", FILE, LogFilter.contains("Failed"))
 	assert_array(seen).is_empty()
+
+
+# --- loading logs from a scenario (task 2.2) ----------------------------------
+
+
+const M2_FIXTURE: String = "res://tests/scenario/fixtures/valid_m2.json"
+
+
+func _m2() -> Dictionary:
+	var data: Dictionary = ScenarioRunner.read(M2_FIXTURE)
+	assert_bool(data.is_empty()).is_false()
+	return data
+
+
+func test_load_scenario_installs_every_declared_log_in_order() -> void:
+	var sim := NetworkSim.new()
+	assert_array(sim.load_scenario(_m2()).errors).is_empty()
+	var auth: Array[LogLine] = sim.query_logs("WEB1", "/var/log/auth.log", null)
+	assert_array(_numbers(auth)).is_equal([1, 2, 3, 4, 5])
+	assert_str(auth[0].text()).starts_with("sshd[811]: Failed password for root")
+	assert_str(auth[0].src_ip()).is_equal("203.0.113.45")
+	assert_str(auth[0].geo()).is_equal("NL")
+	assert_int(sim.query_logs("WEB1", "/var/log/nginx/access.log", null).size()).is_equal(3)
+	# Same path on another device is its own file.
+	assert_int(sim.query_logs("DB1", "/var/log/auth.log", null).size()).is_equal(2)
+
+
+func test_loaded_logs_can_be_filtered() -> void:
+	var sim := NetworkSim.new()
+	sim.load_scenario(_m2())
+	var hits: Array[LogLine] = sim.query_logs("WEB1", "/var/log/auth.log", LogFilter.src_ip("198.51.100.7"))
+	assert_array(_numbers(hits)).is_equal([3])
+
+
+func test_reloading_replaces_the_logs() -> void:
+	var sim := NetworkSim.new()
+	sim.load_scenario(_m2())
+	sim.load_scenario(ScenarioRunner.read("res://scenarios/m1_vlan_ping.json"))
+	assert_array(sim.query_logs("WEB1", "/var/log/auth.log", null)).is_empty()
+
+
+func test_a_scenario_without_logs_loads_with_none() -> void:
+	var data: Dictionary = _m2()
+	data.erase("logs")
+	data.erase("report")
+	var sim := NetworkSim.new()
+	assert_array(sim.load_scenario(data).errors).is_empty()
+	assert_array(sim.query_logs("WEB1", "/var/log/auth.log", null)).is_empty()
+
+
+func test_a_bad_scenario_keeps_the_logs_already_loaded() -> void:
+	var sim := NetworkSim.new()
+	sim.load_scenario(_m2())
+	var bad: Dictionary = _m2()
+	bad["logs"][0]["lines"][0].erase("text")
+	assert_array(sim.load_scenario(bad).errors).is_not_empty()
+	assert_int(sim.query_logs("WEB1", "/var/log/auth.log", null).size()).is_equal(5)
