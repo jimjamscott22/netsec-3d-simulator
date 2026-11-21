@@ -7,6 +7,7 @@ extends RefCounted
 ##
 ## Objective results are a snapshot taken the moment the mission ended, so
 ## changes made afterwards don't rewrite the record. Accessors return copies.
+## A mission that ended by failing has `completed() == false`.
 
 var _scenario_id: String
 var _title: String
@@ -27,7 +28,7 @@ func _init(
 	_completed = p_completed
 	_text = p_text
 	for s in states:
-		_objectives.append({"id": s.id, "description": s.description, "passed": s.passed})
+		_objectives.append({"id": s.id, "description": s.description, "passed": s.passed, "failed": s.failed})
 
 
 func scenario_id() -> String:
@@ -38,7 +39,7 @@ func title() -> String:
 	return _title
 
 
-## True when every objective passed. (A failed mission arrives in M2.)
+## True when every objective passed, false when the mission was failed.
 func completed() -> bool:
 	return _completed
 
@@ -48,8 +49,8 @@ func text() -> String:
 	return _text
 
 
-## Each `{id: String, description: String, passed: bool}` as the mission ended,
-## in file order.
+## Each `{id: String, description: String, passed: bool, failed: bool}` as the
+## mission ended, in file order.
 func objectives() -> Array[Dictionary]:
 	var out: Array[Dictionary] = []
 	for o in _objectives:

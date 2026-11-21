@@ -259,6 +259,16 @@ func test_filing_a_report_goes_through_sim_and_re_emits_the_signal() -> void:
 	assert_int(sim.report_view().attempts_left("attacker_ip")).is_equal(2)
 
 
+func test_a_failed_mission_is_re_emitted_and_fills_the_debrief() -> void:
+	var sim: Node = _m2()
+	var seen: Array[String] = []
+	_record(sim.mission_failed, "failed", seen)
+	for wrong: String in ["Port scan", "Phishing", "SQL injection"]:
+		sim.submit_report("attack_type", wrong)
+	assert_array(seen).is_equal(["failed:m2_fixture:found_type"])
+	assert_bool(sim.debrief_view().completed()).is_false()
+
+
 func test_there_is_no_report_or_log_before_a_scenario_loads() -> void:
 	var sim: Node = _sim()
 	assert_array(sim.report_view().fields()).is_empty()

@@ -153,7 +153,7 @@ func test_the_objective_detail_counts_attempts_left() -> void:
 	sim.submit_report("attacker_ip", "198.51.100.8")
 	assert_str(_state(sim, "found_ip").detail).is_equal("1 attempt left")
 	sim.submit_report("attacker_ip", "198.51.100.9")
-	assert_str(_state(sim, "found_ip").detail).is_equal("0 attempts left")
+	assert_str(_state(sim, "found_ip").detail).is_equal("out of attempts")
 	assert_bool(_state(sim, "found_ip").passed).is_false()
 
 
@@ -184,9 +184,10 @@ func test_out_of_attempts_refuses_even_the_right_answer() -> void:
 	data["report"]["max_attempts"] = 1
 	var sim: NetworkSim = _loaded(data)
 	sim.submit_report("attacker_ip", "198.51.100.7")
+	# The field is spent, which fails the mission, so the sim reports that.
 	var r: ReportResult = sim.submit_report("attacker_ip", ATTACKER)
 	assert_bool(r.ok).is_false()
-	assert_int(r.reason).is_equal(ReportResult.Reason.OUT_OF_ATTEMPTS)
+	assert_int(r.reason).is_equal(ReportResult.Reason.MISSION_OVER)
 	assert_bool(_state(sim, "found_ip").passed).is_false()
 
 
@@ -243,3 +244,147 @@ func test_loading_a_scenario_without_a_report_drops_the_old_one() -> void:
 	assert_array(sim.load_scenario(ScenarioRunner.read("res://scenarios/m1_vlan_ping.json")).errors).is_empty()
 	assert_array(sim.report_view().fields()).is_empty()
 	assert_bool(sim.scenario_view().has_report()).is_false()
+
+
+# --- failing for good (task 2.4) --------------------------------------------
+
+
+## Spends every attempt on `field` with answers that are well-formed but wrong.
+func _exhaust(sim: NetworkSim, field: String) -> void:
+	var wrong: Dictionary = {
+		"attacker_ip": ["198.51.100.1", "198.51.100.2", "198.51.100.3"],
+		"attack_type": ["Port scan", "Phishing", "SQL injection"],
+		"compromised_user": ["root", "admin", "guest"],
+	}
+	for value: String in wrong[field]:
+		sim.submit_report(field, value)
+
+
+func test_a_field_with_attempts_left_has_not_failed() -> void:
+	var sim: NetworkSim = _loaded()
+	sim.submit_report("attacker_ip", "198.51.100.1")
+	sim.submit_report("attacker_ip", "198.51.100.2")
+	assert_bool(_state(sim, "found_ip").failed).is_false()
+	assert_object(sim.debrief_view()).is_null()
+
+
+func test_running_out_of_attempts_fails_the_objective_for_good() -> void:
+	var sim: NetworkSim = _loaded()
+	_exhaust(sim, "attacker_ip")
+	var s: ObjectiveState = _state(sim, "found_ip")
+	assert_bool(s.failed).is_true()
+	assert_bool(s.passed).is_false()
+	assert_str(s.detail).is_equal("out of attempts")
+	# The other fields are untouched.
+	assert_bool(_state(sim, "found_type").failed).is_false()
+
+
+func test_mission_failed_fires_once_with_the_failed_objective() -> void:
+	var sim: NetworkSim = _loaded()
+	var seen: Array[String] = []
+	_record(sim.events.mission_failed, "failed", seen)
+	_record(sim.events.mission_completed, "completed", seen)
+	_exhaust(sim, "attack_type")
+	assert_array(seen).is_equal(["failed:m2_fixture:found_type"])
+	# A second field running dry afterwards does not fire it again.
+	_exhaust(sim, "attacker_ip")
+	assert_array(seen).is_equal(["failed:m2_fixture:found_type"])
+
+
+func test_mission_failed_names_the_first_failed_objective_in_file_order() -> void:
+	var data: Dictionary = _data()
+	data["report"]["max_attempts"] = 1
+	var sim: NetworkSim = _loaded(data)
+	var seen: Array[String] = []
+	_record(sim.events.mission_failed, "failed", seen)
+	sim.submit_report("compromised_user", "root")
+	assert_array(seen).is_equal(["failed:m2_fixture:found_user"])
+
+
+func test_solving_a_field_on_its_last_attempt_does_not_fail_the_mission() -> void:
+	var sim: NetworkSim = _loaded()
+	var seen: Array[String] = []
+	_record(sim.events.mission_failed, "failed", seen)
+	sim.submit_report("attacker_ip", "198.51.100.1")
+	sim.submit_report("attacker_ip", "198.51.100.2")
+	assert_bool(sim.submit_report("attacker_ip", ATTACKER).correct).is_true()
+	assert_array(seen).is_empty()
+	assert_bool(_state(sim, "found_ip").passed).is_true()
+
+
+func test_the_debrief_is_filled_when_the_mission_fails() -> void:
+	var sim: NetworkSim = _loaded()
+	var at_signal: Array[DebriefView] = []
+	sim.events.mission_failed.connect(
+		func(_id: String, _objective: String) -> void: at_signal.append(sim.debrief_view())
+	)
+	sim.submit_report("attacker_ip", ATTACKER)
+	_exhaust(sim, "attack_type")
+	var view: DebriefView = sim.debrief_view()
+	assert_object(view).is_not_null()
+	assert_int(at_signal.size()).is_equal(1)
+	assert_object(at_signal[0]).is_same(view)
+	assert_bool(view.completed()).is_false()
+	assert_str(view.scenario_id()).is_equal("m2_fixture")
+	var by_id: Dictionary = {}
+	for o: Dictionary in view.objectives():
+		by_id[o["id"]] = o
+	assert_bool(by_id["found_type"]["failed"]).is_true()
+	assert_bool(by_id["found_type"]["passed"]).is_false()
+	assert_bool(by_id["found_ip"]["passed"]).is_true()
+	assert_bool(by_id["found_ip"]["failed"]).is_false()
+	assert_bool(by_id["found_user"]["failed"]).is_false()
+
+
+func test_a_failed_mission_refuses_further_reports_and_never_completes() -> void:
+	var sim: NetworkSim = _loaded()
+	var seen: Array[String] = []
+	_record(sim.events.report_submitted, "report", seen)
+	_record(sim.events.mission_completed, "completed", seen)
+	_exhaust(sim, "attack_type")
+	seen.clear()
+	for field in ["attacker_ip", "compromised_user"]:
+		var r: ReportResult = sim.submit_report(field, "198.51.100.1" if field == "attacker_ip" else "deploy")
+		assert_bool(r.ok).is_false()
+		assert_int(r.reason).is_equal(ReportResult.Reason.MISSION_OVER)
+	assert_array(seen).is_empty()
+	assert_int(sim.report_view().attempts_left("attacker_ip")).is_equal(3)
+	assert_bool(sim.report_view().solved("compromised_user")).is_false()
+	assert_object(sim.debrief_view()).is_not_null()
+	assert_bool(sim.debrief_view().completed()).is_false()
+
+
+func test_a_completed_mission_refuses_further_reports() -> void:
+	var sim: NetworkSim = _loaded()
+	sim.submit_report("attacker_ip", ATTACKER)
+	sim.submit_report("attack_type", "Brute force")
+	sim.submit_report("compromised_user", "deploy")
+	var r: ReportResult = sim.submit_report("attacker_ip", ATTACKER)
+	assert_bool(r.ok).is_false()
+	assert_int(r.reason).is_equal(ReportResult.Reason.MISSION_OVER)
+
+
+func test_an_ordered_objective_that_is_out_of_attempts_still_fails_the_mission() -> void:
+	var data: Dictionary = _data()
+	data["objectives"][1]["order"] = 1  # found_ip, not yet solved
+	data["objectives"][2]["order"] = 2  # found_type, so locked
+	var sim: NetworkSim = _loaded(data)
+	var seen: Array[String] = []
+	_record(sim.events.mission_failed, "failed", seen)
+	_exhaust(sim, "attack_type")
+	assert_bool(_state(sim, "found_type").locked).is_true()
+	assert_bool(_state(sim, "found_type").failed).is_true()
+	assert_array(seen).is_equal(["failed:m2_fixture:found_type"])
+
+
+func test_reloading_clears_the_failure() -> void:
+	var sim: NetworkSim = _loaded()
+	var seen: Array[String] = []
+	_record(sim.events.mission_failed, "failed", seen)
+	_exhaust(sim, "attacker_ip")
+	assert_array(sim.load_scenario(_data()).errors).is_empty()
+	assert_object(sim.debrief_view()).is_null()
+	assert_bool(_state(sim, "found_ip").failed).is_false()
+	assert_bool(sim.submit_report("attacker_ip", ATTACKER).correct).is_true()
+	_exhaust(sim, "attack_type")
+	assert_array(seen).is_equal(["failed:m2_fixture:found_ip", "failed:m2_fixture:found_type"])

@@ -177,7 +177,8 @@ must be one of the options (it is filed in the option's own spelling) and an
 is refused with `INVALID_VALUE` and costs nothing, as do unknown fields, a field
 already solved and a field out of attempts. A right answer solves the field; a
 wrong one costs an attempt. Either emits `report_submitted(field, correct)` and
-re-checks the objectives. `report_view()` shows per field `attempts_left`,
+re-checks the objectives. Once the mission has ended (completed or failed) every
+submission is refused with `MISSION_OVER`. `report_view()` shows per field `attempts_left`,
 `last_value` and `solved`, never the answers.
 
 The validator reports each mistake once. When a log's own `source` or `file` is
@@ -254,9 +255,15 @@ once, the first time all pass. Loading signals nothing; reloading resets this.
   `hint` or ping result; a locked one holds back the ones above it too, so a
   step re-locks if an earlier one stops passing. No `order` means never locked.
 - `report`: passes once the field is solved. Until then `detail` reads
-  `3 attempts left` (`1 attempt left`, `0 attempts left`). `failed` stays false
-  for now; a field running out of attempts failing the mission arrives with
-  task 2.4.
+  `3 attempts left` (`1 attempt left`). A field that runs out of attempts
+  unsolved can never pass: its objective is `failed` (`detail` "out of
+  attempts"), even while locked, and stays failed until the scenario reloads.
+- Failing the mission: the first time any objective is `failed`, the sim fills
+  `debrief_view()` (`completed()` false; each objective carries `passed` and
+  `failed`) and emits `mission_failed(scenario_id, objective_id)` for the first
+  failed objective in file order, once. The mission has then ended:
+  `submit_report` refuses with `MISSION_OVER`, as it does after completion, and
+  `mission_completed` can no longer fire. Reloading resets all of it.
 
 ## Patch regions (M3)
 

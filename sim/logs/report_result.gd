@@ -12,7 +12,11 @@ enum Reason {
 	## IPv4 address, or a choice that is not one of the options.
 	INVALID_VALUE,
 	ALREADY_SOLVED,
+	## ReportState's own refusal. Through NetworkSim a spent field has already
+	## failed the mission, so callers see MISSION_OVER instead.
 	OUT_OF_ATTEMPTS,
+	## The mission has already been completed or failed; play has stopped.
+	MISSION_OVER,
 }
 
 var ok: bool = false

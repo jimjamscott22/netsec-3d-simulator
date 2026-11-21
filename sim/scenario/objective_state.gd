@@ -16,8 +16,8 @@ var order: int = 0
 ## A locked objective is never passed, and shows no reason or hint.
 var locked: bool = false
 var passed: bool = false
-## Can no longer pass. Nothing can fail for good yet (a report field running out
-## of attempts arrives with task 2.4), so this stays false for now.
+## Can no longer pass: a `report` objective whose field ran out of attempts.
+## Stays true until the scenario is reloaded, even while the objective is locked.
 var failed: bool = false
 ## `ping` objectives only: why the ping failed, else NONE.
 var fail_reason: PingResult.FailReason = PingResult.FailReason.NONE

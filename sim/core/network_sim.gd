@@ -12,6 +12,7 @@ var _locked: Dictionary[String, bool] = {}
 var _scenario_view: ScenarioView
 var _evaluator: ObjectiveEvaluator
 var _mission_completed: bool = false
+var _mission_failed: bool = false
 var _debrief_text: String = ""
 var _debrief: DebriefView
 ## source device id -> file path -> LogFile.
@@ -51,6 +52,7 @@ func load_scenario(data: Dictionary, file_id: String = "") -> LoadResult:
 	_scenario_view = ScenarioLoader.build_view(data)
 	_evaluator = ObjectiveEvaluator.new(data)
 	_mission_completed = false
+	_mission_failed = false
 	_debrief_text = data.get("debrief", "")
 	_debrief = null
 	# Record where every objective starts, silently: loading signals nothing.
@@ -72,14 +74,15 @@ func objective_states() -> Array[ObjectiveState]:
 
 
 ## The end-of-mission record, or null until the mission has ended. Taken once,
-## as `mission_completed` fires; later changes don't alter it.
+## as `mission_completed` or `mission_failed` fires; later changes don't alter it.
 func debrief_view() -> DebriefView:
 	return _debrief
 
 
 ## Re-checks every objective after a state change. Emits `objective_updated` for
 ## each one whose result changed, then `mission_completed` the first time they
-## all pass. Called by the mutating methods below rather than by connecting to
+## all pass, or `mission_failed` the first time one can no longer pass. The
+## mission ends either way and neither fires again until the next load. Called by the mutating methods below rather than by connecting to
 ## our own signals, which would make a reference cycle with `events`.
 func _reevaluate() -> void:
 	if _evaluator == null:
@@ -87,12 +90,25 @@ func _reevaluate() -> void:
 	var states: Array[ObjectiveState] = _evaluator.evaluate(self)
 	for s in _evaluator.changes(states):
 		events.objective_updated.emit(s.id, s.passed)
-	if not _mission_completed and ObjectiveEvaluator.all_passed(states):
+	if _mission_completed or _mission_failed:
+		return
+	if ObjectiveEvaluator.all_passed(states):
 		_mission_completed = true
 		_debrief = DebriefView.new(
 			_scenario_view.scenario_id(), _scenario_view.title(), true, _debrief_text, states
 		)
 		events.mission_completed.emit(_scenario_view.scenario_id())
+		return
+	# An objective that can no longer pass ends the mission, once, on the first
+	# such objective in file order.
+	for s in states:
+		if s.failed:
+			_mission_failed = true
+			_debrief = DebriefView.new(
+				_scenario_view.scenario_id(), _scenario_view.title(), false, _debrief_text, states
+			)
+			events.mission_failed.emit(_scenario_view.scenario_id(), s.id)
+			return
 
 
 ## Every `config_changed` goes through here so objectives are re-checked after it.
@@ -129,12 +145,14 @@ func query_logs(source_id: String, file: String, filter: LogFilter) -> Array[Log
 
 
 ## Files `value` as the answer for report field `field`. A refusal (unknown field,
-## already solved, out of attempts, or a value that cannot be an answer) changes
-## nothing. Otherwise a right answer solves the field and a wrong one costs an
+## already solved, out of attempts, a value that cannot be an answer, or a mission
+## that has already ended) changes nothing. Otherwise a right answer solves the field and a wrong one costs an
 ## attempt; either way `report_submitted` fires and the objectives are re-checked.
 func submit_report(field: String, value: String) -> ReportResult:
 	if _report == null:
 		return ReportResult.refused(ReportResult.Reason.UNKNOWN_FIELD)
+	if _mission_completed or _mission_failed:
+		return ReportResult.refused(ReportResult.Reason.MISSION_OVER)
 	var result: ReportResult = _report.submit(field, value)
 	if result.ok:
 		events.report_submitted.emit(field, result.correct)

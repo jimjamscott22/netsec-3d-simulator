@@ -27,6 +27,7 @@ signal config_changed(device_id: String)
 signal report_submitted(field: String, correct: bool)
 signal objective_updated(objective_id: String, passed: bool)
 signal mission_completed(scenario_id: String)
+signal mission_failed(scenario_id: String, objective_id: String)
 
 ## Where scenario files are read from. Tests point it at a temp folder to feed
 ## in broken files; nothing else should change it.
@@ -45,6 +46,7 @@ func _init() -> void:
 	events.report_submitted.connect(report_submitted.emit)
 	events.objective_updated.connect(objective_updated.emit)
 	events.mission_completed.connect(mission_completed.emit)
+	events.mission_failed.connect(mission_failed.emit)
 
 
 ## Loads `res://scenarios/<scenario_id>.json`, replacing all sim state. A missing
@@ -81,7 +83,8 @@ func objective_states() -> Array[ObjectiveState]:
 	return _net.objective_states()
 
 
-## The end-of-mission record, or null until the mission has ended.
+## The end-of-mission record (completed or failed), or null until the mission
+## has ended.
 func debrief_view() -> DebriefView:
 	return _net.debrief_view()
 

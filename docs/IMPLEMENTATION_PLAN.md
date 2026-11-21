@@ -368,7 +368,7 @@ logs, works out who attacked, how and which account, and files a report.
     refusal. Only a well-formed wrong answer costs one.
   - `Sim` forwards `query_logs`, `submit_report`, `report_view` and re-emits
     `report_submitted`. The UI tasks (2.7, 2.8) read through those.
-- [ ] **2.4 Report objectives fail for good.** `ObjectiveState.failed` is true
+- [x] **2.4 Report objectives fail for good.** `ObjectiveState.failed` is true
   once a report field is unsolved with no attempts left; `SimEvents.mission_failed`
   (`scenario_id`, `objective_id`) fires once, the sim then refuses further
   `submit_report` calls, and `debrief_view()` is filled (`completed()` false).
@@ -377,6 +377,13 @@ logs, works out who attacked, how and which account, and files a report.
   - Moved into 2.3: the `report` objective's validator entry and its passing
     evaluation, because a field's expected answer is its objective's `equals`;
     the evaluator would otherwise have mishandled a `report` objective.
+  - The mission is over once it has completed or failed, so `submit_report`
+    then returns `MISSION_OVER` (a spent field is therefore reported that way
+    through `NetworkSim`; `OUT_OF_ATTEMPTS` is `ReportState`'s own refusal).
+  - `DebriefView.objectives()` entries gain `failed`. The answers and evidence
+    for the failed card come with 2.8b, and the card itself is UI work.
+  - `Sim` re-emits `mission_failed`. Nothing in `game/main.gd` listens yet: the
+    failed card (2.8b) does.
 - [ ] **2.5 Server mini shell:** `ls`, `cat`, `grep [-i]`, `tail [-n]`,
   `service <name> status`, `help`, over log files and (later) server files.
   Update `ios-cli.md` with the server shell section.

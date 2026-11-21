@@ -71,15 +71,19 @@ func _evaluate_one(sim: NetworkSim, obj: Dictionary) -> ObjectiveState:
 	return s
 
 
-## Passes once the player has filed the right answer. Reads the public
-## ReportView, so the answer never leaves the report state.
+## Passes once the player has filed the right answer, and fails for good when the
+## field runs out of attempts first. Reads the public ReportView, so the answer
+## never leaves the report state.
 func _evaluate_report(sim: NetworkSim, obj: Dictionary, s: ObjectiveState) -> void:
 	var view: ReportView = sim.report_view()
 	var field: String = obj["field"]
 	s.passed = view.solved(field)
-	if not s.passed:
-		var left: int = view.attempts_left(field)
-		s.detail = "%d attempt%s left" % [left, "" if left == 1 else "s"]
+	if s.passed:
+		return
+	var left: int = view.attempts_left(field)
+	# Out of attempts means the field can never be solved: this objective is lost.
+	s.failed = left <= 0
+	s.detail = "out of attempts" if s.failed else "%d attempt%s left" % [left, "" if left == 1 else "s"]
 
 
 func _evaluate_ping(sim: NetworkSim, obj: Dictionary, s: ObjectiveState) -> void:
