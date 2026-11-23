@@ -145,7 +145,8 @@ func test_an_empty_box_or_unpicked_choice_is_not_sent() -> void:
 func test_choice_fields_list_the_mission_options() -> void:
 	var form: ReportForm = _form()
 	form.open()
-	var list: OptionButton = form.get_node("Root").find_child("Input", true, false) as OptionButton
+	var row: Node = form.get_node("Root").find_child("attack_type", true, false)
+	var list: OptionButton = row.find_child("Input", true, false) as OptionButton
 	assert_object(list).is_not_null()
 	var options: Array = []
 	for field: Dictionary in Sim.scenario_view().report_fields():
