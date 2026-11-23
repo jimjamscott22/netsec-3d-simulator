@@ -117,7 +117,8 @@ func test_shell_blocks_the_player() -> void:
 	var room: Room = _room()
 	var shapes: int = 0
 	for node: Node in _all_nodes(room):
-		if node is CollisionShape3D:
+		# Interact targets (the SOC monitor's Area3D) don't block the player.
+		if node is CollisionShape3D and not node.get_parent() is Area3D:
 			shapes += 1
 	# Floor, ceiling, 4 walls, 2 racks, 3 desks of 3 pieces.
 	assert_int(shapes).is_equal(6 + 2 + 9)

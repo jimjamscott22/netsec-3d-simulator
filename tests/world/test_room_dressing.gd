@@ -131,7 +131,8 @@ func test_dressing_adds_no_collision() -> void:
 	for desk: String in RoomDressing.DESKS:
 		var shapes: int = 0
 		for node: Node in _all_nodes(room.get_node(desk)):
-			if node is CollisionShape3D:
+			# The SOC monitor's Area3D is an interact target, not desk geometry.
+			if node is CollisionShape3D and not node.get_parent() is Area3D:
 				shapes += 1
 		# Still the greybox top and two side panels, nothing from the models.
 		assert_int(shapes).is_equal(3)
