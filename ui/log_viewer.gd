@@ -19,8 +19,9 @@ const FONT_SIZE: int = 15
 const BACKGROUND: Color = Color(0.03, 0.04, 0.05, 0.97)
 const TEXT_COLOR: Color = Color(0.80, 0.92, 0.82)
 const DIM_COLOR: Color = Color(0.55, 0.62, 0.58)
-const MATCH_COLOR: String = "#101010"
-const MATCH_BACKGROUND: String = "#e8c547"
+const NUMBER_COLOR: Color = Color(0.54, 0.60, 0.56)
+const MATCH_COLOR: Color = Color(0.06, 0.06, 0.06)
+const MATCH_BACKGROUND: Color = Color(0.91, 0.77, 0.28)
 const LIST_WIDTH: float = 340.0
 const TITLE: String = "SOC monitor  ·  log viewer"
 const FOOTER: String = "Type to filter · ↑/↓ file · PgUp/PgDn scroll · Esc close"
@@ -162,30 +163,42 @@ func handle_key(key: InputEventKey) -> bool:
 	return true
 
 
-## `text` as BBCode with every case-insensitive occurrence of `needle` marked.
-## Square brackets in the log text are escaped, so a line can never inject markup.
-static func highlight(text: String, needle: String) -> String:
-	if needle.is_empty():
-		return _escape(text)
-	var out: String = ""
+## Splits `text` around every case-insensitive occurrence of `needle`:
+## `[plain, match, plain, match, ..., plain]`, so odd entries are the matches (the
+## original case kept) and the parts always join back to `text`. The viewer draws
+## them with `add_text`, which never reads markup, so log text cannot inject any.
+static func split_matches(text: String, needle: String) -> Array[String]:
+	var parts: Array[String] = []
 	var from: int = 0
-	while true:
+	while not needle.is_empty():
 		var at: int = text.findn(needle, from)
 		if at < 0:
 			break
-		out += _escape(text.substr(from, at - from))
-		out += "[bgcolor=%s][color=%s]%s[/color][/bgcolor]" % [
-			MATCH_BACKGROUND, MATCH_COLOR, _escape(text.substr(at, needle.length()))
-		]
+		parts.append(text.substr(from, at - from))
+		parts.append(text.substr(at, needle.length()))
 		from = at + needle.length()
-	return out + _escape(text.substr(from))
+	parts.append(text.substr(from))
+	return parts
 
 
 # --- internals ------------------------------------------------------------------
 
 
-static func _escape(text: String) -> String:
-	return text.replace("[", "[lb]").replace("]", "[rb]")
+func _append_line(line: LogLine, width: int) -> void:
+	_output.push_color(NUMBER_COLOR)
+	_output.add_text(str(line.number()).lpad(width) + "  ")
+	_output.pop()
+	var parts: Array[String] = split_matches(line.full_text(), _filter_text)
+	for i: int in parts.size():
+		if i % 2 == 1:
+			_output.push_bgcolor(MATCH_BACKGROUND)
+			_output.push_color(MATCH_COLOR)
+			_output.add_text(parts[i])
+			_output.pop()
+			_output.pop()
+		else:
+			_output.add_text(parts[i])
+	_output.newline()
 
 
 func _refresh() -> void:
@@ -200,9 +213,7 @@ func _refresh() -> void:
 	_shown.assign(Sim.query_logs(file["source"], file["file"], LogFilter.contains_ignore_case(_filter_text)))
 	var width: int = str(maxi(total, 1)).length()
 	for line: LogLine in _shown:
-		_output.append_text("[color=#8a9a90]%s[/color]  %s\n" % [
-			str(line.number()).lpad(width), highlight(line.full_text(), _filter_text)
-		])
+		_append_line(line, width)
 	if _shown.is_empty():
 		_status.text = "%s  ·  no lines contain \"%s\"" % [file["file"], _filter_text]
 	else:
@@ -310,7 +321,7 @@ func _build() -> void:
 
 	_output = RichTextLabel.new()
 	_output.name = "Output"
-	_output.bbcode_enabled = true
+	_output.bbcode_enabled = false
 	_output.focus_mode = Control.FOCUS_NONE
 	_output.scroll_active = true
 	_output.size_flags_vertical = Control.SIZE_EXPAND_FILL

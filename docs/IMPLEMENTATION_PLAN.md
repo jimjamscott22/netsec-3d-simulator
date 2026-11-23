@@ -419,8 +419,8 @@ logs, works out who attacked, how and which account, and files a report.
     it is open, and a debrief that is due waits for it to close.
   - Lines show their file line number (report evidence cites it). The filter keeps
     lines containing the text, ignoring case (`LogFilter.contains_ignore_case`), and
-    marks each match; the text stays when you switch files. Log text has its
-    square brackets escaped, so a line cannot inject BBCode. Up/Down pick the
+    marks each match; the text stays when you switch files. Lines are drawn
+    with `add_text` (BBCode off), so log text can never inject markup. Up/Down pick the
     file, PgUp/PgDn scroll, Esc closes.
   - Regex filtering stays in the server shell's `grep`; the viewer is the simple tool.
 - [ ] **2.8 Report form UI:** fields from `scenario_view`, attempts left

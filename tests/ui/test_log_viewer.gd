@@ -160,24 +160,26 @@ func test_output_shows_numbers_and_full_text_without_markup() -> void:
 # --- highlight ---------------------------------------------------------------------
 
 
-func test_highlight_marks_every_match_ignoring_case() -> void:
-	var marked: String = LogViewer.highlight("Failed failed FAILED", "failed")
-	assert_int(marked.count("[bgcolor=")).is_equal(3)
-	# The original case is kept inside the mark.
-	assert_str(marked).contains("]FAILED[/color]")
+func test_split_matches_alternates_plain_and_match_ignoring_case() -> void:
+	var parts: Array[String] = LogViewer.split_matches("Failed ok FAILED", "failed")
+	assert_array(parts).is_equal(["", "Failed", " ok ", "FAILED", ""])
+	assert_str("".join(parts)).is_equal("Failed ok FAILED")
 
 
-func test_highlight_without_a_needle_only_escapes() -> void:
-	assert_str(LogViewer.highlight("a plain line", "")).is_equal("a plain line")
-	assert_str(LogViewer.highlight("sshd[811]: ok", "")).is_equal("sshd[lb]811[rb]: ok")
+func test_split_matches_without_a_needle_or_a_match_is_one_part() -> void:
+	assert_array(LogViewer.split_matches("a plain line", "")).is_equal(["a plain line"])
+	assert_array(LogViewer.split_matches("a plain line", "zzz")).is_equal(["a plain line"])
 
 
-func test_highlight_escapes_brackets_so_log_text_cannot_inject_markup() -> void:
-	var marked: String = LogViewer.highlight("x [color=red]bad[/color] y", "bad")
-	assert_str(marked).not_contains("[color=red]")
-	assert_str(marked).contains("[lb]color=red[rb]")
-	# A needle with brackets is escaped inside the mark too.
-	assert_str(LogViewer.highlight("a[1]b", "[1]")).contains("[lb]1[rb]")
+func test_brackets_in_log_text_and_needle_are_shown_as_written() -> void:
+	var viewer: LogViewer = _viewer()
+	viewer.open()
+	viewer.set_filter_text("[811]")
+	assert_array(viewer.shown_line_numbers()).is_equal([1, 2])
+	assert_str(viewer.output_text().split("\n")[0]).contains("sshd[811]: Failed password")
+	assert_array(LogViewer.split_matches("x [color=red]bad[/color]", "bad")).is_equal(
+		["x [color=red]", "bad", "[/color]"]
+	)
 
 
 # --- wired into the game -----------------------------------------------------------
