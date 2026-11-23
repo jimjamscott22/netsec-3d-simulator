@@ -1,0 +1,205 @@
+WARNING: `XDG_DATA_HOME` is a relative path. Ignoring its value and falling back to `$HOME/.local/share` or `get_config_path()` per the XDG Base Directory specification.
+     at: get_data_path (platform/linuxbsd/os_linuxbsd.cpp:916)
+ERROR: Failed to open 'user://logs/godot2026-11-16T19.01.22.log'.
+   at: copy (core/io/dir_access.cpp:429)
+ERROR: Failed to open log file for writing: user://logs/godot.log
+   at: rotate_file (core/io/logger.cpp:169)
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+WARNING: Failed to create wd.xic as the input method or its xim server may not have started yet.
+     at: _create_xic (platform/linuxbsd/x11/display_server_x11.cpp:6347)
+WARNING: Could not set V-Sync mode, as changing V-Sync mode is not supported by the graphics driver.
+     at: set_use_vsync (platform/linuxbsd/x11/gl_manager_x11.cpp:372)
+ERROR: Condition "err != OK" is true.
+   at: initialize (drivers/gles3/shader_gles3.cpp:802)
+ERROR: Condition "err != OK" is true.
+   at: initialize (drivers/gles3/shader_gles3.cpp:802)
+ERROR: Condition "err != OK" is true.
+   at: initialize (drivers/gles3/shader_gles3.cpp:802)
+ERROR: Condition "err != OK" is true.
+   at: initialize (drivers/gles3/shader_gles3.cpp:802)
+ERROR: Condition "err != OK" is true.
+   at: initialize (drivers/gles3/shader_gles3.cpp:802)
+ERROR: Condition "err != OK" is true.
+   at: initialize (drivers/gles3/shader_gles3.cpp:802)
+ERROR: Condition "err != OK" is true.
+   at: initialize (drivers/gles3/shader_gles3.cpp:802)
+ERROR: Condition "err != OK" is true.
+   at: initialize (drivers/gles3/shader_gles3.cpp:802)
+ERROR: Condition "err != OK" is true.
+   at: initialize (drivers/gles3/shader_gles3.cpp:802)
+ERROR: Condition "err != OK" is true.
+   at: initialize (drivers/gles3/shader_gles3.cpp:802)
+ERROR: Condition "err != OK" is true.
+   at: initialize (drivers/gles3/shader_gles3.cpp:802)
+ERROR: Condition "err != OK" is true.
+   at: initialize (drivers/gles3/shader_gles3.cpp:802)
+ERROR: Condition "err != OK" is true.
+   at: initialize (drivers/gles3/shader_gles3.cpp:802)
+ERROR: Condition "err != OK" is true.
+   at: initialize (drivers/gles3/shader_gles3.cpp:802)
+OpenGL API 4.5 (Core Profile) Mesa 26.0.8-1ubuntu0.3 - Compatibility - Using Device: Mesa - llvmpipe (LLVM 21.1.8, 256 bits)
+
+CHECK PASS Starts on mission menu | 
+CHECK PASS Settings opens from menu | 
+CHECK PASS Settings returns on Escape | 
+Menu to first rendered room frame ms 2005.466
+CHECK PASS Briefing appears | 
+CHECK PASS Enter dismisses briefing | 
+CHECK PASS Initial HUD | 
+CHECK PASS Initial gateway hint | Nothing answers at PC-A's gateway, 192.168.10.1. Which device should own that address?
+Idle room FPS samples [1, 116, 116, 165, 165, 165]
+CHECK PASS Movement W | (0.0, 0.00079, -0.533333)
+CHECK PASS Movement A | (-0.6, 0.000001, 0.0)
+CHECK PASS Movement S | (0.0, -0.000002, 0.6)
+CHECK PASS Movement D | (0.6, 0.000001, 0.0)
+CHECK PASS Mouse look changes yaw and pitch | 
+CHECK PASS Ctrl crouches on floor | 0.94999998807907
+CHECK PASS Ctrl release restores height | 1.64999997615814
+SCRIPT ERROR: Cannot call method 'get_node' on a null value.
+          at: port (res://playtest_probe.gd:70)
+          GDScript backtrace (most recent call first):
+              [0] port (res://playtest_probe.gd:70)
+              [1] run (res://playtest_probe.gd:176)
+              [2] physics (res://playtest_probe.gd:40)
+SCRIPT ERROR: Cannot call method 'get_node' on a null value.
+          at: port (res://playtest_probe.gd:70)
+          GDScript backtrace (most recent call first):
+              [0] port (res://playtest_probe.gd:70)
+              [1] run (res://playtest_probe.gd:179)
+              [2] physics (res://playtest_probe.gd:40)
+CHECK FAIL PC-B port reachable | 
+Terminal interaction (plus physics wait) ms 51.435
+CHECK PASS PC-A console opens through ray and E | 
+CHECK PASS PC-A IP and gateway stay locked | C:\>ipconfig
+Windows IP Configuration
+
+Ethernet adapter Ethernet0:
+
+   Connection-specific DNS Suffix  . :
+   IPv4 Address. . . . . . . . . . . : 192.168.10.10
+   Subnet Mask . . . . . . . . . . . : 255.255.255.0
+   Default Gateway . . . . . . . . . : 192.168.10.1
+C:\>ipconfig /set 192.168.10.20 255.255.255.0 192.168.10.1
+Access is denied. Network settings are managed by IT.
+C:\>ipconfig
+Windows IP Configuration
+
+Ethernet adapter Ethernet0:
+
+   Connection-specific DNS Suffix  . :
+   IPv4 Address. . . . . . . . . . . : 192.168.10.10
+   Subnet Mask . . . . . . . . . . . : 255.255.255.0
+   Default Gateway . . . . . . . . . : 192.168.10.1
+
+CHECK PASS Escape closes terminal | 
+Terminal interaction (plus physics wait) ms 54.011
+CHECK PASS PC-B console opens through ray and E | 
+CHECK FAIL PC-B IP and gateway stay locked | C:\>ipconfig
+Windows IP Configuration
+
+Ethernet adapter Ethernet0:
+
+   Media State . . . . . . . . . . . : Media disconnected
+   Connection-specific DNS Suffix  . :
+C:\>ipconfig /set 192.168.10.20 255.255.255.0 192.168.10.1
+Access is denied. Network settings are managed by IT.
+C:\>ipconfig
+Windows IP Configuration
+
+Ethernet adapter Ethernet0:
+
+   Media State . . . . . . . . . . . : Media disconnected
+   Connection-specific DNS Suffix  . :
+
+CHECK PASS Escape closes terminal | 
+Terminal interaction (plus physics wait) ms 49.472
+CHECK PASS S1 console opens through ray and E | 
+CHECK PASS Up recalls previous command | show vlan brief
+CHECK PASS Down returns to empty input | 
+CHECK PASS Tab completes show | show 
+CHECK PASS Question mark displays help |                                        Fa0/22, Fa0/23, Fa0/24, Gi0/1
+                                                Gi0/2
+10   ACCOUNTING                       active    Fa0/1
+1002 fddi-default                     act/unsup
+1003 token-ring-default               act/unsup
+1004 fddinet-default                  act/unsup
+1005 trnet-default                    act/unsup
+Switch#show ?
+  ip              IP information
+  running-config  Current operating configuration
+  vlan            VTP VLAN status
+
+CHECK FAIL IOS-style invalid command |   act/unsup
+Switch#show ?
+  ip              IP information
+  running-config  Current operating configuration
+  vlan            VTP VLAN status
+Switch#bogus
+Translating "bogus"... % Unknown command or computer name, or unable to find computer address
+
+CHECK PASS Both switch access ports in VLAN 10 cannot win | 
+CHECK PASS S1 show output includes VLANs, assigned port and trunk | 
+CHECK PASS Escape closes terminal | 
+Terminal interaction (plus physics wait) ms 49.787
+CHECK PASS R1 console opens through ray and E | 
+CHECK PASS Physical router IP without subinterfaces cannot win | er line.  End with CNTL/Z.
+Router(config)#int g0/0
+Router(config-if)#no shut
+Router(config-if)#ip address 192.168.10.1 255.255.255.0
+Router(config-if)#end
+Router#sh ip int br
+Interface                  IP-Address      OK? Method Status                Protocol
+GigabitEthernet0/0         192.168.10.1    YES manual up                    up
+GigabitEthernet0/1         unassigned      YES unset  administratively down down
+
+CHECK FAIL Router show output and ping succeed | ES unset  administratively down down
+Router#conf t
+Enter configuration commands, one per line.  End with CNTL/Z.
+Router(config)#int g0/0
+Router(config-if)#no ip address
+Router(config-if)#exit
+Router(config)#int g0/0.10
+Router(config-subif)#encapsulation dot1Q 10
+Router(config-subif)#ip address 192.168.10.1 255.255.255.0
+Router(config-subif)#exit
+Router(config)#int g0/0.20
+Router(config-subif)#encapsulation dot1Q 20
+Router(config-subif)#ip address 192.168.20.1 255.255.255.0
+Router(config-subif)#end
+Router#sh ip int br
+Interface                  IP-Address      OK? Method Status                Protocol
+GigabitEthernet0/0         unassigned      YES unset  up                    up
+GigabitEthernet0/0.10      192.168.10.1    YES manual up                    up
+GigabitEthernet0/0.20      192.168.20.1    YES manual up                    up
+GigabitEthernet0/1         unassigned      YES unset  administratively down down
+Router#show running-config
+Building configuration...
+
+Current configuration : 319 bytes
+!
+hostname Router
+!
+interface GigabitEthernet0/0
+ no ip address
+!
+interface GigabitEthernet0/0.10
+ encapsulation dot1Q 10
+ ip address 192.168.10.1 255.255.255.0
+!
+interface GigabitEthernet0/0.20
+ encapsulation dot1Q 20
+ ip address 192.168.20.1 255.255.255.0
+!
+interface GigabitEthernet0/1
+ no ip address
+ shutdown
+!
+end
+Router#ping 192.168.20.10
+Type escape sequence to abort.
+Sending 5, 100-byte ICMP Echos to 192.168.20.10, timeout is 2 seconds:
+.....
+Success rate is 0 percent (0/5)
+
+CHECK PASS Escape closes terminal | 
+CHECK FAIL Day One debrief appears with all five objectives | 

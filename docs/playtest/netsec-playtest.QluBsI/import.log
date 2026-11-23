@@ -1,0 +1,2538 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+[   0% ] [90m[1mfirst_scan_filesystem[22m | Started Project initialization (5 steps)[39m[0m
+[   0% ] [90m[1mfirst_scan_filesystem[22m | Scanning file structure...[39m[0m
+[  16% ] [90m[1mfirst_scan_filesystem[22m | Loading global class names...[39m[0m
+[  33% ] [90m[1mfirst_scan_filesystem[22m | Verifying GDExtensions...[39m[0m
+[  50% ] [90m[1mfirst_scan_filesystem[22m | Creating autoload scripts...[39m[0m
+[  66% ] [90m[1mfirst_scan_filesystem[22m | Initializing plugins...[39m[0m
+[38;2;218;165;32mIt was recognized that GdUnit4 is running in a test environment, therefore the GdUnit4 plugin will not be executed![0m
+[  83% ] [90m[1mfirst_scan_filesystem[22m | Starting file scan...[39m[0m
+[92m[ DONE ][39m [1mfirst_scan_filesystem[22m
+[0m
+[   0% ] [90m[1mupdate_scripts_classes[22m | Started Registering global classes... (338 steps)[39m[0m
+[   0% ] [90m[1mupdate_scripts_classes[22m | [39m[0m
+[   0% ] [90m[1mupdate_scripts_classes[22m | [39m[0m
+[   0% ] [90m[1mupdate_scripts_classes[22m | CallBackValueProvider[39m[0m
+[   0% ] [90m[1mupdate_scripts_classes[22m | DefaultValueProvider[39m[0m
+[   1% ] [90m[1mupdate_scripts_classes[22m | GdAssertMessages[39m[0m
+[   1% ] [90m[1mupdate_scripts_classes[22m | GdAssertReports[39m[0m
+[   1% ] [90m[1mupdate_scripts_classes[22m | GdUnitArrayAssertImpl[39m[0m
+[   2% ] [90m[1mupdate_scripts_classes[22m | GdUnitAssertImpl[39m[0m
+[   2% ] [90m[1mupdate_scripts_classes[22m | GdUnitAssertions[39m[0m
+[   2% ] [90m[1mupdate_scripts_classes[22m | [39m[0m
+[   2% ] [90m[1mupdate_scripts_classes[22m | [39m[0m
+[   3% ] [90m[1mupdate_scripts_classes[22m | [39m[0m
+[   3% ] [90m[1mupdate_scripts_classes[22m | [39m[0m
+[   3% ] [90m[1mupdate_scripts_classes[22m | [39m[0m
+[   4% ] [90m[1mupdate_scripts_classes[22m | [39m[0m
+[   4% ] [90m[1mupdate_scripts_classes[22m | [39m[0m
+[   4% ] [90m[1mupdate_scripts_classes[22m | [39m[0m
+[   5% ] [90m[1mupdate_scripts_classes[22m | [39m[0m
+[   5% ] [90m[1mupdate_scripts_classes[22m | [39m[0m
+[   5% ] [90m[1mupdate_scripts_classes[22m | [39m[0m
+[   5% ] [90m[1mupdate_scripts_classes[22m | [39m[0m
+[   6% ] [90m[1mupdate_scripts_classes[22m | [39m[0m
+[   6% ] [90m[1mupdate_scripts_classes[22m | ValueProvider[39m[0m
+[   6% ] [90m[1mupdate_scripts_classes[22m | CmdArgumentParser[39m[0m
+[   7% ] [90m[1mupdate_scripts_classes[22m | CmdCommand[39m[0m
+[   7% ] [90m[1mupdate_scripts_classes[22m | CmdCommandHandler[39m[0m
+[   7% ] [90m[1mupdate_scripts_classes[22m | CmdOption[39m[0m
+[   7% ] [90m[1mupdate_scripts_classes[22m | CmdOptions[39m[0m
+[   8% ] [90m[1mupdate_scripts_classes[22m | TestCaseAttribute[39m[0m
+[   8% ] [90m[1mupdate_scripts_classes[22m | GdUnitBaseCommand[39m[0m
+[   8% ] [90m[1mupdate_scripts_classes[22m | GdUnitCommandFileSystem[39m[0m
+[   9% ] [90m[1mupdate_scripts_classes[22m | GdUnitCommandFileSystemDebugTests[39m[0m
+[   9% ] [90m[1mupdate_scripts_classes[22m | GdUnitCommandFileSystemRunTests[39m[0m
+[   9% ] [90m[1mupdate_scripts_classes[22m | GdUnitCommandHandler[39m[0m
+[  10% ] [90m[1mupdate_scripts_classes[22m | GdUnitCommandInspectorDebugTests[39m[0m
+[  10% ] [90m[1mupdate_scripts_classes[22m | GdUnitCommandInspectorRerunTestsUntilFailure[39m[0m
+[  10% ] [90m[1mupdate_scripts_classes[22m | GdUnitCommandInspectorRunTests[39m[0m
+[  10% ] [90m[1mupdate_scripts_classes[22m | GdUnitCommandInspectorTreeCollapse[39m[0m
+[  11% ] [90m[1mupdate_scripts_classes[22m | GdUnitCommandInspectorTreeExpand[39m[0m
+[  11% ] [90m[1mupdate_scripts_classes[22m | GdUnitCommandRunTestsOverall[39m[0m
+[  11% ] [90m[1mupdate_scripts_classes[22m | GdUnitCommandScriptEditor[39m[0m
+[  12% ] [90m[1mupdate_scripts_classes[22m | GdUnitCommandScriptEditorCreateTest[39m[0m
+[  12% ] [90m[1mupdate_scripts_classes[22m | GdUnitCommandScriptEditorDebugTests[39m[0m
+[  12% ] [90m[1mupdate_scripts_classes[22m | GdUnitCommandScriptEditorRunTests[39m[0m
+[  12% ] [90m[1mupdate_scripts_classes[22m | GdUnitCommandStopTestSession[39m[0m
+[  13% ] [90m[1mupdate_scripts_classes[22m | GdUnitCommandTestSession[39m[0m
+[  13% ] [90m[1mupdate_scripts_classes[22m | GdUnitShortcut[39m[0m
+[  13% ] [90m[1mupdate_scripts_classes[22m | GdUnitGUID[39m[0m
+[  14% ] [90m[1mupdate_scripts_classes[22m | GdUnitTestCase[39m[0m
+[  14% ] [90m[1mupdate_scripts_classes[22m | GdUnitTestDiscoverer[39m[0m
+[  14% ] [90m[1mupdate_scripts_classes[22m | GdUnitTestDiscoverGuard[39m[0m
+[  15% ] [90m[1mupdate_scripts_classes[22m | GdUnitTestDiscoverSink[39m[0m
+[  15% ] [90m[1mupdate_scripts_classes[22m | GdUnitEvent[39m[0m
+[  15% ] [90m[1mupdate_scripts_classes[22m | GdUnitInit[39m[0m
+[  15% ] [90m[1mupdate_scripts_classes[22m | GdUnitStop[39m[0m
+[  16% ] [90m[1mupdate_scripts_classes[22m | GdUnitEventTestDiscoverEnd[39m[0m
+[  16% ] [90m[1mupdate_scripts_classes[22m | GdUnitEventTestDiscoverStart[39m[0m
+[  16% ] [90m[1mupdate_scripts_classes[22m | GdUnitSessionClose[39m[0m
+[  17% ] [90m[1mupdate_scripts_classes[22m | GdUnitSessionStart[39m[0m
+[  17% ] [90m[1mupdate_scripts_classes[22m | GdUnitTestCaseFuzzedExecutionStage[39m[0m
+[  17% ] [90m[1mupdate_scripts_classes[22m | GdUnitTestCaseFuzzedTestStage[39m[0m
+[  17% ] [90m[1mupdate_scripts_classes[22m | GdUnitTestCaseSingleExecutionStage[39m[0m
+[  18% ] [90m[1mupdate_scripts_classes[22m | GdUnitTestCaseSingleTestStage[39m[0m
+[  18% ] [90m[1mupdate_scripts_classes[22m | GdUnitTestCaseAfterStage[39m[0m
+[  18% ] [90m[1mupdate_scripts_classes[22m | GdUnitTestCaseBeforeStage[39m[0m
+[  19% ] [90m[1mupdate_scripts_classes[22m | GdUnitTestCaseExecutionStage[39m[0m
+[  19% ] [90m[1mupdate_scripts_classes[22m | GdUnitTestSuiteAfterStage[39m[0m
+[  19% ] [90m[1mupdate_scripts_classes[22m | GdUnitTestSuiteBeforeStage[39m[0m
+[  20% ] [90m[1mupdate_scripts_classes[22m | GdUnitTestSuiteExecutionStage[39m[0m
+[  20% ] [90m[1mupdate_scripts_classes[22m | IGdUnitExecutionStage[39m[0m
+[  20% ] [90m[1mupdate_scripts_classes[22m | GdUnitExecutionContext[39m[0m
+[  20% ] [90m[1mupdate_scripts_classes[22m | GdUnitMemoryObserver[39m[0m
+[  21% ] [90m[1mupdate_scripts_classes[22m | GdUnitProjectSettingsSnapshot[39m[0m
+[  21% ] [90m[1mupdate_scripts_classes[22m | GdUnitTestReportCollector[39m[0m
+[  21% ] [90m[1mupdate_scripts_classes[22m | GdUnitTestSuiteExecutor[39m[0m
+[  22% ] [90m[1mupdate_scripts_classes[22m | GdUnitBaseReporterTestSessionHook[39m[0m
+[  22% ] [90m[1mupdate_scripts_classes[22m | GdUnitHtmlReporterTestSessionHook[39m[0m
+[  22% ] [90m[1mupdate_scripts_classes[22m | GdUnitTestSessionHook[39m[0m
+[  23% ] [90m[1mupdate_scripts_classes[22m | GdUnitTestSessionHookService[39m[0m
+[  23% ] [90m[1mupdate_scripts_classes[22m | GdUnitXMLReporterTestSessionHook[39m[0m
+[  23% ] [90m[1mupdate_scripts_classes[22m | GdBuiltinConstants[39m[0m
+[  23% ] [90m[1mupdate_scripts_classes[22m | GdCallableParameterSetResolver[39m[0m
+[  24% ] [90m[1mupdate_scripts_classes[22m | GdInlineParameterSetResolver[39m[0m
+[  24% ] [90m[1mupdate_scripts_classes[22m | GdParameterSetResolver[39m[0m
+[  24% ] [90m[1mupdate_scripts_classes[22m | GdParameterSetResolverFactory[39m[0m
+[  25% ] [90m[1mupdate_scripts_classes[22m | GdPropertyParameterSetResolver[39m[0m
+[  25% ] [90m[1mupdate_scripts_classes[22m | GdClassDescriptor[39m[0m
+[  25% ] [90m[1mupdate_scripts_classes[22m | GdDefaultValueDecoder[39m[0m
+[  25% ] [90m[1mupdate_scripts_classes[22m | GdFunctionArgument[39m[0m
+[  26% ] [90m[1mupdate_scripts_classes[22m | GdFunctionDescriptor[39m[0m
+[  26% ] [90m[1mupdate_scripts_classes[22m | GdScriptParser[39m[0m
+[  26% ] [90m[1mupdate_scripts_classes[22m | GdUnitExpressionRunner[39m[0m
+[  27% ] [90m[1mupdate_scripts_classes[22m | GdUnitError[39m[0m
+[  27% ] [90m[1mupdate_scripts_classes[22m | GdUnitReport[39m[0m
+[  27% ] [90m[1mupdate_scripts_classes[22m | GdUnitScriptErrorCollector[39m[0m
+[  28% ] [90m[1mupdate_scripts_classes[22m | GdUnitTestCIRunner[39m[0m
+[  28% ] [90m[1mupdate_scripts_classes[22m | [39m[0m
+[  28% ] [90m[1mupdate_scripts_classes[22m | GdUnitTestSession[39m[0m
+[  28% ] [90m[1mupdate_scripts_classes[22m | [39m[0m
+[  29% ] [90m[1mupdate_scripts_classes[22m | GdUnitTestSuiteDefaultTemplate[39m[0m
+[  29% ] [90m[1mupdate_scripts_classes[22m | GdUnitTestSuiteTemplate[39m[0m
+[  29% ] [90m[1mupdate_scripts_classes[22m | GdUnitThreadContext[39m[0m
+[  30% ] [90m[1mupdate_scripts_classes[22m | GdUnitThreadManager[39m[0m
+[  30% ] [90m[1mupdate_scripts_classes[22m | GdUnitCSIMessageWriter[39m[0m
+[  30% ] [90m[1mupdate_scripts_classes[22m | GdUnitMessageWriter[39m[0m
+[  30% ] [90m[1mupdate_scripts_classes[22m | GdUnitRichTextMessageWriter[39m[0m
+[  31% ] [90m[1mupdate_scripts_classes[22m | _TestCase[39m[0m
+[  31% ] [90m[1mupdate_scripts_classes[22m | GdArrayTools[39m[0m
+[  31% ] [90m[1mupdate_scripts_classes[22m | GdDiffTool[39m[0m
+[  32% ] [90m[1mupdate_scripts_classes[22m | GdObjects[39m[0m
+[  32% ] [90m[1mupdate_scripts_classes[22m | GdUnit4Version[39m[0m
+[  32% ] [90m[1mupdate_scripts_classes[22m | GdUnitFileAccess[39m[0m
+[  33% ] [90m[1mupdate_scripts_classes[22m | GdUnitProperty[39m[0m
+[  33% ] [90m[1mupdate_scripts_classes[22m | GdUnitResult[39m[0m
+[  33% ] [90m[1mupdate_scripts_classes[22m | GdUnitRunnerConfig[39m[0m
+[  33% ] [90m[1mupdate_scripts_classes[22m | GdUnitSceneRunnerImpl[39m[0m
+[  34% ] [90m[1mupdate_scripts_classes[22m | GdUnitSettings[39m[0m
+[  34% ] [90m[1mupdate_scripts_classes[22m | GdUnitSignalAwaiter[39m[0m
+[  34% ] [90m[1mupdate_scripts_classes[22m | GdUnitSignalCollector[39m[0m
+[  35% ] [90m[1mupdate_scripts_classes[22m | GdUnitSignals[39m[0m
+[  35% ] [90m[1mupdate_scripts_classes[22m | GdUnitSingleton[39m[0m
+[  35% ] [90m[1mupdate_scripts_classes[22m | GdUnitStackTrace[39m[0m
+[  35% ] [90m[1mupdate_scripts_classes[22m | GdUnitStackTraceElement[39m[0m
+[  36% ] [90m[1mupdate_scripts_classes[22m | GdUnitTestResourceLoader[39m[0m
+[  36% ] [90m[1mupdate_scripts_classes[22m | GdUnitTestSuiteBuilder[39m[0m
+[  36% ] [90m[1mupdate_scripts_classes[22m | GdUnitTestSuiteScanner[39m[0m
+[  37% ] [90m[1mupdate_scripts_classes[22m | [39m[0m
+[  37% ] [90m[1mupdate_scripts_classes[22m | GodotVersionFixures[39m[0m
+[  37% ] [90m[1mupdate_scripts_classes[22m | LocalTime[39m[0m
+[  38% ] [90m[1mupdate_scripts_classes[22m | GdUnit4CSharpApiLoader[39m[0m
+[  38% ] [90m[1mupdate_scripts_classes[22m | CallableDoubler[39m[0m
+[  38% ] [90m[1mupdate_scripts_classes[22m | GdFunctionDoubler[39m[0m
+[  38% ] [90m[1mupdate_scripts_classes[22m | GdUnitClassDoubler[39m[0m
+[  39% ] [90m[1mupdate_scripts_classes[22m | GdUnitFunctionDoublerBuilder[39m[0m
+[  39% ] [90m[1mupdate_scripts_classes[22m | GdUnitMockFunctionDoubler[39m[0m
+[  39% ] [90m[1mupdate_scripts_classes[22m | GdUnitObjectInteractions[39m[0m
+[  40% ] [90m[1mupdate_scripts_classes[22m | GdUnitObjectInteractionsVerifier[39m[0m
+[  40% ] [90m[1mupdate_scripts_classes[22m | GdUnitSpyFunctionDoubler[39m[0m
+[  40% ] [90m[1mupdate_scripts_classes[22m | GdUnitFuncValueExtractor[39m[0m
+[  41% ] [90m[1mupdate_scripts_classes[22m | BoolFuzzer[39m[0m
+[  41% ] [90m[1mupdate_scripts_classes[22m | FloatFuzzer[39m[0m
+[  41% ] [90m[1mupdate_scripts_classes[22m | Fuzzer[39m[0m
+[  41% ] [90m[1mupdate_scripts_classes[22m | IntFuzzer[39m[0m
+[  42% ] [90m[1mupdate_scripts_classes[22m | StringFuzzer[39m[0m
+[  42% ] [90m[1mupdate_scripts_classes[22m | Vector2Fuzzer[39m[0m
+[  42% ] [90m[1mupdate_scripts_classes[22m | Vector3Fuzzer[39m[0m
+[  43% ] [90m[1mupdate_scripts_classes[22m | AnyArgumentMatcher[39m[0m
+[  43% ] [90m[1mupdate_scripts_classes[22m | AnyBuildInTypeArgumentMatcher[39m[0m
+[  43% ] [90m[1mupdate_scripts_classes[22m | AnyClazzArgumentMatcher[39m[0m
+[  43% ] [90m[1mupdate_scripts_classes[22m | ChainedArgumentMatcher[39m[0m
+[  44% ] [90m[1mupdate_scripts_classes[22m | EqualsArgumentMatcher[39m[0m
+[  44% ] [90m[1mupdate_scripts_classes[22m | GdUnitArgumentMatcher[39m[0m
+[  44% ] [90m[1mupdate_scripts_classes[22m | GdUnitArgumentMatchers[39m[0m
+[  45% ] [90m[1mupdate_scripts_classes[22m | GdUnitMock[39m[0m
+[  45% ] [90m[1mupdate_scripts_classes[22m | GdUnitMockBuilder[39m[0m
+[  45% ] [90m[1mupdate_scripts_classes[22m | DoubledMockClassSourceClassName[39m[0m
+[  46% ] [90m[1mupdate_scripts_classes[22m | ErrorLogEntry[39m[0m
+[  46% ] [90m[1mupdate_scripts_classes[22m | GdUnitMonitor[39m[0m
+[  46% ] [90m[1mupdate_scripts_classes[22m | GdUnitOrphanNodeInfo[39m[0m
+[  46% ] [90m[1mupdate_scripts_classes[22m | GdUnitOrphanNodesMonitor[39m[0m
+[  47% ] [90m[1mupdate_scripts_classes[22m | GodotGdErrorMonitor[39m[0m
+[  47% ] [90m[1mupdate_scripts_classes[22m | RPC[39m[0m
+[  47% ] [90m[1mupdate_scripts_classes[22m | RPCClientConnect[39m[0m
+[  48% ] [90m[1mupdate_scripts_classes[22m | RPCClientDisconnect[39m[0m
+[  48% ] [90m[1mupdate_scripts_classes[22m | RPCGdUnitEvent[39m[0m
+[  48% ] [90m[1mupdate_scripts_classes[22m | RPCMessage[39m[0m
+[  48% ] [90m[1mupdate_scripts_classes[22m | [39m[0m
+[  49% ] [90m[1mupdate_scripts_classes[22m | GdUnitServerConstants[39m[0m
+[  49% ] [90m[1mupdate_scripts_classes[22m | GdUnitTask[39m[0m
+[  49% ] [90m[1mupdate_scripts_classes[22m | GdUnitTcpClient[39m[0m
+[  50% ] [90m[1mupdate_scripts_classes[22m | GdUnitTcpNode[39m[0m
+[  50% ] [90m[1mupdate_scripts_classes[22m | GdUnitTcpServer[39m[0m
+[  50% ] [90m[1mupdate_scripts_classes[22m | GdUnitConsoleTestReporter[39m[0m
+[  51% ] [90m[1mupdate_scripts_classes[22m | GdUnitByPathReport[39m[0m
+[  51% ] [90m[1mupdate_scripts_classes[22m | GdUnitHtmlEncoder[39m[0m
+[  51% ] [90m[1mupdate_scripts_classes[22m | GdUnitHtmlPatterns[39m[0m
+[  51% ] [90m[1mupdate_scripts_classes[22m | GdUnitHtmlReportWriter[39m[0m
+[  52% ] [90m[1mupdate_scripts_classes[22m | JUnitXmlReportWriter[39m[0m
+[  52% ] [90m[1mupdate_scripts_classes[22m | XmlElement[39m[0m
+[  52% ] [90m[1mupdate_scripts_classes[22m | GdUnitReportSummary[39m[0m
+[  53% ] [90m[1mupdate_scripts_classes[22m | GdUnitReportWriter[39m[0m
+[  53% ] [90m[1mupdate_scripts_classes[22m | GdUnitTestCaseReport[39m[0m
+[  53% ] [90m[1mupdate_scripts_classes[22m | GdUnitTestReporter[39m[0m
+[  53% ] [90m[1mupdate_scripts_classes[22m | GdUnitTestSuiteReport[39m[0m
+[  54% ] [90m[1mupdate_scripts_classes[22m | GdUnitSpyBuilder[39m[0m
+[  54% ] [90m[1mupdate_scripts_classes[22m | DoubledSpyClassSourceClassName[39m[0m
+[  54% ] [90m[1mupdate_scripts_classes[22m | GdUnitContextMenuItem[39m[0m
+[  55% ] [90m[1mupdate_scripts_classes[22m | [39m[0m
+[  55% ] [90m[1mupdate_scripts_classes[22m | GdUnitInspectorContextMenu[39m[0m
+[  55% ] [90m[1mupdate_scripts_classes[22m | [39m[0m
+[  56% ] [90m[1mupdate_scripts_classes[22m | [39m[0m
+[  56% ] [90m[1mupdate_scripts_classes[22m | [39m[0m
+[  56% ] [90m[1mupdate_scripts_classes[22m | [39m[0m
+[  56% ] [90m[1mupdate_scripts_classes[22m | [39m[0m
+[  57% ] [90m[1mupdate_scripts_classes[22m | GdUnitReportPanel[39m[0m
+[  57% ] [90m[1mupdate_scripts_classes[22m | GdUnitInputCapture[39m[0m
+[  57% ] [90m[1mupdate_scripts_classes[22m | [39m[0m
+[  58% ] [90m[1mupdate_scripts_classes[22m | [39m[0m
+[  58% ] [90m[1mupdate_scripts_classes[22m | [39m[0m
+[  58% ] [90m[1mupdate_scripts_classes[22m | GdUnitEditorColorTheme[39m[0m
+[  58% ] [90m[1mupdate_scripts_classes[22m | [39m[0m
+[  59% ] [90m[1mupdate_scripts_classes[22m | GdUnitFonts[39m[0m
+[  59% ] [90m[1mupdate_scripts_classes[22m | GdUnitInspecor[39m[0m
+[  59% ] [90m[1mupdate_scripts_classes[22m | GdUnitInspectorTreeConstants[39m[0m
+[  60% ] [90m[1mupdate_scripts_classes[22m | GdUnitScriptEditorControls[39m[0m
+[  60% ] [90m[1mupdate_scripts_classes[22m | GdUnitUiTools[39m[0m
+[  60% ] [90m[1mupdate_scripts_classes[22m | [39m[0m
+[  61% ] [90m[1mupdate_scripts_classes[22m | GdUnitPatch[39m[0m
+[  61% ] [90m[1mupdate_scripts_classes[22m | GdUnitPatcher[39m[0m
+[  61% ] [90m[1mupdate_scripts_classes[22m | [39m[0m
+[  61% ] [90m[1mupdate_scripts_classes[22m | [39m[0m
+[  62% ] [90m[1mupdate_scripts_classes[22m | [39m[0m
+[  62% ] [90m[1mupdate_scripts_classes[22m | Comparator[39m[0m
+[  62% ] [90m[1mupdate_scripts_classes[22m | Fuzzers[39m[0m
+[  63% ] [90m[1mupdate_scripts_classes[22m | GdUnitArrayAssert[39m[0m
+[  63% ] [90m[1mupdate_scripts_classes[22m | GdUnitAssert[39m[0m
+[  63% ] [90m[1mupdate_scripts_classes[22m | GdUnitAwaiter[39m[0m
+[  64% ] [90m[1mupdate_scripts_classes[22m | GdUnitBoolAssert[39m[0m
+[  64% ] [90m[1mupdate_scripts_classes[22m | GdUnitConstants[39m[0m
+[  64% ] [90m[1mupdate_scripts_classes[22m | GdUnitDictionaryAssert[39m[0m
+[  64% ] [90m[1mupdate_scripts_classes[22m | GdUnitFailureAssert[39m[0m
+[  65% ] [90m[1mupdate_scripts_classes[22m | GdUnitFileAssert[39m[0m
+[  65% ] [90m[1mupdate_scripts_classes[22m | GdUnitFloatAssert[39m[0m
+[  65% ] [90m[1mupdate_scripts_classes[22m | GdUnitFuncAssert[39m[0m
+[  66% ] [90m[1mupdate_scripts_classes[22m | GdUnitGodotErrorAssert[39m[0m
+[  66% ] [90m[1mupdate_scripts_classes[22m | GdUnitIntAssert[39m[0m
+[  66% ] [90m[1mupdate_scripts_classes[22m | GdUnitObjectAssert[39m[0m
+[  66% ] [90m[1mupdate_scripts_classes[22m | GdUnitResultAssert[39m[0m
+[  67% ] [90m[1mupdate_scripts_classes[22m | GdUnitSceneRunner[39m[0m
+[  67% ] [90m[1mupdate_scripts_classes[22m | GdUnitSignalAssert[39m[0m
+[  67% ] [90m[1mupdate_scripts_classes[22m | GdUnitStringAssert[39m[0m
+[  68% ] [90m[1mupdate_scripts_classes[22m | GdUnitTestSuite[39m[0m
+[  68% ] [90m[1mupdate_scripts_classes[22m | GdUnitTuple[39m[0m
+[  68% ] [90m[1mupdate_scripts_classes[22m | GdUnitValueExtractor[39m[0m
+[  69% ] [90m[1mupdate_scripts_classes[22m | GdUnitVectorAssert[39m[0m
+[  69% ] [90m[1mupdate_scripts_classes[22m | [39m[0m
+[  69% ] [90m[1mupdate_scripts_classes[22m | [39m[0m
+[  69% ] [90m[1mupdate_scripts_classes[22m | [39m[0m
+[  70% ] [90m[1mupdate_scripts_classes[22m | [39m[0m
+[  70% ] [90m[1mupdate_scripts_classes[22m | CliArg[39m[0m
+[  70% ] [90m[1mupdate_scripts_classes[22m | CliArgResult[39m[0m
+[  71% ] [90m[1mupdate_scripts_classes[22m | CliFormatters[39m[0m
+[  71% ] [90m[1mupdate_scripts_classes[22m | CliMatch[39m[0m
+[  71% ] [90m[1mupdate_scripts_classes[22m | CliMode[39m[0m
+[  71% ] [90m[1mupdate_scripts_classes[22m | CliResult[39m[0m
+[  72% ] [90m[1mupdate_scripts_classes[22m | CliSession[39m[0m
+[  72% ] [90m[1mupdate_scripts_classes[22m | CliToken[39m[0m
+[  72% ] [90m[1mupdate_scripts_classes[22m | CliTokenizer[39m[0m
+[  73% ] [90m[1mupdate_scripts_classes[22m | CommandRegistry[39m[0m
+[  73% ] [90m[1mupdate_scripts_classes[22m | HostCommands[39m[0m
+[  73% ] [90m[1mupdate_scripts_classes[22m | HostSession[39m[0m
+[  74% ] [90m[1mupdate_scripts_classes[22m | IosCommands[39m[0m
+[  74% ] [90m[1mupdate_scripts_classes[22m | ConfigResult[39m[0m
+[  74% ] [90m[1mupdate_scripts_classes[22m | DeviceView[39m[0m
+[  74% ] [90m[1mupdate_scripts_classes[22m | LinkResult[39m[0m
+[  75% ] [90m[1mupdate_scripts_classes[22m | NetworkSim[39m[0m
+[  75% ] [90m[1mupdate_scripts_classes[22m | SimEvents[39m[0m
+[  75% ] [90m[1mupdate_scripts_classes[22m | Device[39m[0m
+[  76% ] [90m[1mupdate_scripts_classes[22m | Host[39m[0m
+[  76% ] [90m[1mupdate_scripts_classes[22m | Interface[39m[0m
+[  76% ] [90m[1mupdate_scripts_classes[22m | DeviceModels[39m[0m
+[  76% ] [90m[1mupdate_scripts_classes[22m | Router[39m[0m
+[  77% ] [90m[1mupdate_scripts_classes[22m | Server[39m[0m
+[  77% ] [90m[1mupdate_scripts_classes[22m | Switch[39m[0m
+[  77% ] [90m[1mupdate_scripts_classes[22m | IfName[39m[0m
+[  78% ] [90m[1mupdate_scripts_classes[22m | IPv4[39m[0m
+[  78% ] [90m[1mupdate_scripts_classes[22m | L2[39m[0m
+[  78% ] [90m[1mupdate_scripts_classes[22m | L2Endpoint[39m[0m
+[  79% ] [90m[1mupdate_scripts_classes[22m | PingResult[39m[0m
+[  79% ] [90m[1mupdate_scripts_classes[22m | Resolver[39m[0m
+[  79% ] [90m[1mupdate_scripts_classes[22m | DebriefView[39m[0m
+[  79% ] [90m[1mupdate_scripts_classes[22m | ScenarioLoader[39m[0m
+[  80% ] [90m[1mupdate_scripts_classes[22m | LoadResult[39m[0m
+[  80% ] [90m[1mupdate_scripts_classes[22m | ObjectiveEvaluator[39m[0m
+[  80% ] [90m[1mupdate_scripts_classes[22m | ObjectiveState[39m[0m
+[  81% ] [90m[1mupdate_scripts_classes[22m | ScenarioFields[39m[0m
+[  81% ] [90m[1mupdate_scripts_classes[22m | ScenarioView[39m[0m
+[  81% ] [90m[1mupdate_scripts_classes[22m | ScenarioValidator[39m[0m
+[  82% ] [90m[1mupdate_scripts_classes[22m | TestCliArg[39m[0m
+[  82% ] [90m[1mupdate_scripts_classes[22m | TestCliFormatters[39m[0m
+[  82% ] [90m[1mupdate_scripts_classes[22m | TestCliSession[39m[0m
+[  82% ] [90m[1mupdate_scripts_classes[22m | TestCommandRegistry[39m[0m
+[  83% ] [90m[1mupdate_scripts_classes[22m | TestHostShell[39m[0m
+[  83% ] [90m[1mupdate_scripts_classes[22m | TestIosCommands[39m[0m
+[  83% ] [90m[1mupdate_scripts_classes[22m | TestPingCommand[39m[0m
+[  84% ] [90m[1mupdate_scripts_classes[22m | TestShowCommands[39m[0m
+[  84% ] [90m[1mupdate_scripts_classes[22m | TestCliTokenizer[39m[0m
+[  84% ] [90m[1mupdate_scripts_classes[22m | TestDebriefView[39m[0m
+[  84% ] [90m[1mupdate_scripts_classes[22m | TestDeviceView[39m[0m
+[  85% ] [90m[1mupdate_scripts_classes[22m | TestNetworkSim[39m[0m
+[  85% ] [90m[1mupdate_scripts_classes[22m | TestNetworkSimConfig[39m[0m
+[  85% ] [90m[1mupdate_scripts_classes[22m | TestOpenSession[39m[0m
+[  86% ] [90m[1mupdate_scripts_classes[22m | TestDeviceClasses[39m[0m
+[  86% ] [90m[1mupdate_scripts_classes[22m | TestInterface[39m[0m
+[  86% ] [90m[1mupdate_scripts_classes[22m | TestModels[39m[0m
+[  87% ] [90m[1mupdate_scripts_classes[22m | TestProgress[39m[0m
+[  87% ] [90m[1mupdate_scripts_classes[22m | TestSim[39m[0m
+[  87% ] [90m[1mupdate_scripts_classes[22m | TestIfName[39m[0m
+[  87% ] [90m[1mupdate_scripts_classes[22m | TestIPv4[39m[0m
+[  88% ] [90m[1mupdate_scripts_classes[22m | TestL2[39m[0m
+[  88% ] [90m[1mupdate_scripts_classes[22m | TestPingResult[39m[0m
+[  88% ] [90m[1mupdate_scripts_classes[22m | TestResolver[39m[0m
+[  89% ] [90m[1mupdate_scripts_classes[22m | TestScenarioLoader[39m[0m
+[  89% ] [90m[1mupdate_scripts_classes[22m | TestM1VlanPing[39m[0m
+[  89% ] [90m[1mupdate_scripts_classes[22m | TestObjectives[39m[0m
+[  89% ] [90m[1mupdate_scripts_classes[22m | TestScenarioFields[39m[0m
+[  90% ] [90m[1mupdate_scripts_classes[22m | TestScenarioSmoke[39m[0m
+[  90% ] [90m[1mupdate_scripts_classes[22m | TestScenarioValidator[39m[0m
+[  90% ] [90m[1mupdate_scripts_classes[22m | ScenarioRunner[39m[0m
+[  91% ] [90m[1mupdate_scripts_classes[22m | TestScenarioRunner[39m[0m
+[  91% ] [90m[1mupdate_scripts_classes[22m | TestTopoBuilder[39m[0m
+[  91% ] [90m[1mupdate_scripts_classes[22m | TopoBuilder[39m[0m
+[  92% ] [90m[1mupdate_scripts_classes[22m | TestMainMenu[39m[0m
+[  92% ] [90m[1mupdate_scripts_classes[22m | TestMissionCard[39m[0m
+[  92% ] [90m[1mupdate_scripts_classes[22m | TestMissionHud[39m[0m
+[  92% ] [90m[1mupdate_scripts_classes[22m | TestTerminal[39m[0m
+[  93% ] [90m[1mupdate_scripts_classes[22m | TestTerminalReveal[39m[0m
+[  93% ] [90m[1mupdate_scripts_classes[22m | TestBlenderModels[39m[0m
+[  93% ] [90m[1mupdate_scripts_classes[22m | TestDeviceModels[39m[0m
+[  94% ] [90m[1mupdate_scripts_classes[22m | TestPlayer[39m[0m
+[  94% ] [90m[1mupdate_scripts_classes[22m | TestRoom[39m[0m
+[  94% ] [90m[1mupdate_scripts_classes[22m | TestRoomBuilder[39m[0m
+[  94% ] [90m[1mupdate_scripts_classes[22m | TestRoomDressing[39m[0m
+[  95% ] [90m[1mupdate_scripts_classes[22m | TestSmoke[39m[0m
+[  95% ] [90m[1mupdate_scripts_classes[22m | Terminal[39m[0m
+[  95% ] [90m[1mupdate_scripts_classes[22m | TerminalReveal[39m[0m
+[  96% ] [90m[1mupdate_scripts_classes[22m | Cabling[39m[0m
+[  96% ] [90m[1mupdate_scripts_classes[22m | MainMenu[39m[0m
+[  96% ] [90m[1mupdate_scripts_classes[22m | MissionCard[39m[0m
+[  97% ] [90m[1mupdate_scripts_classes[22m | MissionHud[39m[0m
+[  97% ] [90m[1mupdate_scripts_classes[22m | SettingsPanel[39m[0m
+[  97% ] [90m[1mupdate_scripts_classes[22m | DeviceModel[39m[0m
+[  97% ] [90m[1mupdate_scripts_classes[22m | PortSocket[39m[0m
+[  98% ] [90m[1mupdate_scripts_classes[22m | CableMesh[39m[0m
+[  98% ] [90m[1mupdate_scripts_classes[22m | Player[39m[0m
+[  98% ] [90m[1mupdate_scripts_classes[22m | Room[39m[0m
+[  99% ] [90m[1mupdate_scripts_classes[22m | RoomBuilder[39m[0m
+[  99% ] [90m[1mupdate_scripts_classes[22m | RoomDressing[39m[0m
+[92m[ DONE ][39m [1mupdate_scripts_classes[22m
+[0m
+[   0% ] [90m[1m_update_scan_actions[22m | Started Scanning actions... (253 steps)[39m[0m
+[   0% ] [90m[1m_update_scan_actions[22m | touch-button.png[39m[0m
+[   0% ] [90m[1m_update_scan_actions[22m | logo.png[39m[0m
+[   0% ] [90m[1m_update_scan_actions[22m | border_bottom.png[39m[0m
+[   1% ] [90m[1m_update_scan_actions[22m | border_top.png[39m[0m
+[   1% ] [90m[1m_update_scan_actions[22m | dot1.png[39m[0m
+[   1% ] [90m[1m_update_scan_actions[22m | dot2.png[39m[0m
+[   2% ] [90m[1m_update_scan_actions[22m | embedded.png[39m[0m
+[   2% ] [90m[1m_update_scan_actions[22m | horizontal-line2.png[39m[0m
+[   3% ] [90m[1m_update_scan_actions[22m | rack_frame.glb[39m[0m
+[   3% ] [90m[1m_update_scan_actions[22m | rack_frame_metal_plate_diff_1k.jpg[39m[0m
+[   3% ] [90m[1m_update_scan_actions[22m | rack_frame_metal_plate_nor_gl_1k.jpg[39m[0m
+[   4% ] [90m[1m_update_scan_actions[22m | router_2port.glb[39m[0m
+[   4% ] [90m[1m_update_scan_actions[22m | switch_24.glb[39m[0m
+[   5% ] [90m[1m_update_scan_actions[22m | bathroomCabinet.glb[39m[0m
+[   5% ] [90m[1m_update_scan_actions[22m | bathroomCabinetDrawer.glb[39m[0m
+[   5% ] [90m[1m_update_scan_actions[22m | bathroomMirror.glb[39m[0m
+[   6% ] [90m[1m_update_scan_actions[22m | bathroomSink.glb[39m[0m
+[   6% ] [90m[1m_update_scan_actions[22m | bathroomSinkSquare.glb[39m[0m
+[   7% ] [90m[1m_update_scan_actions[22m | bathtub.glb[39m[0m
+[   7% ] [90m[1m_update_scan_actions[22m | bear.glb[39m[0m
+[   7% ] [90m[1m_update_scan_actions[22m | bedBunk.glb[39m[0m
+[   8% ] [90m[1m_update_scan_actions[22m | bedDouble.glb[39m[0m
+[   8% ] [90m[1m_update_scan_actions[22m | bedSingle.glb[39m[0m
+[   9% ] [90m[1m_update_scan_actions[22m | bench.glb[39m[0m
+[   9% ] [90m[1m_update_scan_actions[22m | benchCushion.glb[39m[0m
+[   9% ] [90m[1m_update_scan_actions[22m | benchCushionLow.glb[39m[0m
+[  10% ] [90m[1m_update_scan_actions[22m | bookcaseClosed.glb[39m[0m
+[  10% ] [90m[1m_update_scan_actions[22m | bookcaseClosedDoors.glb[39m[0m
+[  11% ] [90m[1m_update_scan_actions[22m | bookcaseClosedWide.glb[39m[0m
+[  11% ] [90m[1m_update_scan_actions[22m | bookcaseOpen.glb[39m[0m
+[  11% ] [90m[1m_update_scan_actions[22m | bookcaseOpenLow.glb[39m[0m
+[  12% ] [90m[1m_update_scan_actions[22m | books.glb[39m[0m
+[  12% ] [90m[1m_update_scan_actions[22m | cabinetBed.glb[39m[0m
+[  12% ] [90m[1m_update_scan_actions[22m | cabinetBedDrawer.glb[39m[0m
+[  13% ] [90m[1m_update_scan_actions[22m | cabinetBedDrawerTable.glb[39m[0m
+[  13% ] [90m[1m_update_scan_actions[22m | cabinetTelevision.glb[39m[0m
+[  14% ] [90m[1m_update_scan_actions[22m | cabinetTelevisionDoors.glb[39m[0m
+[  14% ] [90m[1m_update_scan_actions[22m | cardboardBoxClosed.glb[39m[0m
+[  14% ] [90m[1m_update_scan_actions[22m | cardboardBoxOpen.glb[39m[0m
+[  15% ] [90m[1m_update_scan_actions[22m | ceilingFan.glb[39m[0m
+[  15% ] [90m[1m_update_scan_actions[22m | chair.glb[39m[0m
+[  16% ] [90m[1m_update_scan_actions[22m | chairCushion.glb[39m[0m
+[  16% ] [90m[1m_update_scan_actions[22m | chairDesk.glb[39m[0m
+[  16% ] [90m[1m_update_scan_actions[22m | chairModernCushion.glb[39m[0m
+[  17% ] [90m[1m_update_scan_actions[22m | chairModernFrameCushion.glb[39m[0m
+[  17% ] [90m[1m_update_scan_actions[22m | chairRounded.glb[39m[0m
+[  18% ] [90m[1m_update_scan_actions[22m | coatRack.glb[39m[0m
+[  18% ] [90m[1m_update_scan_actions[22m | coatRackStanding.glb[39m[0m
+[  18% ] [90m[1m_update_scan_actions[22m | computerKeyboard.glb[39m[0m
+[  19% ] [90m[1m_update_scan_actions[22m | computerMouse.glb[39m[0m
+[  19% ] [90m[1m_update_scan_actions[22m | computerScreen.glb[39m[0m
+[  20% ] [90m[1m_update_scan_actions[22m | desk.glb[39m[0m
+[  20% ] [90m[1m_update_scan_actions[22m | deskCorner.glb[39m[0m
+[  20% ] [90m[1m_update_scan_actions[22m | doorway.glb[39m[0m
+[  21% ] [90m[1m_update_scan_actions[22m | doorwayFront.glb[39m[0m
+[  21% ] [90m[1m_update_scan_actions[22m | doorwayOpen.glb[39m[0m
+[  22% ] [90m[1m_update_scan_actions[22m | dryer.glb[39m[0m
+[  22% ] [90m[1m_update_scan_actions[22m | floorCorner.glb[39m[0m
+[  22% ] [90m[1m_update_scan_actions[22m | floorCornerRound.glb[39m[0m
+[  23% ] [90m[1m_update_scan_actions[22m | floorFull.glb[39m[0m
+[  23% ] [90m[1m_update_scan_actions[22m | floorHalf.glb[39m[0m
+[  24% ] [90m[1m_update_scan_actions[22m | hoodLarge.glb[39m[0m
+[  24% ] [90m[1m_update_scan_actions[22m | hoodModern.glb[39m[0m
+[  24% ] [90m[1m_update_scan_actions[22m | kitchenBar.glb[39m[0m
+[  25% ] [90m[1m_update_scan_actions[22m | kitchenBarEnd.glb[39m[0m
+[  25% ] [90m[1m_update_scan_actions[22m | kitchenBlender.glb[39m[0m
+[  25% ] [90m[1m_update_scan_actions[22m | kitchenCabinet.glb[39m[0m
+[  26% ] [90m[1m_update_scan_actions[22m | kitchenCabinetCornerInner.glb[39m[0m
+[  26% ] [90m[1m_update_scan_actions[22m | kitchenCabinetCornerRound.glb[39m[0m
+[  27% ] [90m[1m_update_scan_actions[22m | kitchenCabinetDrawer.glb[39m[0m
+[  27% ] [90m[1m_update_scan_actions[22m | kitchenCabinetUpper.glb[39m[0m
+[  27% ] [90m[1m_update_scan_actions[22m | kitchenCabinetUpperCorner.glb[39m[0m
+[  28% ] [90m[1m_update_scan_actions[22m | kitchenCabinetUpperDouble.glb[39m[0m
+[  28% ] [90m[1m_update_scan_actions[22m | kitchenCabinetUpperLow.glb[39m[0m
+[  29% ] [90m[1m_update_scan_actions[22m | kitchenCoffeeMachine.glb[39m[0m
+[  29% ] [90m[1m_update_scan_actions[22m | kitchenFridge.glb[39m[0m
+[  29% ] [90m[1m_update_scan_actions[22m | kitchenFridgeBuiltIn.glb[39m[0m
+[  30% ] [90m[1m_update_scan_actions[22m | kitchenFridgeLarge.glb[39m[0m
+[  30% ] [90m[1m_update_scan_actions[22m | kitchenFridgeSmall.glb[39m[0m
+[  31% ] [90m[1m_update_scan_actions[22m | kitchenMicrowave.glb[39m[0m
+[  31% ] [90m[1m_update_scan_actions[22m | kitchenSink.glb[39m[0m
+[  31% ] [90m[1m_update_scan_actions[22m | kitchenStove.glb[39m[0m
+[  32% ] [90m[1m_update_scan_actions[22m | kitchenStoveElectric.glb[39m[0m
+[  32% ] [90m[1m_update_scan_actions[22m | lampRoundFloor.glb[39m[0m
+[  33% ] [90m[1m_update_scan_actions[22m | lampRoundTable.glb[39m[0m
+[  33% ] [90m[1m_update_scan_actions[22m | lampSquareCeiling.glb[39m[0m
+[  33% ] [90m[1m_update_scan_actions[22m | lampSquareFloor.glb[39m[0m
+[  34% ] [90m[1m_update_scan_actions[22m | lampSquareTable.glb[39m[0m
+[  34% ] [90m[1m_update_scan_actions[22m | lampWall.glb[39m[0m
+[  35% ] [90m[1m_update_scan_actions[22m | laptop.glb[39m[0m
+[  35% ] [90m[1m_update_scan_actions[22m | loungeChair.glb[39m[0m
+[  35% ] [90m[1m_update_scan_actions[22m | loungeChairRelax.glb[39m[0m
+[  36% ] [90m[1m_update_scan_actions[22m | loungeDesignChair.glb[39m[0m
+[  36% ] [90m[1m_update_scan_actions[22m | loungeDesignSofa.glb[39m[0m
+[  37% ] [90m[1m_update_scan_actions[22m | loungeDesignSofaCorner.glb[39m[0m
+[  37% ] [90m[1m_update_scan_actions[22m | loungeSofa.glb[39m[0m
+[  37% ] [90m[1m_update_scan_actions[22m | loungeSofaCorner.glb[39m[0m
+[  38% ] [90m[1m_update_scan_actions[22m | loungeSofaLong.glb[39m[0m
+[  38% ] [90m[1m_update_scan_actions[22m | loungeSofaOttoman.glb[39m[0m
+[  38% ] [90m[1m_update_scan_actions[22m | paneling.glb[39m[0m
+[  39% ] [90m[1m_update_scan_actions[22m | pillow.glb[39m[0m
+[  39% ] [90m[1m_update_scan_actions[22m | pillowBlue.glb[39m[0m
+[  40% ] [90m[1m_update_scan_actions[22m | pillowBlueLong.glb[39m[0m
+[  40% ] [90m[1m_update_scan_actions[22m | pillowLong.glb[39m[0m
+[  40% ] [90m[1m_update_scan_actions[22m | plantSmall1.glb[39m[0m
+[  41% ] [90m[1m_update_scan_actions[22m | plantSmall2.glb[39m[0m
+[  41% ] [90m[1m_update_scan_actions[22m | plantSmall3.glb[39m[0m
+[  42% ] [90m[1m_update_scan_actions[22m | pottedPlant.glb[39m[0m
+[  42% ] [90m[1m_update_scan_actions[22m | radio.glb[39m[0m
+[  42% ] [90m[1m_update_scan_actions[22m | rugDoormat.glb[39m[0m
+[  43% ] [90m[1m_update_scan_actions[22m | rugRectangle.glb[39m[0m
+[  43% ] [90m[1m_update_scan_actions[22m | rugRound.glb[39m[0m
+[  44% ] [90m[1m_update_scan_actions[22m | rugRounded.glb[39m[0m
+[  44% ] [90m[1m_update_scan_actions[22m | rugSquare.glb[39m[0m
+[  44% ] [90m[1m_update_scan_actions[22m | shower.glb[39m[0m
+[  45% ] [90m[1m_update_scan_actions[22m | showerRound.glb[39m[0m
+[  45% ] [90m[1m_update_scan_actions[22m | sideTable.glb[39m[0m
+[  46% ] [90m[1m_update_scan_actions[22m | sideTableDrawers.glb[39m[0m
+[  46% ] [90m[1m_update_scan_actions[22m | speaker.glb[39m[0m
+[  46% ] [90m[1m_update_scan_actions[22m | speakerSmall.glb[39m[0m
+[  47% ] [90m[1m_update_scan_actions[22m | stairs.glb[39m[0m
+[  47% ] [90m[1m_update_scan_actions[22m | stairsCorner.glb[39m[0m
+[  48% ] [90m[1m_update_scan_actions[22m | stairsOpen.glb[39m[0m
+[  48% ] [90m[1m_update_scan_actions[22m | stairsOpenSingle.glb[39m[0m
+[  48% ] [90m[1m_update_scan_actions[22m | stoolBar.glb[39m[0m
+[  49% ] [90m[1m_update_scan_actions[22m | stoolBarSquare.glb[39m[0m
+[  49% ] [90m[1m_update_scan_actions[22m | table.glb[39m[0m
+[  50% ] [90m[1m_update_scan_actions[22m | tableCloth.glb[39m[0m
+[  50% ] [90m[1m_update_scan_actions[22m | tableCoffee.glb[39m[0m
+[  50% ] [90m[1m_update_scan_actions[22m | tableCoffeeGlass.glb[39m[0m
+[  51% ] [90m[1m_update_scan_actions[22m | tableCoffeeGlassSquare.glb[39m[0m
+[  51% ] [90m[1m_update_scan_actions[22m | tableCoffeeSquare.glb[39m[0m
+[  51% ] [90m[1m_update_scan_actions[22m | tableCross.glb[39m[0m
+[  52% ] [90m[1m_update_scan_actions[22m | tableCrossCloth.glb[39m[0m
+[  52% ] [90m[1m_update_scan_actions[22m | tableGlass.glb[39m[0m
+[  53% ] [90m[1m_update_scan_actions[22m | tableRound.glb[39m[0m
+[  53% ] [90m[1m_update_scan_actions[22m | televisionAntenna.glb[39m[0m
+[  53% ] [90m[1m_update_scan_actions[22m | televisionModern.glb[39m[0m
+[  54% ] [90m[1m_update_scan_actions[22m | televisionVintage.glb[39m[0m
+[  54% ] [90m[1m_update_scan_actions[22m | toaster.glb[39m[0m
+[  55% ] [90m[1m_update_scan_actions[22m | toilet.glb[39m[0m
+[  55% ] [90m[1m_update_scan_actions[22m | toiletSquare.glb[39m[0m
+[  55% ] [90m[1m_update_scan_actions[22m | trashcan.glb[39m[0m
+[  56% ] [90m[1m_update_scan_actions[22m | wall.glb[39m[0m
+[  56% ] [90m[1m_update_scan_actions[22m | wallCorner.glb[39m[0m
+[  57% ] [90m[1m_update_scan_actions[22m | wallCornerRond.glb[39m[0m
+[  57% ] [90m[1m_update_scan_actions[22m | wallDoorway.glb[39m[0m
+[  57% ] [90m[1m_update_scan_actions[22m | wallDoorwayWide.glb[39m[0m
+[  58% ] [90m[1m_update_scan_actions[22m | wallHalf.glb[39m[0m
+[  58% ] [90m[1m_update_scan_actions[22m | wallWindow.glb[39m[0m
+[  59% ] [90m[1m_update_scan_actions[22m | wallWindowSlide.glb[39m[0m
+[  59% ] [90m[1m_update_scan_actions[22m | washer.glb[39m[0m
+[  59% ] [90m[1m_update_scan_actions[22m | washerDryerStacked.glb[39m[0m
+[  60% ] [90m[1m_update_scan_actions[22m | Details_Arrow.fbx[39m[0m
+[  60% ] [90m[1m_update_scan_actions[22m | Details_Arrow_2.fbx[39m[0m
+[  61% ] [90m[1m_update_scan_actions[22m | Details_Basic_1.fbx[39m[0m
+[  61% ] [90m[1m_update_scan_actions[22m | Details_Basic_2.fbx[39m[0m
+[  61% ] [90m[1m_update_scan_actions[22m | Details_Basic_3.fbx[39m[0m
+[  62% ] [90m[1m_update_scan_actions[22m | Details_Basic_4.fbx[39m[0m
+[  62% ] [90m[1m_update_scan_actions[22m | Details_Cylinder.fbx[39m[0m
+[  62% ] [90m[1m_update_scan_actions[22m | Details_Cylinder_Long.fbx[39m[0m
+[  63% ] [90m[1m_update_scan_actions[22m | Details_Dots.fbx[39m[0m
+[  63% ] [90m[1m_update_scan_actions[22m | Details_Hexagon.fbx[39m[0m
+[  64% ] [90m[1m_update_scan_actions[22m | Details_Output.fbx[39m[0m
+[  64% ] [90m[1m_update_scan_actions[22m | Details_Output_Small.fbx[39m[0m
+[  64% ] [90m[1m_update_scan_actions[22m | Details_Pipes_Long.fbx[39m[0m
+[  65% ] [90m[1m_update_scan_actions[22m | Details_Pipes_Medium.fbx[39m[0m
+[  65% ] [90m[1m_update_scan_actions[22m | Details_Pipes_Small.fbx[39m[0m
+[  66% ] [90m[1m_update_scan_actions[22m | Details_Plate_Details.fbx[39m[0m
+[  66% ] [90m[1m_update_scan_actions[22m | Details_Plate_Large.fbx[39m[0m
+[  66% ] [90m[1m_update_scan_actions[22m | Details_Plate_Long.fbx[39m[0m
+[  67% ] [90m[1m_update_scan_actions[22m | Details_Plate_Small.fbx[39m[0m
+[  67% ] [90m[1m_update_scan_actions[22m | Details_Triangles.fbx[39m[0m
+[  68% ] [90m[1m_update_scan_actions[22m | Details_Vent_1.fbx[39m[0m
+[  68% ] [90m[1m_update_scan_actions[22m | Details_Vent_2.fbx[39m[0m
+[  68% ] [90m[1m_update_scan_actions[22m | Details_Vent_3.fbx[39m[0m
+[  69% ] [90m[1m_update_scan_actions[22m | Details_Vent_4.fbx[39m[0m
+[  69% ] [90m[1m_update_scan_actions[22m | Details_Vent_5.fbx[39m[0m
+[  70% ] [90m[1m_update_scan_actions[22m | Details_X.fbx[39m[0m
+[  70% ] [90m[1m_update_scan_actions[22m | DoorDoubleLong_Wall_SideA.fbx[39m[0m
+[  70% ] [90m[1m_update_scan_actions[22m | DoorDouble_Wall_SideA.fbx[39m[0m
+[  71% ] [90m[1m_update_scan_actions[22m | DoorDouble_Wall_SideB.fbx[39m[0m
+[  71% ] [90m[1m_update_scan_actions[22m | DoorSingleLong_Wall_SideA.fbx[39m[0m
+[  72% ] [90m[1m_update_scan_actions[22m | DoorSingle_Wall_SideA.fbx[39m[0m
+[  72% ] [90m[1m_update_scan_actions[22m | DoorSingle_Wall_SideB.fbx[39m[0m
+[  72% ] [90m[1m_update_scan_actions[22m | LongWindow_Wall_SideA.fbx[39m[0m
+[  73% ] [90m[1m_update_scan_actions[22m | LongWindow_Wall_SideB.fbx[39m[0m
+[  73% ] [90m[1m_update_scan_actions[22m | SmallWindows_Wall_SideA.fbx[39m[0m
+[  74% ] [90m[1m_update_scan_actions[22m | SmallWindows_Wall_SideB.fbx[39m[0m
+[  74% ] [90m[1m_update_scan_actions[22m | ThreeWindows_Wall_SideA.fbx[39m[0m
+[  74% ] [90m[1m_update_scan_actions[22m | ThreeWindows_Wall_SideB.fbx[39m[0m
+[  75% ] [90m[1m_update_scan_actions[22m | Wall_1.fbx[39m[0m
+[  75% ] [90m[1m_update_scan_actions[22m | Wall_2.fbx[39m[0m
+[  75% ] [90m[1m_update_scan_actions[22m | Wall_3.fbx[39m[0m
+[  76% ] [90m[1m_update_scan_actions[22m | Wall_4.fbx[39m[0m
+[  76% ] [90m[1m_update_scan_actions[22m | Wall_5.fbx[39m[0m
+[  77% ] [90m[1m_update_scan_actions[22m | Wall_Empty.fbx[39m[0m
+[  77% ] [90m[1m_update_scan_actions[22m | Window_Wall_SideA.fbx[39m[0m
+[  77% ] [90m[1m_update_scan_actions[22m | Window_Wall_SideB.fbx[39m[0m
+[  78% ] [90m[1m_update_scan_actions[22m | Column_1.fbx[39m[0m
+[  78% ] [90m[1m_update_scan_actions[22m | Column_2.fbx[39m[0m
+[  79% ] [90m[1m_update_scan_actions[22m | Column_3.fbx[39m[0m
+[  79% ] [90m[1m_update_scan_actions[22m | Column_Slim.fbx[39m[0m
+[  79% ] [90m[1m_update_scan_actions[22m | Door_Double.fbx[39m[0m
+[  80% ] [90m[1m_update_scan_actions[22m | Door_Single.fbx[39m[0m
+[  80% ] [90m[1m_update_scan_actions[22m | FloorTile_Basic2.fbx[39m[0m
+[  81% ] [90m[1m_update_scan_actions[22m | FloorTile_Basic.fbx[39m[0m
+[  81% ] [90m[1m_update_scan_actions[22m | FloorTile_Corner.fbx[39m[0m
+[  81% ] [90m[1m_update_scan_actions[22m | FloorTile_Double_Hallway.fbx[39m[0m
+[  82% ] [90m[1m_update_scan_actions[22m | FloorTile_Empty.fbx[39m[0m
+[  82% ] [90m[1m_update_scan_actions[22m | FloorTile_InnerCorner.fbx[39m[0m
+[  83% ] [90m[1m_update_scan_actions[22m | FloorTile_Side.fbx[39m[0m
+[  83% ] [90m[1m_update_scan_actions[22m | Pipes.fbx[39m[0m
+[  83% ] [90m[1m_update_scan_actions[22m | Props_Base.fbx[39m[0m
+[  84% ] [90m[1m_update_scan_actions[22m | Props_Capsule.fbx[39m[0m
+[  84% ] [90m[1m_update_scan_actions[22m | Props_Chest.fbx[39m[0m
+[  85% ] [90m[1m_update_scan_actions[22m | Props_Computer.fbx[39m[0m
+[  85% ] [90m[1m_update_scan_actions[22m | Props_ComputerSmall.fbx[39m[0m
+[  85% ] [90m[1m_update_scan_actions[22m | Props_ContainerFull.fbx[39m[0m
+[  86% ] [90m[1m_update_scan_actions[22m | Props_Crate.fbx[39m[0m
+[  86% ] [90m[1m_update_scan_actions[22m | Props_CrateLong.fbx[39m[0m
+[  87% ] [90m[1m_update_scan_actions[22m | Props_Laser.fbx[39m[0m
+[  87% ] [90m[1m_update_scan_actions[22m | Props_Pod.fbx[39m[0m
+[  87% ] [90m[1m_update_scan_actions[22m | Props_Shelf.fbx[39m[0m
+[  88% ] [90m[1m_update_scan_actions[22m | Props_Shelf_Tall.fbx[39m[0m
+[  88% ] [90m[1m_update_scan_actions[22m | Props_Statue.fbx[39m[0m
+[  88% ] [90m[1m_update_scan_actions[22m | Props_Teleporter_1.fbx[39m[0m
+[  89% ] [90m[1m_update_scan_actions[22m | Props_Teleporter_2.fbx[39m[0m
+[  89% ] [90m[1m_update_scan_actions[22m | Props_Vessel.fbx[39m[0m
+[  90% ] [90m[1m_update_scan_actions[22m | Props_Vessel_Short.fbx[39m[0m
+[  90% ] [90m[1m_update_scan_actions[22m | Props_Vessel_Tall.fbx[39m[0m
+[  90% ] [90m[1m_update_scan_actions[22m | RoofTile_Corner_Pipes.fbx[39m[0m
+[  91% ] [90m[1m_update_scan_actions[22m | RoofTile_Details.fbx[39m[0m
+[  91% ] [90m[1m_update_scan_actions[22m | RoofTile_Empty.fbx[39m[0m
+[  92% ] [90m[1m_update_scan_actions[22m | RoofTile_InnerCorner_Pipes.fbx[39m[0m
+[  92% ] [90m[1m_update_scan_actions[22m | RoofTile_OrangeVent.fbx[39m[0m
+[  92% ] [90m[1m_update_scan_actions[22m | RoofTile_Pipes1.fbx[39m[0m
+[  93% ] [90m[1m_update_scan_actions[22m | RoofTile_Pipes2.fbx[39m[0m
+[  93% ] [90m[1m_update_scan_actions[22m | RoofTile_Plate2.fbx[39m[0m
+[  94% ] [90m[1m_update_scan_actions[22m | RoofTile_Plate.fbx[39m[0m
+[  94% ] [90m[1m_update_scan_actions[22m | RoofTile_Sides_Pipes.fbx[39m[0m
+[  94% ] [90m[1m_update_scan_actions[22m | RoofTile_SmallVents.fbx[39m[0m
+[  95% ] [90m[1m_update_scan_actions[22m | RoofTile_Vents.fbx[39m[0m
+[  95% ] [90m[1m_update_scan_actions[22m | Staircase.fbx[39m[0m
+[  96% ] [90m[1m_update_scan_actions[22m | concrete_floor_02_diff_1k.jpg[39m[0m
+[  96% ] [90m[1m_update_scan_actions[22m | concrete_floor_02_nor_gl_1k.jpg[39m[0m
+[  96% ] [90m[1m_update_scan_actions[22m | concrete_floor_02_rough_1k.jpg[39m[0m
+[  97% ] [90m[1m_update_scan_actions[22m | concrete_wall_008_diff_1k.jpg[39m[0m
+[  97% ] [90m[1m_update_scan_actions[22m | concrete_wall_008_nor_gl_1k.jpg[39m[0m
+[  98% ] [90m[1m_update_scan_actions[22m | concrete_wall_008_rough_1k.jpg[39m[0m
+[  98% ] [90m[1m_update_scan_actions[22m | metal_plate_diff_1k.jpg[39m[0m
+[  98% ] [90m[1m_update_scan_actions[22m | metal_plate_nor_gl_1k.jpg[39m[0m
+[  99% ] [90m[1m_update_scan_actions[22m | metal_plate_rough_1k.jpg[39m[0m
+[92m[ DONE ][39m [1m_update_scan_actions[22m
+[0m
+[   0% ] [90m[1mreimport[22m | Started (Re)Importing Assets (253 steps)[39m[0m
+[   0% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[   0% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[   0% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[   1% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[   1% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[   1% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[   2% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[   2% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[   3% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[   3% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[   3% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[   4% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[   4% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[   5% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[   5% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[   5% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[   6% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[   6% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[   7% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[   7% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[   7% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[   8% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[   8% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[   9% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[   9% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[   9% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  10% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  10% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  11% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  11% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  11% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  12% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  12% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  12% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  13% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  13% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  14% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  14% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  14% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  15% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  15% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  16% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  16% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  16% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  17% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  17% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  18% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  18% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  18% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  19% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  19% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  20% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  20% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  20% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  21% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  21% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  22% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  22% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  22% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  23% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  23% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  24% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  24% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  24% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  25% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  25% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  25% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  26% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  26% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  27% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  27% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  27% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  28% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  28% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  29% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  29% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  29% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  30% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  30% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  31% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  31% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  31% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  32% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  32% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  33% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  33% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  33% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  34% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  34% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  35% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  35% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  35% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  36% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  36% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  37% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  37% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  37% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  38% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  38% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  38% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  39% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  39% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  40% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  40% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  40% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  41% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  41% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  42% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  42% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  42% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  43% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  43% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  44% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  44% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  44% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  45% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  45% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  46% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  46% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  46% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  47% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  47% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  48% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  48% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  48% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  49% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  49% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  50% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  50% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  50% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  51% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  51% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  51% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  52% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  52% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  53% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  53% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  53% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  54% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  54% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  55% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  55% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  55% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  56% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  56% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  57% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  57% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  57% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  58% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  58% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  59% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  59% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  59% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  60% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  60% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  61% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  61% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  61% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  62% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  62% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  62% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  63% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  63% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  64% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  64% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  64% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  65% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  65% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  66% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  66% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  66% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  67% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  67% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  68% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  68% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  68% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  69% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  69% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  70% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  70% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  70% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  71% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  71% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  72% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  72% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  72% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  73% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  73% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  74% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  74% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  74% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  75% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  75% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  75% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  76% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  76% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  77% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  77% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  77% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  78% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  78% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  79% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  79% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  79% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  80% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  80% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  81% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  81% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  81% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  82% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  82% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  83% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  83% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  83% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  84% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  84% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  85% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  85% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  85% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  86% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  86% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  87% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  87% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  87% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  88% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  88% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  88% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  89% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  89% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  90% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  90% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  90% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  91% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  91% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  92% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  92% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  92% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  93% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  93% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  94% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  94% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  94% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  95% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  95% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  96% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  96% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  96% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  97% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  97% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  98% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  98% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  98% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  99% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[   0% ] [90m[1mreimport[22m | Executing pre-reimport operations...[39m[0m
+[   0% ] [90m[1mpreload_reimporting_scene[22m | Started Preparing scenes for reload (1 steps)[39m[0m
+[   0% ] [90m[1mpreload_reimporting_scene[22m | Analyzing scene [empty][39m[0m
+[  50% ] [90m[1mpreload_reimporting_scene[22m | Preparation done.[39m[0m
+[92m[ DONE ][39m [1mpreload_reimporting_scene[22m
+[0m
+[   0% ] [90m[1mreimport[22m | metal_plate_rough_1k.jpg[39m[0m
+[   0% ] [90m[1mreimport[22m | metal_plate_nor_gl_1k.jpg[39m[0m
+[   0% ] [90m[1mreimport[22m | metal_plate_diff_1k.jpg[39m[0m
+[   1% ] [90m[1mreimport[22m | concrete_wall_008_rough_1k.jpg[39m[0m
+[   1% ] [90m[1mreimport[22m | concrete_wall_008_nor_gl_1k.jpg[39m[0m
+[   1% ] [90m[1mreimport[22m | concrete_wall_008_diff_1k.jpg[39m[0m
+[   2% ] [90m[1mreimport[22m | concrete_floor_02_rough_1k.jpg[39m[0m
+[   2% ] [90m[1mreimport[22m | concrete_floor_02_nor_gl_1k.jpg[39m[0m
+[   3% ] [90m[1mreimport[22m | concrete_floor_02_diff_1k.jpg[39m[0m
+[   3% ] [90m[1mreimport[22m | rack_frame_metal_plate_nor_gl_1k.jpg[39m[0m
+[   3% ] [90m[1mreimport[22m | touch-button.png[39m[0m
+[   4% ] [90m[1mreimport[22m | logo.png[39m[0m
+[   4% ] [90m[1mreimport[22m | border_bottom.png[39m[0m
+[   5% ] [90m[1mreimport[22m | border_top.png[39m[0m
+[   5% ] [90m[1mreimport[22m | dot1.png[39m[0m
+[   5% ] [90m[1mreimport[22m | dot2.png[39m[0m
+[   6% ] [90m[1mreimport[22m | embedded.png[39m[0m
+[   6% ] [90m[1mreimport[22m | horizontal-line2.png[39m[0m
+[   7% ] [90m[1mreimport[22m | rack_frame_metal_plate_diff_1k.jpg[39m[0m
+[   7% ] [90m[1mreimport[22m | Details_Pipes_Long.fbx[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[   7% ] [90m[1mreimport[22m | Details_Pipes_Medium.fbx[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[   8% ] [90m[1mreimport[22m | Details_Pipes_Small.fbx[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[   8% ] [90m[1mreimport[22m | Details_Plate_Details.fbx[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[   9% ] [90m[1mreimport[22m | Details_Plate_Large.fbx[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[   9% ] [90m[1mreimport[22m | Details_Plate_Long.fbx[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[   9% ] [90m[1mreimport[22m | Details_Plate_Small.fbx[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  10% ] [90m[1mreimport[22m | Details_Triangles.fbx[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  10% ] [90m[1mreimport[22m | Details_Vent_1.fbx[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  11% ] [90m[1mreimport[22m | Details_Vent_2.fbx[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  11% ] [90m[1mreimport[22m | Details_Vent_3.fbx[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  11% ] [90m[1mreimport[22m | Details_Vent_4.fbx[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  12% ] [90m[1mreimport[22m | Details_Vent_5.fbx[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  12% ] [90m[1mreimport[22m | Details_X.fbx[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  12% ] [90m[1mreimport[22m | DoorDoubleLong_Wall_SideA.fbx[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  13% ] [90m[1mreimport[22m | DoorDouble_Wall_SideA.fbx[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  13% ] [90m[1mreimport[22m | DoorDouble_Wall_SideB.fbx[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  14% ] [90m[1mreimport[22m | DoorSingleLong_Wall_SideA.fbx[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  14% ] [90m[1mreimport[22m | DoorSingle_Wall_SideA.fbx[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  14% ] [90m[1mreimport[22m | DoorSingle_Wall_SideB.fbx[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  15% ] [90m[1mreimport[22m | LongWindow_Wall_SideA.fbx[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  15% ] [90m[1mreimport[22m | LongWindow_Wall_SideB.fbx[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  16% ] [90m[1mreimport[22m | SmallWindows_Wall_SideA.fbx[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  16% ] [90m[1mreimport[22m | SmallWindows_Wall_SideB.fbx[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  16% ] [90m[1mreimport[22m | ThreeWindows_Wall_SideA.fbx[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  17% ] [90m[1mreimport[22m | ThreeWindows_Wall_SideB.fbx[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  17% ] [90m[1mreimport[22m | Wall_1.fbx[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  18% ] [90m[1mreimport[22m | Wall_2.fbx[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  18% ] [90m[1mreimport[22m | Wall_3.fbx[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  18% ] [90m[1mreimport[22m | televisionAntenna.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  19% ] [90m[1mreimport[22m | televisionModern.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  19% ] [90m[1mreimport[22m | televisionVintage.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  20% ] [90m[1mreimport[22m | toaster.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  20% ] [90m[1mreimport[22m | toilet.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  20% ] [90m[1mreimport[22m | toiletSquare.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  21% ] [90m[1mreimport[22m | trashcan.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  21% ] [90m[1mreimport[22m | wall.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  22% ] [90m[1mreimport[22m | wallCorner.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  22% ] [90m[1mreimport[22m | wallCornerRond.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  22% ] [90m[1mreimport[22m | wallDoorway.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  23% ] [90m[1mreimport[22m | wallDoorwayWide.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  23% ] [90m[1mreimport[22m | wallHalf.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  24% ] [90m[1mreimport[22m | wallWindow.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  24% ] [90m[1mreimport[22m | wallWindowSlide.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  24% ] [90m[1mreimport[22m | washer.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  25% ] [90m[1mreimport[22m | washerDryerStacked.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  25% ] [90m[1mreimport[22m | Details_Arrow.fbx[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  25% ] [90m[1mreimport[22m | Details_Arrow_2.fbx[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  26% ] [90m[1mreimport[22m | Details_Basic_1.fbx[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  26% ] [90m[1mreimport[22m | Details_Basic_2.fbx[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  27% ] [90m[1mreimport[22m | Details_Basic_3.fbx[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  27% ] [90m[1mreimport[22m | Details_Basic_4.fbx[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  27% ] [90m[1mreimport[22m | Details_Cylinder.fbx[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  28% ] [90m[1mreimport[22m | Details_Cylinder_Long.fbx[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  28% ] [90m[1mreimport[22m | Details_Dots.fbx[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  29% ] [90m[1mreimport[22m | Details_Hexagon.fbx[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  29% ] [90m[1mreimport[22m | Details_Output.fbx[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  29% ] [90m[1mreimport[22m | Details_Output_Small.fbx[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  30% ] [90m[1mreimport[22m | Props_Shelf.fbx[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  30% ] [90m[1mreimport[22m | Props_Shelf_Tall.fbx[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  31% ] [90m[1mreimport[22m | Props_Statue.fbx[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  31% ] [90m[1mreimport[22m | Props_Teleporter_1.fbx[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  31% ] [90m[1mreimport[22m | Props_Teleporter_2.fbx[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  32% ] [90m[1mreimport[22m | Props_Vessel.fbx[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  32% ] [90m[1mreimport[22m | Props_Vessel_Short.fbx[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  33% ] [90m[1mreimport[22m | Props_Vessel_Tall.fbx[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  33% ] [90m[1mreimport[22m | RoofTile_Corner_Pipes.fbx[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  33% ] [90m[1mreimport[22m | RoofTile_Details.fbx[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  34% ] [90m[1mreimport[22m | RoofTile_Empty.fbx[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  34% ] [90m[1mreimport[22m | RoofTile_InnerCorner_Pipes.fbx[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  35% ] [90m[1mreimport[22m | RoofTile_OrangeVent.fbx[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  35% ] [90m[1mreimport[22m | RoofTile_Pipes1.fbx[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  35% ] [90m[1mreimport[22m | RoofTile_Pipes2.fbx[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  36% ] [90m[1mreimport[22m | RoofTile_Plate2.fbx[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  36% ] [90m[1mreimport[22m | RoofTile_Plate.fbx[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  37% ] [90m[1mreimport[22m | RoofTile_Sides_Pipes.fbx[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  37% ] [90m[1mreimport[22m | RoofTile_SmallVents.fbx[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  37% ] [90m[1mreimport[22m | RoofTile_Vents.fbx[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  38% ] [90m[1mreimport[22m | Staircase.fbx[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  38% ] [90m[1mreimport[22m | rack_frame.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  38% ] [90m[1mreimport[22m | bathroomSinkSquare.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  39% ] [90m[1mreimport[22m | bathroomSink.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  39% ] [90m[1mreimport[22m | bathroomMirror.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  40% ] [90m[1mreimport[22m | bathroomCabinetDrawer.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  40% ] [90m[1mreimport[22m | bathroomCabinet.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  40% ] [90m[1mreimport[22m | switch_24.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  41% ] [90m[1mreimport[22m | router_2port.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  41% ] [90m[1mreimport[22m | Wall_4.fbx[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  42% ] [90m[1mreimport[22m | Wall_5.fbx[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  42% ] [90m[1mreimport[22m | Wall_Empty.fbx[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  42% ] [90m[1mreimport[22m | Window_Wall_SideA.fbx[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  43% ] [90m[1mreimport[22m | Window_Wall_SideB.fbx[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  43% ] [90m[1mreimport[22m | Column_1.fbx[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  44% ] [90m[1mreimport[22m | Column_2.fbx[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  44% ] [90m[1mreimport[22m | Column_3.fbx[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  44% ] [90m[1mreimport[22m | Column_Slim.fbx[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  45% ] [90m[1mreimport[22m | Door_Double.fbx[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  45% ] [90m[1mreimport[22m | Door_Single.fbx[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  46% ] [90m[1mreimport[22m | FloorTile_Basic2.fbx[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  46% ] [90m[1mreimport[22m | FloorTile_Basic.fbx[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  46% ] [90m[1mreimport[22m | FloorTile_Corner.fbx[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  47% ] [90m[1mreimport[22m | FloorTile_Double_Hallway.fbx[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  47% ] [90m[1mreimport[22m | FloorTile_Empty.fbx[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  48% ] [90m[1mreimport[22m | FloorTile_InnerCorner.fbx[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  48% ] [90m[1mreimport[22m | FloorTile_Side.fbx[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  48% ] [90m[1mreimport[22m | Pipes.fbx[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  49% ] [90m[1mreimport[22m | Props_Base.fbx[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  49% ] [90m[1mreimport[22m | Props_Capsule.fbx[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  50% ] [90m[1mreimport[22m | Props_Chest.fbx[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  50% ] [90m[1mreimport[22m | Props_Computer.fbx[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  50% ] [90m[1mreimport[22m | Props_ComputerSmall.fbx[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  51% ] [90m[1mreimport[22m | Props_ContainerFull.fbx[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  51% ] [90m[1mreimport[22m | Props_Crate.fbx[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  51% ] [90m[1mreimport[22m | Props_CrateLong.fbx[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  52% ] [90m[1mreimport[22m | Props_Laser.fbx[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  52% ] [90m[1mreimport[22m | Props_Pod.fbx[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  53% ] [90m[1mreimport[22m | computerKeyboard.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  53% ] [90m[1mreimport[22m | computerMouse.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  53% ] [90m[1mreimport[22m | computerScreen.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  54% ] [90m[1mreimport[22m | desk.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  54% ] [90m[1mreimport[22m | deskCorner.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  55% ] [90m[1mreimport[22m | doorway.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  55% ] [90m[1mreimport[22m | doorwayFront.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  55% ] [90m[1mreimport[22m | doorwayOpen.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  56% ] [90m[1mreimport[22m | dryer.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  56% ] [90m[1mreimport[22m | floorCorner.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  57% ] [90m[1mreimport[22m | floorCornerRound.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  57% ] [90m[1mreimport[22m | floorFull.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  57% ] [90m[1mreimport[22m | floorHalf.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  58% ] [90m[1mreimport[22m | hoodLarge.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  58% ] [90m[1mreimport[22m | hoodModern.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  59% ] [90m[1mreimport[22m | kitchenBar.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  59% ] [90m[1mreimport[22m | kitchenBarEnd.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  59% ] [90m[1mreimport[22m | kitchenBlender.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  60% ] [90m[1mreimport[22m | kitchenCabinet.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  60% ] [90m[1mreimport[22m | kitchenCabinetCornerInner.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  61% ] [90m[1mreimport[22m | kitchenCabinetCornerRound.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  61% ] [90m[1mreimport[22m | kitchenCabinetDrawer.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  61% ] [90m[1mreimport[22m | kitchenCabinetUpper.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  62% ] [90m[1mreimport[22m | kitchenCabinetUpperCorner.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  62% ] [90m[1mreimport[22m | kitchenCabinetUpperDouble.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  62% ] [90m[1mreimport[22m | kitchenCabinetUpperLow.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  63% ] [90m[1mreimport[22m | kitchenCoffeeMachine.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  63% ] [90m[1mreimport[22m | kitchenFridge.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  64% ] [90m[1mreimport[22m | kitchenFridgeBuiltIn.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  64% ] [90m[1mreimport[22m | bathtub.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  64% ] [90m[1mreimport[22m | bear.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  65% ] [90m[1mreimport[22m | bedBunk.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  65% ] [90m[1mreimport[22m | bedDouble.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  66% ] [90m[1mreimport[22m | bedSingle.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  66% ] [90m[1mreimport[22m | bench.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  66% ] [90m[1mreimport[22m | benchCushion.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  67% ] [90m[1mreimport[22m | benchCushionLow.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  67% ] [90m[1mreimport[22m | bookcaseClosed.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  68% ] [90m[1mreimport[22m | bookcaseClosedDoors.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  68% ] [90m[1mreimport[22m | bookcaseClosedWide.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  68% ] [90m[1mreimport[22m | bookcaseOpen.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  69% ] [90m[1mreimport[22m | bookcaseOpenLow.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  69% ] [90m[1mreimport[22m | books.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  70% ] [90m[1mreimport[22m | cabinetBed.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  70% ] [90m[1mreimport[22m | cabinetBedDrawer.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  70% ] [90m[1mreimport[22m | cabinetBedDrawerTable.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  71% ] [90m[1mreimport[22m | cabinetTelevision.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  71% ] [90m[1mreimport[22m | cabinetTelevisionDoors.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  72% ] [90m[1mreimport[22m | cardboardBoxClosed.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  72% ] [90m[1mreimport[22m | cardboardBoxOpen.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  72% ] [90m[1mreimport[22m | ceilingFan.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  73% ] [90m[1mreimport[22m | chair.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  73% ] [90m[1mreimport[22m | chairCushion.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  74% ] [90m[1mreimport[22m | chairDesk.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  74% ] [90m[1mreimport[22m | chairModernCushion.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  74% ] [90m[1mreimport[22m | chairModernFrameCushion.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  75% ] [90m[1mreimport[22m | chairRounded.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  75% ] [90m[1mreimport[22m | coatRack.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  75% ] [90m[1mreimport[22m | coatRackStanding.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  76% ] [90m[1mreimport[22m | pottedPlant.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  76% ] [90m[1mreimport[22m | radio.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  77% ] [90m[1mreimport[22m | rugDoormat.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  77% ] [90m[1mreimport[22m | rugRectangle.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  77% ] [90m[1mreimport[22m | rugRound.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  78% ] [90m[1mreimport[22m | rugRounded.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  78% ] [90m[1mreimport[22m | rugSquare.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  79% ] [90m[1mreimport[22m | shower.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  79% ] [90m[1mreimport[22m | showerRound.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  79% ] [90m[1mreimport[22m | sideTable.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  80% ] [90m[1mreimport[22m | sideTableDrawers.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  80% ] [90m[1mreimport[22m | speaker.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  81% ] [90m[1mreimport[22m | speakerSmall.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  81% ] [90m[1mreimport[22m | stairs.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  81% ] [90m[1mreimport[22m | stairsCorner.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  82% ] [90m[1mreimport[22m | stairsOpen.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  82% ] [90m[1mreimport[22m | stairsOpenSingle.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  83% ] [90m[1mreimport[22m | stoolBar.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  83% ] [90m[1mreimport[22m | stoolBarSquare.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  83% ] [90m[1mreimport[22m | table.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  84% ] [90m[1mreimport[22m | tableCloth.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  84% ] [90m[1mreimport[22m | tableCoffee.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  85% ] [90m[1mreimport[22m | tableCoffeeGlass.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  85% ] [90m[1mreimport[22m | tableCoffeeGlassSquare.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  85% ] [90m[1mreimport[22m | tableCoffeeSquare.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  86% ] [90m[1mreimport[22m | tableCross.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  86% ] [90m[1mreimport[22m | tableCrossCloth.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  87% ] [90m[1mreimport[22m | tableGlass.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  87% ] [90m[1mreimport[22m | tableRound.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  87% ] [90m[1mreimport[22m | kitchenFridgeLarge.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  88% ] [90m[1mreimport[22m | kitchenFridgeSmall.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  88% ] [90m[1mreimport[22m | kitchenMicrowave.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  88% ] [90m[1mreimport[22m | kitchenSink.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  89% ] [90m[1mreimport[22m | kitchenStove.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  89% ] [90m[1mreimport[22m | kitchenStoveElectric.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  90% ] [90m[1mreimport[22m | lampRoundFloor.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  90% ] [90m[1mreimport[22m | lampRoundTable.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  90% ] [90m[1mreimport[22m | lampSquareCeiling.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  91% ] [90m[1mreimport[22m | lampSquareFloor.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  91% ] [90m[1mreimport[22m | lampSquareTable.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  92% ] [90m[1mreimport[22m | lampWall.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  92% ] [90m[1mreimport[22m | laptop.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  92% ] [90m[1mreimport[22m | loungeChair.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  93% ] [90m[1mreimport[22m | loungeChairRelax.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  93% ] [90m[1mreimport[22m | loungeDesignChair.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  94% ] [90m[1mreimport[22m | loungeDesignSofa.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  94% ] [90m[1mreimport[22m | loungeDesignSofaCorner.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  94% ] [90m[1mreimport[22m | loungeSofa.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  95% ] [90m[1mreimport[22m | loungeSofaCorner.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  95% ] [90m[1mreimport[22m | loungeSofaLong.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  96% ] [90m[1mreimport[22m | loungeSofaOttoman.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  96% ] [90m[1mreimport[22m | paneling.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  96% ] [90m[1mreimport[22m | pillow.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  97% ] [90m[1mreimport[22m | pillowBlue.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  97% ] [90m[1mreimport[22m | pillowBlueLong.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  98% ] [90m[1mreimport[22m | pillowLong.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  98% ] [90m[1mreimport[22m | plantSmall1.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  98% ] [90m[1mreimport[22m | plantSmall2.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  99% ] [90m[1mreimport[22m | plantSmall3.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  99% ] [90m[1mreimport[22m | Finalizing Asset Import...[39m[0m
+[92m[ DONE ][39m [1mreimport[22m
+[0m
+[   0% ] [90m[1mreimport[22m | Started (Re)Importing Assets (253 steps)[39m[0m
+[   0% ] [90m[1mreimport[22m | Executing post-reimport operations...[39m[0m
+[92m[ DONE ][39m [1mreimport[22m
+[0m
+[   0% ] [90m[1mloading_editor_layout[22m | Started Loading editor (5 steps)[39m[0m
+[   0% ] [90m[1mloading_editor_layout[22m | Loading editor layout...[39m[0m
+[  16% ] [90m[1mloading_editor_layout[22m | Loading docks...[39m[0m
+[92m[ DONE ][39m [1mloading_editor_layout[22m
+[0m
