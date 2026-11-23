@@ -13,6 +13,8 @@ extends CanvasLayer
 
 signal opened
 signal closed
+## The player wants the report form (a mission with a report only).
+signal report_requested
 
 const FONT_NAMES: PackedStringArray = ["Consolas", "DejaVu Sans Mono", "Liberation Mono", "Menlo", "monospace"]
 const FONT_SIZE: int = 15
@@ -24,7 +26,7 @@ const MATCH_COLOR: Color = Color(0.06, 0.06, 0.06)
 const MATCH_BACKGROUND: Color = Color(0.91, 0.77, 0.28)
 const LIST_WIDTH: float = 340.0
 const TITLE: String = "SOC monitor  ·  log viewer"
-const FOOTER: String = "Type to filter · ↑/↓ file · PgUp/PgDn scroll · Esc close"
+const FOOTER: String = "Type to filter · ↑/↓ file · PgUp/PgDn scroll · F2 report · Esc close"
 const NO_FILES: String = "No log files in this mission."
 
 ## `{source: String, file: String, lines: int}` for each file, in list order.
@@ -37,6 +39,7 @@ var _list: ItemList
 var _filter: LineEdit
 var _status: Label
 var _output: RichTextLabel
+var _report_button: Button
 
 
 func _ready() -> void:
@@ -59,6 +62,11 @@ func _input(event: InputEvent) -> void:
 # --- public ---------------------------------------------------------------------
 
 
+## True while the "File report" button is on offer.
+func report_offered() -> bool:
+	return _report_button.visible
+
+
 ## Opens the viewer on the first file. Returns false (and stays closed) when the
 ## mission has no logs.
 func open() -> bool:
@@ -72,6 +80,7 @@ func open() -> bool:
 		_list.add_item("%s\n%s  (%d lines)" % [entry["source"], entry["file"], entry["lines"]])
 	_filter.clear()
 	_filter_text = ""
+	_report_button.visible = scenario.has_report()
 	show()
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	select_file(0)
@@ -158,6 +167,10 @@ func handle_key(key: InputEventKey) -> bool:
 			_scroll(-1)
 		KEY_PAGEDOWN:
 			_scroll(1)
+		KEY_F2:
+			if not _report_button.visible:
+				return false
+			report_requested.emit()
 		_:
 			return false
 	return true
@@ -277,11 +290,20 @@ func _build() -> void:
 	var column := VBoxContainer.new()
 	margin.add_child(column)
 
+	var header := HBoxContainer.new()
+	column.add_child(header)
 	var title := Label.new()
 	title.name = "Title"
 	title.text = TITLE
+	title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	title.add_theme_color_override("font_color", DIM_COLOR)
-	column.add_child(title)
+	header.add_child(title)
+	_report_button = Button.new()
+	_report_button.name = "ReportButton"
+	_report_button.text = "File report (F2)"
+	_report_button.focus_mode = Control.FOCUS_NONE
+	_report_button.pressed.connect(report_requested.emit)
+	header.add_child(_report_button)
 	column.add_child(HSeparator.new())
 
 	var body := HBoxContainer.new()

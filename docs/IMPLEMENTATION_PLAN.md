@@ -423,9 +423,20 @@ logs, works out who attacked, how and which account, and files a report.
     with `add_text` (BBCode off), so log text can never inject markup. Up/Down pick the
     file, PgUp/PgDn scroll, Esc closes.
   - Regex filtering stays in the server shell's `grep`; the viewer is the simple tool.
-- [ ] **2.8 Report form UI:** fields from `scenario_view`, attempts left
+- [x] **2.8 Report form UI:** fields from `scenario_view`, attempts left
   and per-field feedback from `report_view`; nothing hard-coded per
   mission.
+  - `ui/report_form.gd` (`ReportForm`, `report_form.tscn`, a full-screen `CanvasLayer`).
+    It is reached from the log viewer (a "File report" button, or F2, shown only
+    when the mission has a report), and `game/main.gd` swaps the two. One row per
+    `report_fields()` entry: a box by kind (a choice becomes a list of its
+    options), Submit (or Enter), the attempts left and the last answer's feedback.
+  - A wrong answer says "Not correct." and the attempts line drops; a value that
+    cannot be an answer (empty, bad IPv4, nothing picked) is explained and costs
+    nothing; a solved field shows its answer and locks; a spent field says "No
+    attempts left". The form refreshes on `report_submitted`.
+  - The debrief waits behind an open form like it does behind the terminal.
+    Showing the failed card is task 2.8b.
 - [ ] **2.8b Failed debrief card** (SPEC §7.2 step 6): on `mission_failed`,
   stop play and show the failed objective, the answers and the evidence
   lines from `Sim.debrief_view()`, and Retry / Main menu.

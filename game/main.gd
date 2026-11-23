@@ -9,6 +9,7 @@ const MENU_SCENE: String = "res://ui/main_menu.tscn"
 @onready var _cabling: Cabling = $CablingHUD
 @onready var _terminal: Terminal = $Terminal
 @onready var _log_viewer: LogViewer = $LogViewer
+@onready var _report_form: ReportForm = $ReportForm
 @onready var _hud: MissionHud = $MissionHUD
 @onready var _card: MissionCard = $MissionCard
 @onready var _player: Player = $Player
@@ -28,6 +29,9 @@ func _ready() -> void:
 	_terminal.closed.connect(_on_terminal_closed)
 	_log_viewer.opened.connect(_hud.hide)
 	_log_viewer.closed.connect(_on_log_viewer_closed)
+	_log_viewer.report_requested.connect(_on_report_requested)
+	_report_form.opened.connect(_hud.hide)
+	_report_form.closed.connect(_on_report_form_closed)
 	Sim.scenario_loaded.connect(_on_scenario_loaded)
 	Sim.mission_completed.connect(_on_mission_completed)
 
@@ -60,7 +64,7 @@ func _on_scenario_loaded(_scenario_id: String) -> void:
 ## The last fix is usually typed in the terminal, so the debrief lets the player
 ## see that command's output first and appears once the terminal closes.
 func _on_mission_completed(_scenario_id: String) -> void:
-	if _terminal.is_open() or _log_viewer.is_open():
+	if _terminal.is_open() or _log_viewer.is_open() or _report_form.is_open():
 		_debrief_pending = true
 	else:
 		_card.show_debrief()
@@ -72,6 +76,17 @@ func _on_terminal_closed() -> void:
 
 
 func _on_log_viewer_closed() -> void:
+	_hud.show()
+	_show_pending_debrief()
+
+
+## The report form is opened from the log viewer, which steps aside for it.
+func _on_report_requested() -> void:
+	_log_viewer.close()
+	_report_form.open()
+
+
+func _on_report_form_closed() -> void:
 	_hud.show()
 	_show_pending_debrief()
 

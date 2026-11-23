@@ -208,3 +208,16 @@ func test_servers_are_placed_in_the_rack_with_a_console() -> void:
 	assert_int(server.socket_markers().size()).is_equal(1)
 	assert_str(server.socket_markers()[0].port_id()).is_equal("WEB1:Ethernet0")
 	assert_str(str(server.console_target().get_meta("console_device"))).is_equal("WEB1")
+
+
+func test_report_is_offered_only_for_a_mission_with_a_report_and_f2_asks_for_it() -> void:
+	var viewer: LogViewer = _viewer()
+	var asked: Array[bool] = []
+	viewer.report_requested.connect(func() -> void: asked.append(true))
+	viewer.open()
+	assert_bool(viewer.report_offered()).is_true()
+	var f2 := InputEventKey.new()
+	f2.pressed = true
+	f2.keycode = KEY_F2
+	assert_bool(viewer.handle_key(f2)).is_true()
+	assert_array(asked).has_size(1)
