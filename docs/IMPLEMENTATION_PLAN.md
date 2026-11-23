@@ -437,13 +437,25 @@ logs, works out who attacked, how and which account, and files a report.
     attempts left". The form refreshes on `report_submitted`.
   - The debrief waits behind an open form like it does behind the terminal.
     Showing the failed card is task 2.8b.
-- [ ] **2.8b Failed debrief card** (SPEC §7.2 step 6): on `mission_failed`,
+- [x] **2.8b Failed debrief card** (SPEC §7.2 step 6): on `mission_failed`,
   stop play and show the failed objective, the answers and the evidence
   lines from `Sim.debrief_view()`, and Retry / Main menu.
   *Tests (sim):* `debrief_view` has no answers before failure and has the
   answers and `evidence` after.
   *Done when:* running out of attempts on any field shows the card, and
   Retry reloads the mission from its starting state.
+  - `DebriefView.report_fields()` (filled for a completed mission too) gives each
+    field's `label`, `answer`, `last_value`, `solved` and `evidence`, where each
+    evidence entry is `{source, file, line, text}` with the cited log line looked up.
+    `ReportState.debrief_rows()` builds it from the scenario's `equals` and
+    `evidence`; neither reaches a live view.
+  - `MissionCard` gets `Kind.FAILED`: "TICKET FAILED", the objectives with `[!]` on
+    the one that failed, the failed objective named in the body, a scrolling
+    answers-and-evidence block, and Retry / Main menu (`retry_requested`,
+    `menu_requested`). Esc does not dismiss it; Enter picks Retry.
+  - `game/main.gd` closes any open window on `mission_failed` and shows the card at
+    once; Retry reloads the mission by id (so the briefing shows again), Main menu
+    goes to the menu. Nothing is saved on failure.
 - [ ] **2.9 Write `scenarios/m2_log_triage.json`.** About 150–300 log lines
   mixing normal traffic with an SSH brute force from one IP that ends in a
   successful login. Solution steps use a new `report` step type in the smoke

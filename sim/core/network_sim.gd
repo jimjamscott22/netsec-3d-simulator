@@ -95,7 +95,8 @@ func _reevaluate() -> void:
 	if ObjectiveEvaluator.all_passed(states):
 		_mission_completed = true
 		_debrief = DebriefView.new(
-			_scenario_view.scenario_id(), _scenario_view.title(), true, _debrief_text, states
+			_scenario_view.scenario_id(), _scenario_view.title(), true, _debrief_text, states,
+			_report_debrief()
 		)
 		events.mission_completed.emit(_scenario_view.scenario_id())
 		return
@@ -105,10 +106,33 @@ func _reevaluate() -> void:
 		if s.failed:
 			_mission_failed = true
 			_debrief = DebriefView.new(
-				_scenario_view.scenario_id(), _scenario_view.title(), false, _debrief_text, states
+				_scenario_view.scenario_id(), _scenario_view.title(), false, _debrief_text, states,
+				_report_debrief()
 			)
 			events.mission_failed.emit(_scenario_view.scenario_id(), s.id)
 			return
+
+
+## The report's answers with the cited log lines looked up, for the debrief.
+func _report_debrief() -> Array[Dictionary]:
+	var rows: Array[Dictionary] = []
+	if _report == null:
+		return rows
+	for row: Dictionary in _report.debrief_rows():
+		var evidence: Array[Dictionary] = []
+		for ref: Dictionary in row["evidence"]:
+			var files: Dictionary = _logs.get(ref["source"], {})
+			var file: LogFile = files.get(ref["file"])
+			var line: LogLine = file.line(ref["line"]) if file != null else null
+			evidence.append({
+				"source": ref["source"],
+				"file": ref["file"],
+				"line": ref["line"],
+				"text": line.full_text() if line != null else "",
+			})
+		row["evidence"] = evidence
+		rows.append(row)
+	return rows
 
 
 ## Every `config_changed` goes through here so objectives are re-checked after it.

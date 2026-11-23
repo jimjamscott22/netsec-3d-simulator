@@ -24,6 +24,8 @@ func _ready() -> void:
 	_apply_settings()
 	Progress.settings_changed.connect(_apply_settings)
 	_card.closed.connect(_on_card_closed)
+	_card.retry_requested.connect(_on_retry_requested)
+	_card.menu_requested.connect(_go_to_menu)
 	# The terminal covers the screen and owns Tab, so the HUD steps aside.
 	_terminal.opened.connect(_hud.hide.unbind(1))
 	_terminal.closed.connect(_on_terminal_closed)
@@ -34,6 +36,7 @@ func _ready() -> void:
 	_report_form.closed.connect(_on_report_form_closed)
 	Sim.scenario_loaded.connect(_on_scenario_loaded)
 	Sim.mission_completed.connect(_on_mission_completed)
+	Sim.mission_failed.connect(_on_mission_failed)
 
 	# The main menu loads the mission before switching here. Running this scene
 	# on its own (from the editor, or in tests) falls back to M1.
@@ -70,6 +73,29 @@ func _on_mission_completed(_scenario_id: String) -> void:
 		_card.show_debrief()
 
 
+## Failing stops play: whatever window is open closes and the failed card shows
+## the answers. (The failing answer comes from the report form, mid-submit.)
+func _on_mission_failed(_scenario_id: String, _objective_id: String) -> void:
+	_debrief_pending = false
+	if _terminal.is_open():
+		_terminal.close()
+	if _log_viewer.is_open():
+		_log_viewer.close()
+	if _report_form.is_open():
+		_report_form.close()
+	_card.show_debrief()
+
+
+## Retry reloads the mission from its start; loading shows the briefing again.
+func _on_retry_requested() -> void:
+	var view: ScenarioView = Sim.scenario_view()
+	if view == null:
+		return
+	var result: LoadResult = Sim.load_scenario_id(view.scenario_id())
+	if not result.ok:
+		push_error("Could not restart %s: %s" % [view.scenario_id(), "\n".join(result.errors)])
+
+
 func _on_terminal_closed() -> void:
 	_hud.show()
 	_show_pending_debrief()
@@ -98,8 +124,11 @@ func _show_pending_debrief() -> void:
 
 
 func _on_card_closed(kind: MissionCard.Kind) -> void:
-	if kind != MissionCard.Kind.DEBRIEF:
-		return
+	if kind == MissionCard.Kind.DEBRIEF:
+		_go_to_menu()
+
+
+func _go_to_menu() -> void:
 	menu_requested.emit()
 	if get_tree().current_scene == self:
 		get_tree().change_scene_to_file(MENU_SCENE)

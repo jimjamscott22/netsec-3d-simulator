@@ -14,6 +14,7 @@ var _title: String
 var _completed: bool
 var _text: String
 var _objectives: Array[Dictionary]
+var _report: Array[Dictionary] = []
 
 
 func _init(
@@ -22,6 +23,7 @@ func _init(
 	p_completed: bool,
 	p_text: String,
 	states: Array[ObjectiveState],
+	p_report: Array[Dictionary] = [],
 ) -> void:
 	_scenario_id = p_scenario_id
 	_title = p_title
@@ -29,6 +31,8 @@ func _init(
 	_text = p_text
 	for s in states:
 		_objectives.append({"id": s.id, "description": s.description, "passed": s.passed, "failed": s.failed})
+	for row in p_report:
+		_report.append(row.duplicate(true))
 
 
 func scenario_id() -> String:
@@ -55,4 +59,17 @@ func objectives() -> Array[Dictionary]:
 	var out: Array[Dictionary] = []
 	for o in _objectives:
 		out.append(o.duplicate())
+	return out
+
+
+## M2: each report field as the mission ended, in file order: `{id: String,
+## label: String, answer: String, last_value: String, solved: bool, evidence:
+## Array}`, where each evidence entry is `{source: String, file: String, line:
+## int, text: String}` (the log line the scenario cites, as the player saw it).
+## Empty when the scenario has no report. This is where the answers finally
+## reach the presentation layer, which is why the view exists only after the end.
+func report_fields() -> Array[Dictionary]:
+	var out: Array[Dictionary] = []
+	for row in _report:
+		out.append(row.duplicate(true))
 	return out
