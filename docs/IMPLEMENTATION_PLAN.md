@@ -410,9 +410,19 @@ logs, works out who attacked, how and which account, and files a report.
     is non-empty, when it gets the "SOC monitor" interact label and the
     `soc_monitor` meta. Task 2.7 hooks the viewer onto that meta in `game/main.gd`.
   - The trash can moved to x = -1.0 to clear the new desk.
-- [ ] **2.7 Log viewer UI:** file list from `scenario_view` log
+- [x] **2.7 Log viewer UI:** file list from `scenario_view` log
   descriptors, lines via `query_logs`, scrolling monospace view, filter box
   with match highlight.
+  - `ui/log_viewer.gd` (`LogViewer`, `log_viewer.tscn`, a full-screen `CanvasLayer`
+    like the terminal) is opened from `game/main.gd` when the player interacts
+    with the SOC monitor (`soc_monitor` meta). The mission HUD steps aside while
+    it is open, and a debrief that is due waits for it to close.
+  - Lines show their file line number (report evidence cites it). The filter keeps
+    lines containing the text, ignoring case (`LogFilter.contains_ignore_case`), and
+    marks each match; the text stays when you switch files. Log text has its
+    square brackets escaped, so a line cannot inject BBCode. Up/Down pick the
+    file, PgUp/PgDn scroll, Esc closes.
+  - Regex filtering stays in the server shell's `grep`; the viewer is the simple tool.
 - [ ] **2.8 Report form UI:** fields from `scenario_view`, attempts left
   and per-field feedback from `report_view`; nothing hard-coded per
   mission.

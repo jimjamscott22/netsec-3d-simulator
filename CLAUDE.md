@@ -47,7 +47,8 @@ in plan order: the log model and `query_logs` (`sim/logs/`, task 2.1), the
 a report field out of attempts failing the mission with `mission_failed` (task
 2.4), and the server mini shell (`ServerSession`, `ServerCommands`, task 2.5) are
 done, as is the server model scene and the SOC desk with its monitor
-(`server_1u.tscn`, `SocMonitor`, task 2.6). Task 2.7 (the log viewer UI) is
+(`server_1u.tscn`, `SocMonitor`, task 2.6) and the log viewer UI
+(`ui/log_viewer.gd`, `LogViewer`, task 2.7). Task 2.8 (the report form UI) is
 next.
 
 ## Source of truth (read before working)

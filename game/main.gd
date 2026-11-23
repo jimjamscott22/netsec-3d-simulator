@@ -8,6 +8,7 @@ const MENU_SCENE: String = "res://ui/main_menu.tscn"
 
 @onready var _cabling: Cabling = $CablingHUD
 @onready var _terminal: Terminal = $Terminal
+@onready var _log_viewer: LogViewer = $LogViewer
 @onready var _hud: MissionHud = $MissionHUD
 @onready var _card: MissionCard = $MissionCard
 @onready var _player: Player = $Player
@@ -25,6 +26,8 @@ func _ready() -> void:
 	# The terminal covers the screen and owns Tab, so the HUD steps aside.
 	_terminal.opened.connect(_hud.hide.unbind(1))
 	_terminal.closed.connect(_on_terminal_closed)
+	_log_viewer.opened.connect(_hud.hide)
+	_log_viewer.closed.connect(_on_log_viewer_closed)
 	Sim.scenario_loaded.connect(_on_scenario_loaded)
 	Sim.mission_completed.connect(_on_mission_completed)
 
@@ -38,10 +41,13 @@ func _ready() -> void:
 		push_error("Could not start M1: %s" % "\n".join(result.errors))
 
 
-## A console port or PC screen opens the terminal; everything else is cabling.
+## A console port or PC screen opens the terminal, the SOC monitor opens the log
+## viewer; everything else is cabling.
 func _on_interacted(target: CollisionObject3D) -> void:
 	if target.has_meta("console_device"):
 		_terminal.open(str(target.get_meta("console_device")))
+	elif target.has_meta("soc_monitor"):
+		_log_viewer.open()
 	else:
 		_cabling.interact(target)
 
@@ -54,7 +60,7 @@ func _on_scenario_loaded(_scenario_id: String) -> void:
 ## The last fix is usually typed in the terminal, so the debrief lets the player
 ## see that command's output first and appears once the terminal closes.
 func _on_mission_completed(_scenario_id: String) -> void:
-	if _terminal.is_open():
+	if _terminal.is_open() or _log_viewer.is_open():
 		_debrief_pending = true
 	else:
 		_card.show_debrief()
@@ -62,6 +68,15 @@ func _on_mission_completed(_scenario_id: String) -> void:
 
 func _on_terminal_closed() -> void:
 	_hud.show()
+	_show_pending_debrief()
+
+
+func _on_log_viewer_closed() -> void:
+	_hud.show()
+	_show_pending_debrief()
+
+
+func _show_pending_debrief() -> void:
 	if _debrief_pending:
 		_debrief_pending = false
 		_card.show_debrief()
