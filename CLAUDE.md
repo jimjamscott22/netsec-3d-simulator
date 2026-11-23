@@ -46,7 +46,9 @@ in plan order: the log model and `query_logs` (`sim/logs/`, task 2.1), the
 `submit_report`, `report_view` and the `report` objective type (task 2.3), and
 a report field out of attempts failing the mission with `mission_failed` (task
 2.4), and the server mini shell (`ServerSession`, `ServerCommands`, task 2.5) are
-done. Task 2.6 (the server model scene and a SOC desk) is next.
+done, as is the server model scene and the SOC desk with its monitor
+(`server_1u.tscn`, `SocMonitor`, task 2.6). Task 2.7 (the log viewer UI) is
+next.
 
 ## Source of truth (read before working)
 

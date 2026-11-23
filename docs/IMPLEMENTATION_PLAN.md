@@ -400,7 +400,16 @@ logs, works out who attacked, how and which account, and files a report.
     the line as shown. `service <name> status` reads `Server.services`
     (`id`, `port`), which M3 fills, so in M2 it always says "unrecognized service".
   - `edit <file>` is task 3.6.
-- [ ] **2.6 Server model scene** (`server_1u`) and a SOC desk with a monitor.
+- [x] **2.6 Server model scene** (`server_1u`) and a SOC desk with a monitor.
+  - `world/devices/server_1u.tscn` is a greybox 1U box (one `Socket01` for
+    `Ethernet0`, a console port that opens the server shell); the room builder
+    maps the catalog model id `server` to it.
+  - The room gains a third desk, `Desks/soc_desk`, with `SocMonitor`
+    (`world/soc_monitor.tscn`, `Room.soc_monitor()`). The builder calls
+    `set_online()` on each scenario load: online only when `scenario_view().logs()`
+    is non-empty, when it gets the "SOC monitor" interact label and the
+    `soc_monitor` meta. Task 2.7 hooks the viewer onto that meta in `game/main.gd`.
+  - The trash can moved to x = -1.0 to clear the new desk.
 - [ ] **2.7 Log viewer UI:** file list from `scenario_view` log
   descriptors, lines via `query_logs`, scrolling monospace view, filter box
   with match highlight.

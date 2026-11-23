@@ -6,6 +6,7 @@ const MODELS: Dictionary[String, PackedScene] = {
 	"router_2port": preload("res://world/devices/router_2port.tscn"),
 	"switch_24": preload("res://world/devices/switch_24.tscn"),
 	"pc": preload("res://world/devices/pc.tscn"),
+	"server": preload("res://world/devices/server_1u.tscn"),
 }
 
 
@@ -66,3 +67,17 @@ func test_led_renders_link_state_without_changing_other_sockets() -> void:
 	sockets[0].set_link_state(false, false)
 	assert_bool(led.emission_enabled).is_false()
 	assert_bool(led.albedo_color.is_equal_approx(PortSocket.LED_OFF)).is_true()
+
+
+func test_server_is_a_one_u_box_with_one_socket_and_a_console() -> void:
+	var server: DeviceModel = _instantiate("server")
+	var sockets: Array[PortSocket] = server.socket_markers()
+	assert_int(sockets.size()).is_equal(1)
+	assert_object(server.console_target()).is_not_null()
+	var box: BoxShape3D = (server.get_node("Chassis/Collision") as CollisionShape3D).shape as BoxShape3D
+	# 1U is 44.45 mm, and the box must fit between the rack's 0.6 m sides.
+	assert_float(box.size.y).is_between(0.04, 0.046)
+	assert_float(box.size.x).is_less(0.6)
+	# The socket and console sit on the front face, away from each other.
+	assert_float(sockets[0].position.z).is_greater(box.size.z)
+	assert_float(server.console_target().position.x).is_not_equal(sockets[0].position.x)
