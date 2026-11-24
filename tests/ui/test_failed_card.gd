@@ -48,6 +48,12 @@ func _key(code: Key) -> InputEventKey:
 	return k
 
 
+func _fail_once_and_show(card: MissionCard) -> void:
+	if Sim.debrief_view() == null:
+		_fail()
+	assert_bool(card.show_debrief()).is_true()
+
+
 func _fail() -> void:
 	for wrong: String in ["Port scan", "Phishing", "SQL injection"]:
 		Sim.submit_report("attack_type", wrong)
@@ -122,6 +128,36 @@ func test_escape_does_not_dismiss_it_and_enter_retries() -> void:
 	card._input(_key(KEY_ENTER))
 	assert_bool(card.is_open()).is_false()
 	assert_array(asked).is_equal(["retry"])
+
+
+func test_the_failed_card_lets_focus_keys_through_and_blocks_the_rest() -> void:
+	for code: Key in MissionCard.FOCUS_KEYS:
+		assert_bool(MissionCard.blocks_key(MissionCard.Kind.FAILED, code)).is_false()
+		# The other cards still swallow everything.
+		assert_bool(MissionCard.blocks_key(MissionCard.Kind.BRIEFING, code)).is_true()
+		assert_bool(MissionCard.blocks_key(MissionCard.Kind.DEBRIEF, code)).is_true()
+	for code: Key in [KEY_W, KEY_ENTER, KEY_ESCAPE, KEY_SPACE, KEY_E]:
+		assert_bool(MissionCard.blocks_key(MissionCard.Kind.FAILED, code)).is_true()
+
+
+func test_enter_and_space_pick_the_button_with_focus() -> void:
+	var card: MissionCard = _card()
+	var asked: Array[String] = []
+	card.retry_requested.connect(func() -> void: asked.append("retry"))
+	card.menu_requested.connect(func() -> void: asked.append("menu"))
+	for press: Key in [KEY_ENTER, KEY_SPACE]:
+		_fail_once_and_show(card)
+		var buttons: Array[Node] = card.find_children("*", "Button", true, false)
+		(buttons[1] as Button).grab_focus()
+		card._input(_key(press))
+		assert_bool(card.is_open()).is_false()
+	assert_array(asked).is_equal(["menu", "menu"])
+	for press: Key in [KEY_ENTER, KEY_SPACE]:
+		_fail_once_and_show(card)
+		var buttons: Array[Node] = card.find_children("*", "Button", true, false)
+		(buttons[0] as Button).grab_focus()
+		card._input(_key(press))
+	assert_array(asked).is_equal(["menu", "menu", "retry", "retry"])
 
 
 func test_the_buttons_ask_for_retry_and_the_menu() -> void:

@@ -31,6 +31,9 @@ const RETRY_BUTTON: String = "Retry"
 const MENU_BUTTON: String = "Main menu"
 const FAILED_NOTE: String = "You ran out of attempts, so this ticket cannot be resolved. Here is what the answers were and where the evidence was."
 const REPORT_HEIGHT: float = 220.0
+## Keys the GUI uses to move focus between buttons. The failed card lets them
+## through so a keyboard-only player can reach Main menu.
+const FOCUS_KEYS: Array[Key] = [KEY_TAB, KEY_LEFT, KEY_RIGHT, KEY_UP, KEY_DOWN]
 const WIDTH: float = 720.0
 const PAPER: Color = Color(0.95, 0.93, 0.87)
 const INK: Color = Color(0.12, 0.13, 0.15)
@@ -62,17 +65,33 @@ func _input(event: InputEvent) -> void:
 	var key: InputEventKey = event as InputEventKey
 	if key == null:
 		return
+	if not blocks_key(_kind, key.keycode):
+		return
 	# Keys never reach the world or HUD behind the card. Mark the event handled
 	# before closing: closing can switch scenes, and this node then has no viewport.
 	get_viewport().set_input_as_handled()
 	if not key.pressed or key.echo:
 		return
 	if _kind == Kind.FAILED:
-		# Esc cannot dismiss it: the player picks Retry or Main menu.
-		if key.keycode in [KEY_ENTER, KEY_KP_ENTER]:
+		# Esc cannot dismiss it: the player picks Retry or Main menu, with the
+		# button that has focus (Retry to start with).
+		if key.keycode in [KEY_ENTER, KEY_KP_ENTER, KEY_SPACE]:
 			_choose(not _secondary.has_focus())
 	elif key.keycode in [KEY_ENTER, KEY_KP_ENTER, KEY_ESCAPE]:
 		close()
+
+
+## A focus key the failed card passes to the GUI that nobody uses would still
+## reach the world and HUD behind it, so whatever it leaves is swallowed here.
+func _unhandled_input(event: InputEvent) -> void:
+	if visible and event is InputEventKey:
+		get_viewport().set_input_as_handled()
+
+
+## True when the card swallows `keycode` while open in `kind`: every key, except
+## that the failed card lets focus keys through to its buttons.
+static func blocks_key(kind_: Kind, keycode: Key) -> bool:
+	return not (kind_ == Kind.FAILED and keycode in FOCUS_KEYS)
 
 
 # --- public ---------------------------------------------------------------------

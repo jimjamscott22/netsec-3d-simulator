@@ -50,8 +50,9 @@ done, as is the server model scene and the SOC desk with its monitor
 (`server_1u.tscn`, `SocMonitor`, task 2.6) and the log viewer UI
 (`ui/log_viewer.gd`, `LogViewer`, task 2.7) and the report form UI
 (`ui/report_form.gd`, `ReportForm`, task 2.8) and the failed debrief card
-(`MissionCard.Kind.FAILED`, `DebriefView.report_fields()`, task 2.8b). Task 2.9
-(`scenarios/m2_log_triage.json`) is next.
+(`MissionCard.Kind.FAILED`, `DebriefView.report_fields()`, task 2.8b) and the
+real M2 mission (`scenarios/m2_log_triage.json` with the `report` solution step,
+task 2.9). Task 2.10 (mission catalog and select screen) is next.
 
 ## Source of truth (read before working)
 

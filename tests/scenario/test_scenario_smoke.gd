@@ -21,3 +21,40 @@ func test_every_scenario_passes_the_smoke_test() -> void:
 		for problem: String in ScenarioRunner.smoke(data, ScenarioRunner.file_id(file_name)):
 			report.append("%s: %s" % [file_name, problem])
 	assert_array(report).is_empty()
+
+
+# --- the `report` solution step (task 2.9) ----------------------------------------
+
+const REPORT_FIXTURE: String = "res://tests/scenario/fixtures/valid_m2.json"
+
+
+func _report_fixture(steps: Array) -> Dictionary:
+	var data: Dictionary = ScenarioRunner.read(REPORT_FIXTURE)
+	# The fixture's config objective already holds at the start; only reports are open.
+	data["solution"] = steps
+	return data
+
+
+func test_report_steps_play_the_report_and_complete_the_mission() -> void:
+	var data: Dictionary = _report_fixture([
+		{"report": {"field": "attacker_ip", "value": "203.0.113.45"}},
+		{"report": {"field": "attack_type", "value": "brute force"}},
+		{"report": {"field": "compromised_user", "value": "deploy"}},
+	])
+	assert_array(ScenarioRunner.smoke(data, "m2_fixture")).is_empty()
+
+
+func test_a_wrong_report_step_is_reported() -> void:
+	var data: Dictionary = _report_fixture([
+		{"report": {"field": "attacker_ip", "value": "198.51.100.7"}},
+	])
+	var problems: Array[String] = ScenarioRunner.smoke(data, "m2_fixture")
+	assert_str("\n".join(PackedStringArray(problems))).contains("was not the right answer")
+
+
+func test_a_refused_report_step_is_reported() -> void:
+	var data: Dictionary = _report_fixture([
+		{"report": {"field": "attacker_ip", "value": "not an ip"}},
+	])
+	var problems: Array[String] = ScenarioRunner.smoke(data, "m2_fixture")
+	assert_str("\n".join(PackedStringArray(problems))).contains("refused (INVALID_VALUE)")

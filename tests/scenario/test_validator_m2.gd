@@ -573,3 +573,36 @@ func test_an_answer_is_not_checked_against_a_field_that_is_not_there() -> void:
 		d["objectives"][OBJ_IP]["field"] = "nope"
 		d["objectives"][OBJ_IP]["equals"] = "banana")
 	assert_array(errors).is_equal([_objective(OBJ_IP) + '.field: unknown report field "nope"'])
+
+
+# --- report solution steps (task 2.9) ----------------------------------------------
+
+
+func _with_report_step(step: Variant) -> Array[String]:
+	return _edit(func(d: Dictionary) -> void: d["solution"].append(step))
+
+
+func test_a_report_step_files_a_value_for_a_report_field() -> void:
+	assert_array(_with_report_step({"report": {"field": "attacker_ip", "value": "203.0.113.45"}})).is_empty()
+
+
+func test_a_report_step_is_checked() -> void:
+	var at: String = "solution[1]"
+	assert_array(_with_report_step({"report": 5})).is_equal([at + ".report: must be an object"])
+	assert_array(_with_report_step({"report": {"value": "x"}})).is_equal([at + ".report.field: required"])
+	assert_array(_with_report_step({"report": {"field": "attacker_ip"}})).is_equal([at + ".report.value: required"])
+	assert_array(_with_report_step({"report": {"field": 3, "value": "x"}})).is_equal([at + ".report.field: must be a report field id"])
+	assert_array(_with_report_step({"report": {"field": "nope", "value": "x"}})).is_equal([at + '.report.field: unknown report field "nope"'])
+	assert_array(_with_report_step({"report": {"field": "attacker_ip", "value": ""}})).is_equal([at + ".report.value: must be a non-empty string"])
+	assert_array(_with_report_step({"report": {"field": "attacker_ip", "value": "x", "note": "y"}})).is_equal([at + ".report.note: unknown key"])
+	assert_array(_with_report_step({"report": {"field": "attacker_ip", "value": "x"}, "device": "WEB1"})).is_equal(
+		[at + ': a step has either "device" and "commands", "link", or "report"']
+	)
+
+
+func test_a_report_step_needs_a_report() -> void:
+	var errors: Array[String] = _edit(func(d: Dictionary) -> void:
+		_drop_report(d)
+		d["solution"].append({"report": {"field": "attacker_ip", "value": "1.2.3.4"}})
+	)
+	assert_array(errors).contains(['solution[1].report.field: unknown report field "attacker_ip"'])

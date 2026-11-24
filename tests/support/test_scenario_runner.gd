@@ -77,7 +77,7 @@ func test_apply_solution_reports_an_unknown_device_and_step_type() -> void:
 	assert_array(ScenarioRunner.apply_solution(sim, unknown_device)).is_equal(["solution[0]: unknown device 'X9'"])
 	var unknown_step: Dictionary = {"solution": [{"nonsense": true}]}
 	assert_array(ScenarioRunner.apply_solution(sim, unknown_step)).is_equal(
-		["solution[0]: unsupported step type (has neither 'link' nor 'device')"])
+		["solution[0]: unsupported step type (has none of 'link', 'device' or 'report')"])
 
 
 # --- smoke ---------------------------------------------------------------------

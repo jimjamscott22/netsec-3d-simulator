@@ -456,11 +456,29 @@ logs, works out who attacked, how and which account, and files a report.
   - `game/main.gd` closes any open window on `mission_failed` and shows the card at
     once; Retry reloads the mission by id (so the briefing shows again), Main menu
     goes to the menu. Nothing is saved on failure.
-- [ ] **2.9 Write `scenarios/m2_log_triage.json`.** About 150–300 log lines
+- [x] **2.9 Write `scenarios/m2_log_triage.json`.** About 150–300 log lines
   mixing normal traffic with an SSH brute force from one IP that ends in a
   successful login. Solution steps use a new `report` step type in the smoke
   test.
   *Done when:* the smoke test passes.
+  - `scenarios/m2_log_triage.json` ("Who Knocked?", sequence 2): two servers (`WEB1`
+    in rack_a slot 1, `DB1` in slot 2), 193 log lines in three files. In WEB1's
+    `auth.log` one address (203.0.113.45, NL) fails 44 passwords across common
+    usernames in about three minutes, then is accepted for `deploy`. Lookalikes keep
+    the answer from being the name or the noise: a scanner (192.0.2.88, DE) fails five
+    times and never gets in, an office admin has one typo, and `deploy` also logs in by
+    key from the CI server. The report asks for the attacker IP, the attack type (six
+    options, so a guess is not a coin flip) and the compromised account, each with
+    evidence lines. Three attempts per field.
+  - New solution step `{ "report": { "field", "value" } }`: validator rules
+    (`_check_solution_report`, the step kinds message now names all three),
+    `ScenarioRunner._apply_step`, and the schema reference.
+  - `tests/scenario/test_m2_log_triage.gd` pins what makes it fair (one heavy-failure
+    address that then gets in, the lookalikes, evidence text, no answer in any live
+    view); the smoke test picks the file up on its own.
+  - Folded in from the Codex review of the failed card: it now lets Tab and the arrow
+    keys reach its buttons (`MissionCard.blocks_key`), and Enter or Space picks the
+    button with focus, so a keyboard-only player can choose Main menu.
 - [ ] **2.10 Mission catalog + select screen.** Core
   `summarize_scenario`; `Sim.scenario_catalog()` reads every file in
   `res://scenarios/` and returns summaries sorted by `sequence`; the screen
