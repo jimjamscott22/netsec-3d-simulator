@@ -132,6 +132,9 @@ func test_the_facade_answers_the_lock_question() -> void:
 	_write_scenario("m2_b", 2)
 	var sim: Node = _sim()
 	var missions: Array[ScenarioSummary] = sim.scenario_catalog()
-	assert_bool(sim.is_mission_locked(missions, 0, [])).is_false()
-	assert_bool(sim.is_mission_locked(missions, 1, [])).is_true()
-	assert_bool(sim.is_mission_locked(missions, 1, ["m1_a"])).is_false()
+	# `sim` is an untyped Node here, so the arguments must already be typed arrays.
+	var none: Array[String] = []
+	var first_done: Array[String] = ["m1_a"]
+	assert_bool(sim.is_mission_locked(missions, 0, none)).is_false()
+	assert_bool(sim.is_mission_locked(missions, 1, none)).is_true()
+	assert_bool(sim.is_mission_locked(missions, 1, first_done)).is_false()
