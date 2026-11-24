@@ -104,7 +104,9 @@ func test_no_live_view_shows_an_answer_or_a_log_line() -> void:
 	seen.append(str(sim.report_view().fields()))
 	for s: String in seen:
 		assert_str(s).not_contains(ATTACKER)
-		assert_str(s).not_contains("Brute force")
+		# "Brute force" is one of the options the player sees, so only the
+		# account name stands for the other answers here.
+		assert_str(s).not_contains("deploy")
 	assert_object(sim.debrief_view()).is_null()
 
 
