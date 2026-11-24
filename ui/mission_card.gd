@@ -125,6 +125,8 @@ func show_debrief() -> bool:
 	_heading.text = view.title()
 	_results.text = results_lines(view.objectives())
 	_results.visible = not view.objectives().is_empty()
+	# Green ticks suit a resolved ticket; on a failed one they read as success.
+	_results.add_theme_color_override("font_color", PASSED_INK if view.completed() else INK)
 	_set_report(report_text(view.report_fields()))
 	if view.completed():
 		_label.text = DEBRIEF_LABEL

@@ -24,7 +24,7 @@ const DIM_COLOR: Color = Color(0.55, 0.62, 0.58)
 const NUMBER_COLOR: Color = Color(0.54, 0.60, 0.56)
 const MATCH_COLOR: Color = Color(0.06, 0.06, 0.06)
 const MATCH_BACKGROUND: Color = Color(0.91, 0.77, 0.28)
-const LIST_WIDTH: float = 340.0
+const LIST_WIDTH: float = 420.0
 const TITLE: String = "SOC monitor  ·  log viewer"
 const FOOTER: String = "Type to filter · ↑/↓ file · PgUp/PgDn scroll · F2 report · Esc close"
 const NO_FILES: String = "No log files in this mission."
@@ -77,7 +77,7 @@ func open() -> bool:
 	_files.assign(scenario.logs())
 	_list.clear()
 	for entry: Dictionary in _files:
-		_list.add_item("%s\n%s  (%d lines)" % [entry["source"], entry["file"], entry["lines"]])
+		_list.add_item("%s  %s  (%d)" % [entry["source"], entry["file"], entry["lines"]])
 	_filter.clear()
 	_filter_text = ""
 	_report_button.visible = scenario.has_report()
@@ -99,6 +99,11 @@ func close() -> void:
 
 func is_open() -> bool:
 	return visible
+
+
+## The list entry text of file `index`, for example "WEB1  /var/log/auth.log  (103)".
+func file_label(index: int) -> String:
+	return _list.get_item_text(index) if index >= 0 and index < _list.item_count else ""
 
 
 func file_count() -> int:

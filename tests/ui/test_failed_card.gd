@@ -88,6 +88,16 @@ func test_failed_card_names_the_failed_objective_and_the_answers() -> void:
 	assert_str(report).contains("Evidence: WEB1 /var/log/auth.log line 1: 2026-03-14T02:11:05Z sshd[811]: Failed password")
 
 
+func test_a_failed_card_does_not_use_the_resolved_green() -> void:
+	var card: MissionCard = _card()
+	_fail()
+	card.show_debrief()
+	var results: Label = card.find_children("*", "Label", true, false).filter(
+		func(l: Label) -> bool: return l.text.begins_with("[")
+	)[0]
+	assert_bool(results.get_theme_color("font_color") == MissionCard.PASSED_INK).is_false()
+
+
 func test_report_text_golden() -> void:
 	var fields: Array[Dictionary] = [
 		{"id": "a", "label": "Attacker IP", "answer": "1.2.3.4", "last_value": "", "solved": true,

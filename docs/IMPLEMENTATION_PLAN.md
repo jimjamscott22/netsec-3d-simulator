@@ -507,6 +507,12 @@ logs, works out who attacked, how and which account, and files a report.
   countries for lines with `src_ip`; click to jump to the line in the log
   viewer. Pure UI over `query_logs`.
 - [ ] **2.12 Playtest** with `docs/playtest/m2_log_triage.md`.
+  - Checklist written (`docs/playtest/m2_log_triage.md`) and a first scripted run done
+    under Xvfb (`docs/playtest/results/m2_log_triage/PLAYTEST.md`): 25 checks passed
+    and it found three small UI problems, all fixed with tests (a clipped file list
+    in the log viewer, green ticks on the failed card, and a spare-cable line and
+    hint prompt on a mission that has neither). Left unticked, like 1.33, until a human
+    does the new-player run and the lowest-spec performance check.
 
 **Exit criteria:** M2 playable after M1 from mission select; CI green.
 
@@ -644,6 +650,7 @@ Ideas that are out of scope until a milestone pulls them in:
   sit between the rails instead of in front of them.
 - Score / timer / hint penalties.
 - Localization.
+- Server shell counting for log work: `grep -c`, `wc -l` (found in the M2 playtest).
 - `no vlan <id>`, `no hostname`, `no interface <subif>` and other `no` forms
   not needed by `m1_vlan_ping`.
 - More missions: DHCP starvation, ARP spoofing, firewall rules, phishing.

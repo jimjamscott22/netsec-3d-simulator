@@ -221,3 +221,12 @@ func test_report_is_offered_only_for_a_mission_with_a_report_and_f2_asks_for_it(
 	f2.keycode = KEY_F2
 	assert_bool(viewer.handle_key(f2)).is_true()
 	assert_array(asked).has_size(1)
+
+
+func test_every_file_label_names_the_device_path_and_line_count() -> void:
+	var viewer: LogViewer = _viewer()
+	viewer.open()
+	assert_str(viewer.file_label(0)).is_equal("WEB1  /var/log/auth.log  (5)")
+	assert_str(viewer.file_label(1)).is_equal("WEB1  /var/log/nginx/access.log  (3)")
+	assert_str(viewer.file_label(2)).is_equal("DB1  /var/log/auth.log  (2)")
+	assert_str(viewer.file_label(9)).is_empty()

@@ -17,6 +17,8 @@ const NEXT_STEP: String = "Next step: "
 const NO_HINT: String = "No hint for this step. Check the objectives' details."
 const ALL_DONE: String = "Every objective is complete."
 const PROMPT: String = "H hint · Tab objectives"
+## For a mission with no hints at all (a log mission), where H would have nothing to say.
+const PROMPT_NO_HINTS: String = "Tab objectives"
 const WIDTH: float = 380.0
 const TEXT_COLOR: Color = Color(0.92, 0.94, 0.92)
 const PASSED_COLOR: Color = Color(0.55, 0.88, 0.55)
@@ -58,8 +60,17 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 func toggle_hint() -> void:
+	# A mission without hints offers no hint key, so H does nothing there.
+	if not _has_hints():
+		return
 	_hint_shown = not _hint_shown
 	_refresh()
+
+
+## True when the loaded mission has any hint to give.
+func _has_hints() -> bool:
+	var view: ScenarioView = Sim.scenario_view()
+	return view != null and not view.hints().is_empty()
 
 
 func toggle_objectives() -> void:
@@ -162,6 +173,10 @@ func _refresh() -> void:
 		labels[i].text = line_text(states[i])
 		labels[i].add_theme_color_override("font_color", line_color(states[i]))
 	_spare.text = "Spare cables: %d" % Sim.spare_cables()
+	# A mission that gives no cable has no use for the line (it stays on screen
+	# at 0 once a given cable is used).
+	_spare.visible = view != null and view.spare_cables() > 0
+	_prompt.text = PROMPT if _has_hints() else PROMPT_NO_HINTS
 	_refresh_hint(states)
 
 
