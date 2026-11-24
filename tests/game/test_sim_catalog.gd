@@ -125,3 +125,13 @@ func test_reading_the_catalog_does_not_touch_the_loaded_mission() -> void:
 	assert_array(sim.load_scenario_id("m1_a").errors).is_empty()
 	sim.scenario_catalog()
 	assert_str(sim.scenario_view().scenario_id()).is_equal("m1_a")
+
+
+func test_the_facade_answers_the_lock_question() -> void:
+	_write_scenario("m1_a", 1)
+	_write_scenario("m2_b", 2)
+	var sim: Node = _sim()
+	var missions: Array[ScenarioSummary] = sim.scenario_catalog()
+	assert_bool(sim.is_mission_locked(missions, 0, [])).is_false()
+	assert_bool(sim.is_mission_locked(missions, 1, [])).is_true()
+	assert_bool(sim.is_mission_locked(missions, 1, ["m1_a"])).is_false()

@@ -87,6 +87,14 @@ func scenario_catalog() -> Array[ScenarioSummary]:
 	return catalog.missions
 
 
+## True when mission `index` of `missions` (from `scenario_catalog()`) is locked,
+## given the ids of the missions already `completed`: every mission but the first
+## waits for the one before it. Mission select asks here, so it never touches the
+## core's catalog rules itself.
+func is_mission_locked(missions: Array[ScenarioSummary], index: int, completed: Array[String]) -> bool:
+	return ScenarioCatalog.is_locked(missions, index, completed)
+
+
 ## Why files were left out of the last `scenario_catalog()`, one line each.
 func catalog_problems() -> Array[String]:
 	return _catalog_problems.duplicate()

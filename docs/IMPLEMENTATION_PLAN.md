@@ -499,7 +499,9 @@ logs, works out who attacked, how and which account, and files a report.
     the problems with `push_warning`; `Sim.catalog_problems()` returns them.
   - `MainMenu` draws one row per mission (title, "Completed" / "Not started" /
     "Locked", Start). `start_mission(id)` refuses a locked or unknown mission, and
-    the menu no longer loads a mission just to read its title. Completing a mission
+    the menu no longer loads a mission just to read its title. It asks
+    `Sim.is_mission_locked()` for the lock rule rather than calling the catalog
+    class itself (Codex review). Completing a mission
     already saves through `Progress`, so the next one unlocks on the next visit.
 - [ ] **2.11 Threat map (should-have):** 2D world map, arcs from `geo`
   countries for lines with `src_ip`; click to jump to the line in the log

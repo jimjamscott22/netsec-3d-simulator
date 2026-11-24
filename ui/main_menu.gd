@@ -62,7 +62,7 @@ func refresh_missions() -> void:
 	var missions: Array[ScenarioSummary] = Sim.scenario_catalog()
 	var completed: Array[String] = Progress.completed_ids()
 	for index: int in missions.size():
-		_add_row(missions[index], index, ScenarioCatalog.is_locked(missions, index, completed), completed)
+		_add_row(missions[index], index, Sim.is_mission_locked(missions, index, completed), completed)
 	var problems: Array[String] = Sim.catalog_problems()
 	if missions.is_empty():
 		_show_error("No missions found.", problems)
