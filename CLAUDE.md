@@ -52,7 +52,9 @@ done, as is the server model scene and the SOC desk with its monitor
 (`ui/report_form.gd`, `ReportForm`, task 2.8) and the failed debrief card
 (`MissionCard.Kind.FAILED`, `DebriefView.report_fields()`, task 2.8b) and the
 real M2 mission (`scenarios/m2_log_triage.json` with the `report` solution step,
-task 2.9). Task 2.10 (mission catalog and select screen) is next.
+task 2.9) and the mission catalog and select screen (`ScenarioSummary`,
+`ScenarioCatalog`, `Sim.scenario_catalog()`, `MainMenu`, task 2.10). Task 2.11
+(the threat map, a should-have) is next.
 
 ## Source of truth (read before working)
 

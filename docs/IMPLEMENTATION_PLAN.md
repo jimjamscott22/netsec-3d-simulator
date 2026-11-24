@@ -479,13 +479,28 @@ logs, works out who attacked, how and which account, and files a report.
   - Folded in from the Codex review of the failed card: it now lets Tab and the arrow
     keys reach its buttons (`MissionCard.blocks_key`), and Enter or Space picks the
     button with focus, so a keyboard-only player can choose Main menu.
-- [ ] **2.10 Mission catalog + select screen.** Core
+- [x] **2.10 Mission catalog + select screen.** Core
   `summarize_scenario`; `Sim.scenario_catalog()` reads every file in
   `res://scenarios/` and returns summaries sorted by `sequence`; the screen
   locks a mission until the previous `sequence` is completed in saved
   progress.
   *Tests:* summaries for valid files; invalid files skipped; a duplicate
   `sequence` across files is reported and both files are left out.
+  - `NetworkSim.summarize_scenario(data, file_id)` (static) validates the whole file
+    like `load_scenario` and returns a `ScenarioSummary` (`source`, `id`, `title`,
+    `sequence`, `errors`, `ok()`). An invalid file gets its `errors` and no title,
+    where SPEC §3.3 said `null` plus errors, so a caller always has something to
+    report.
+  - `ScenarioCatalog.build()` (pure) sorts the valid summaries by `sequence`, drops
+    invalid files and every file that shares a `sequence`, and lists why in
+    `problems`; `ScenarioCatalog.is_locked()` says a mission waits for the one
+    before it in the list, not for any earlier one.
+  - `Sim.scenario_catalog()` reads every `*.json` in the scenario folder and logs
+    the problems with `push_warning`; `Sim.catalog_problems()` returns them.
+  - `MainMenu` draws one row per mission (title, "Completed" / "Not started" /
+    "Locked", Start). `start_mission(id)` refuses a locked or unknown mission, and
+    the menu no longer loads a mission just to read its title. Completing a mission
+    already saves through `Progress`, so the next one unlocks on the next visit.
 - [ ] **2.11 Threat map (should-have):** 2D world map, arcs from `geo`
   countries for lines with `src_ip`; click to jump to the line in the log
   viewer. Pure UI over `query_logs`.

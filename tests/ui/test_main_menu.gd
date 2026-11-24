@@ -7,6 +7,8 @@ const MENU_SCENE: PackedScene = preload("res://ui/main_menu.tscn")
 const TEMP_DIR: String = "user://main_menu_test"
 const SAVE: String = TEMP_DIR + "/progress.json"
 const MISSION: String = "m1_vlan_ping"
+const SECOND: String = "m2_log_triage"
+const EMPTY_DIR: String = "user://main_menu_test_no_scenarios"
 
 
 func before_test() -> void:
@@ -17,6 +19,7 @@ func before_test() -> void:
 
 
 func after_test() -> void:
+	Sim.scenario_dir = Sim.SCENARIO_DIR
 	Progress.close()
 	if FileAccess.file_exists(SAVE):
 		DirAccess.remove_absolute(SAVE)
@@ -34,6 +37,12 @@ func test_keeps_a_save_that_is_already_open() -> void:
 	assert_str(Progress.path()).is_equal(SAVE)
 
 
+func test_lists_the_missions_in_sequence_order() -> void:
+	var menu: MainMenu = _menu()
+	assert_array(menu.mission_ids()).starts_with([MISSION, SECOND])
+	assert_str(menu.mission_title_text(1)).is_equal("Who Knocked?")
+
+
 func test_shows_the_first_mission_not_started() -> void:
 	var menu: MainMenu = _menu()
 	assert_str(menu.mission_title_text()).is_equal("Day One: Get Them Talking")
@@ -49,8 +58,46 @@ func test_shows_a_completed_mission() -> void:
 	assert_str(menu.mission_status_text()).is_equal("Completed")
 
 
+func test_the_next_mission_is_locked_until_the_one_before_is_completed() -> void:
+	var menu: MainMenu = _menu()
+	assert_bool(menu.is_mission_locked(0)).is_false()
+	assert_bool(menu.is_mission_locked(1)).is_true()
+	assert_str(menu.mission_status_text(1)).is_equal("Locked")
+	assert_bool(menu.start_button(1).disabled).is_true()
+
+	Progress.mark_completed(MISSION)
+	menu.refresh_missions()
+	assert_bool(menu.is_mission_locked(1)).is_false()
+	assert_str(menu.mission_status_text(1)).is_equal("Not started")
+	assert_bool(menu.start_button(1).disabled).is_false()
+
+
+func test_a_locked_mission_cannot_be_started() -> void:
+	var menu: MainMenu = _menu()
+	var started: Array[String] = []
+	menu.start_requested.connect(started.append)
+	assert_bool(menu.start_mission(SECOND)).is_false()
+	assert_array(started).is_empty()
+
+
+func test_an_unknown_mission_cannot_be_started() -> void:
+	var menu: MainMenu = _menu()
+	assert_bool(menu.start_mission("no_such_mission")).is_false()
+
+
+func test_starting_the_unlocked_second_mission_loads_it() -> void:
+	Progress.mark_completed(MISSION)
+	var menu: MainMenu = _menu()
+	var started: Array[String] = []
+	menu.start_requested.connect(started.append)
+	menu.start_button(1).pressed.emit()
+	assert_array(started).contains_exactly([SECOND])
+	assert_str(Sim.scenario_view().scenario_id()).is_equal(SECOND)
+
+
 func test_start_reloads_the_mission_from_scratch_and_announces_it() -> void:
 	var menu: MainMenu = _menu()
+	assert_bool(Sim.load_scenario_id(MISSION).ok).is_true()
 	assert_bool(Sim.connect_link("S1:Fa0/2", "PC-B:Eth0").ok).is_true()
 	var started: Array[String] = []
 	menu.start_requested.connect(started.append)
@@ -67,6 +114,16 @@ func test_start_button_starts_the_mission() -> void:
 	menu.start_requested.connect(started.append)
 	menu.start_button().pressed.emit()
 	assert_array(started).contains_exactly([MISSION])
+
+
+func test_with_no_scenario_files_the_menu_says_so() -> void:
+	DirAccess.make_dir_recursive_absolute(EMPTY_DIR)
+	Sim.scenario_dir = EMPTY_DIR
+	var menu: MainMenu = _menu()
+	assert_array(menu.mission_ids()).is_empty()
+	assert_str(menu.error_text()).starts_with("No missions found.")
+	assert_bool(menu.start_mission()).is_false()
+	assert_object(menu.start_button()).is_null()
 
 
 func test_settings_open_and_close() -> void:

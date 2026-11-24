@@ -122,7 +122,8 @@ These are hard rules. CI fails if any are broken.
   so this is the cue for the world to build from the views).
   `Sim.scenario_catalog()` returns the valid scenarios'
   `ScenarioSummary` list (via `summarize_scenario`) sorted by `sequence`,
-  for mission select. Invalid files are skipped and logged.
+  for mission select. Invalid files are skipped and logged, and so are files
+  that share a `sequence` (none of them is listed).
 - The only path from `world/` and `ui/` into the core.
 
 ### 3.3 `NetworkSim` public API (v1)
@@ -130,7 +131,7 @@ These are hard rules. CI fails if any are broken.
 | Method | Returns | Milestone |
 | --- | --- | --- |
 | `load_scenario(data: Dictionary)` | `LoadResult` (`ok`, `errors: Array[String]`) | M1 |
-| `summarize_scenario(data: Dictionary)` | `ScenarioSummary` (read-only): `id`, `title`, `sequence`, or `null` plus errors if the file is invalid. Doesn't change sim state | M2 |
+| `summarize_scenario(data: Dictionary, file_id: String = "")` (static) | `ScenarioSummary` (read-only): `id`, `title`, `sequence`, or, if the file is invalid, `errors` with no title (`ok()` tells which). Doesn't change sim state | M2 |
 | `scenario_view()` | `ScenarioView` (read-only, static scenario data): title, briefing, hints; every device's id, type, model, hostname, `rack`+`slot` or `desk`, and its **ordered canonical interface list** (socket order); links (`a`, `b`, `locked`); `reserved_ports`; M2: log descriptors (`source`, `file`, line count) and report fields (`id`, `label`, `kind`, `options`, `max_attempts`) | M1 (M2 adds logs/report) |
 | `device_view(id: String)` | `DeviceView` (read-only snapshot) or `null`: sanitized viewable config (`hostname`, router/switch VLANs/routes/NAT/ACLs, host/server `ip`/`mask`/`gateway`/`locked`, server `services` metadata without `files` or `vulns`) plus each canonical interface's `admin_up`, `oper_up`, `ip`, `mask`, L2/dot1Q settings, and peer port (`<device>:<interface>` or `null`). Subinterface peers are `null`; their `oper_up` follows the parent. Server `files`, `vulns`, `accept` regexes, fixtures, and `exploit` metadata are excluded | M1 |
 | `open_session(device_id: String)` | `CliSession` | M1 |

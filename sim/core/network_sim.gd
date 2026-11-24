@@ -60,6 +60,19 @@ func load_scenario(data: Dictionary, file_id: String = "") -> LoadResult:
 	return LoadResult.success()
 
 
+## What mission select needs to know about one scenario file: its id, title and
+## sequence, or the validation errors when the file is not valid. Checks the
+## whole file exactly as `load_scenario` does, but changes nothing. `file_id`, when
+## given, must equal the scenario's `id`.
+static func summarize_scenario(data: Dictionary, file_id: String = "") -> ScenarioSummary:
+	var errors: Array[String] = ScenarioValidator.validate(data, file_id)
+	if not errors.is_empty():
+		return ScenarioSummary.invalid(file_id, errors)
+	return ScenarioSummary.valid(
+		file_id, data["id"], data["title"], ScenarioFields.to_int(data["sequence"])
+	)
+
+
 ## Static scenario data, or null until a scenario has loaded.
 func scenario_view() -> ScenarioView:
 	return _scenario_view
