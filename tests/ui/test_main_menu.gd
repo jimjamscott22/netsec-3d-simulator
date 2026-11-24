@@ -39,7 +39,7 @@ func test_keeps_a_save_that_is_already_open() -> void:
 
 func test_lists_the_missions_in_sequence_order() -> void:
 	var menu: MainMenu = _menu()
-	assert_array(menu.mission_ids()).starts_with([MISSION, SECOND])
+	assert_array(menu.mission_ids().slice(0, 2)).is_equal([MISSION, SECOND])
 	assert_str(menu.mission_title_text(1)).is_equal("Who Knocked?")
 
 

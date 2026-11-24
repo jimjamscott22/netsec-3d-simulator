@@ -54,7 +54,7 @@ func _ids(missions: Array[ScenarioSummary]) -> Array[String]:
 func test_the_real_folder_lists_the_missions_in_order() -> void:
 	var sim: Node = _sim(SimScript.SCENARIO_DIR)
 	var ids: Array[String] = _ids(sim.scenario_catalog())
-	assert_array(ids).starts_with(["m1_vlan_ping", "m2_log_triage"])
+	assert_array(ids.slice(0, 2)).is_equal(["m1_vlan_ping", "m2_log_triage"])
 	assert_array(sim.catalog_problems()).is_empty()
 
 
