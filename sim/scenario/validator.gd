@@ -43,6 +43,7 @@ const REPORT_KINDS: Array[String] = ["ipv4", "choice", "text"]
 const EVIDENCE_KEYS: Array[String] = ["source", "file", "line"]
 const ROUTE_KEYS: Array[String] = ["network", "mask", "next_hop"]
 const HOST_CONFIG_PATHS: Array[String] = ["hostname", "ip", "mask", "gateway", "locked"]
+const STEP_KINDS: String = 'a step has either "device" and "commands", "link", or "report"'
 
 static var _plain_key: RegEx = _compile("^[A-Za-z_][A-Za-z0-9_]*$")
 static var _scenario_id: RegEx = _compile("^[a-z][a-z0-9_]*$")
@@ -1073,8 +1074,13 @@ func _check_solution_step(entry: Variant, path: String, used: Dictionary) -> int
 	if not _expect_dict(entry, path):
 		return 0
 	var step: Dictionary = entry
-	if step.has("link") == step.has("device"):
-		_err(path, 'a step has either "device" and "commands", or "link"')
+	var kinds: int = int(step.has("link")) + int(step.has("device")) + int(step.has("report"))
+	if kinds != 1:
+		_err(path, STEP_KINDS)
+		return 0
+	if step.has("report"):
+		_check_keys(step, path, ["report"])
+		_check_solution_report(step["report"], _key(path, "report"))
 		return 0
 	if step.has("link"):
 		_check_keys(step, path, ["link"])
@@ -1084,6 +1090,23 @@ func _check_solution_step(entry: Variant, path: String, used: Dictionary) -> int
 	if _need(step, "commands", path):
 		_check_commands(step["commands"], _key(path, "commands"))
 	return 0
+
+
+## A `report` step files `value` for report field `field`.
+func _check_solution_report(value: Variant, path: String) -> void:
+	if not _expect_dict(value, path):
+		return
+	var step: Dictionary = value
+	_check_keys(step, path, ["field", "value"])
+	if _need(step, "field", path):
+		var v: Variant = step["field"]
+		var p: String = _key(path, "field")
+		if not v is String:
+			_err(p, "must be a report field id")
+		elif not _report_fields.has(v) and _report_fields_ok:
+			_err(p, 'unknown report field "%s"' % v)
+	if _need(step, "value", path):
+		_expect_string(step["value"], _key(path, "value"))
 
 
 func _check_commands(value: Variant, path: String) -> void:

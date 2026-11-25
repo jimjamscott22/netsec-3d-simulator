@@ -5,6 +5,7 @@ const MODELS: Dictionary[String, PackedScene] = {
 	"router_2port": preload("res://world/devices/router_2port.tscn"),
 	"switch_24": preload("res://world/devices/switch_24.tscn"),
 	"pc": preload("res://world/devices/pc.tscn"),
+	"server": preload("res://world/devices/server_1u.tscn"),
 }
 const DUST_CAP: PackedScene = preload("res://world/devices/dust_cap.tscn")
 
@@ -50,6 +51,11 @@ func _build(scenario: ScenarioView) -> void:
 		if socket != null:
 			socket.reserved = true
 			socket.add_child(DUST_CAP.instantiate())
+
+	# The SOC monitor only works when the mission has logs to read.
+	var monitor: SocMonitor = _room.soc_monitor()
+	if monitor != null:
+		monitor.set_online(not scenario.logs().is_empty())
 
 	for port_id: String in peers:
 		var peer_id: String = peers[port_id]

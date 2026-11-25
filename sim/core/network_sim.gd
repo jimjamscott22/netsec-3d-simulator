@@ -60,6 +60,19 @@ func load_scenario(data: Dictionary, file_id: String = "") -> LoadResult:
 	return LoadResult.success()
 
 
+## What mission select needs to know about one scenario file: its id, title and
+## sequence, or the validation errors when the file is not valid. Checks the
+## whole file exactly as `load_scenario` does, but changes nothing. `file_id`, when
+## given, must equal the scenario's `id`.
+static func summarize_scenario(data: Dictionary, file_id: String = "") -> ScenarioSummary:
+	var errors: Array[String] = ScenarioValidator.validate(data, file_id)
+	if not errors.is_empty():
+		return ScenarioSummary.invalid(file_id, errors)
+	return ScenarioSummary.valid(
+		file_id, data["id"], data["title"], ScenarioFields.to_int(data["sequence"])
+	)
+
+
 ## Static scenario data, or null until a scenario has loaded.
 func scenario_view() -> ScenarioView:
 	return _scenario_view
@@ -95,7 +108,8 @@ func _reevaluate() -> void:
 	if ObjectiveEvaluator.all_passed(states):
 		_mission_completed = true
 		_debrief = DebriefView.new(
-			_scenario_view.scenario_id(), _scenario_view.title(), true, _debrief_text, states
+			_scenario_view.scenario_id(), _scenario_view.title(), true, _debrief_text, states,
+			_report_debrief()
 		)
 		events.mission_completed.emit(_scenario_view.scenario_id())
 		return
@@ -105,10 +119,33 @@ func _reevaluate() -> void:
 		if s.failed:
 			_mission_failed = true
 			_debrief = DebriefView.new(
-				_scenario_view.scenario_id(), _scenario_view.title(), false, _debrief_text, states
+				_scenario_view.scenario_id(), _scenario_view.title(), false, _debrief_text, states,
+				_report_debrief()
 			)
 			events.mission_failed.emit(_scenario_view.scenario_id(), s.id)
 			return
+
+
+## The report's answers with the cited log lines looked up, for the debrief.
+func _report_debrief() -> Array[Dictionary]:
+	var rows: Array[Dictionary] = []
+	if _report == null:
+		return rows
+	for row: Dictionary in _report.debrief_rows():
+		var evidence: Array[Dictionary] = []
+		for ref: Dictionary in row["evidence"]:
+			var files: Dictionary = _logs.get(ref["source"], {})
+			var file: LogFile = files.get(ref["file"])
+			var line: LogLine = file.line(ref["line"]) if file != null else null
+			evidence.append({
+				"source": ref["source"],
+				"file": ref["file"],
+				"line": ref["line"],
+				"text": line.full_text() if line != null else "",
+			})
+		row["evidence"] = evidence
+		rows.append(row)
+	return rows
 
 
 ## Every `config_changed` goes through here so objectives are re-checked after it.

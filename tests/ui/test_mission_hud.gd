@@ -263,3 +263,25 @@ func test_hud_hides_while_the_terminal_is_open() -> void:
 	assert_bool(hud.visible).is_false()
 	term.close()
 	assert_bool(hud.visible).is_true()
+
+
+# --- a mission with no hints and no cable (a log mission) -----------------------------
+
+
+func test_a_mission_without_hints_or_cables_hides_those_lines() -> void:
+	assert_bool(Sim.load_scenario_id("m2_log_triage").ok).is_true()
+	var hud: MissionHud = _hud()
+	assert_str(hud.prompt_text()).is_equal("Tab objectives")
+	assert_bool(hud.find_children("*", "Label", true, false).any(
+		func(l: Label) -> bool: return l.text.begins_with("Spare cables") and l.visible
+	)).is_false()
+	hud.toggle_hint()
+	assert_bool(hud.is_hint_shown()).is_false()
+	assert_str(hud.hint_text()).is_empty()
+
+
+func test_a_mission_with_hints_and_a_cable_keeps_those_lines() -> void:
+	var hud: MissionHud = _hud()
+	assert_str(hud.prompt_text()).is_equal("H hint · Tab objectives")
+	hud.toggle_hint()
+	assert_bool(hud.is_hint_shown()).is_true()

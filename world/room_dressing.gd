@@ -16,7 +16,7 @@ const KENNEY: String = "res://assets/models/kenney_furniture/"
 const QUATERNIUS: String = "res://assets/models/quaternius_scifi/"
 
 ## Desk nodes under the room that get `DESK_PROPS`.
-const DESKS: Array[String] = ["Desks/desk_1", "Desks/desk_2"]
+const DESKS: Array[String] = ["Desks/desk_1", "Desks/desk_2", "Desks/soc_desk"]
 
 ## Desk-local. Kenney's pieces are about half real-world size, so the scales
 ## bring them to the desk the greybox collision already describes (0.75 m high).
@@ -42,7 +42,7 @@ const ROOM_PROPS: Array[Dictionary] = [
 	# Office corner by the desks.
 	{"model": KENNEY + "pottedPlant.glb", "pos": Vector3(-3.5, 0, 2.4), "yaw": 0.0, "scale": 2.0},
 	{"model": KENNEY + "pottedPlant.glb", "pos": Vector3(3.5, 0, 2.4), "yaw": 0.0, "scale": 2.0},
-	{"model": KENNEY + "trashcan.glb", "pos": Vector3(-0.2, 0, 2.7), "yaw": 0.0, "scale": 1.2},
+	{"model": KENNEY + "trashcan.glb", "pos": Vector3(-1.0, 0, 2.7), "yaw": 0.0, "scale": 1.2},
 ]
 
 

@@ -16,7 +16,8 @@ const DEFAULT_MAX_ATTEMPTS: int = 3
 static var _spaces: RegEx = RegEx.create_from_string("\\s+")
 
 var _order: Array[String] = []
-## field id -> {kind, options, answer (normalized), attempts_left, last_value, solved}
+## field id -> {label, kind, options, answer (normalized), answer_text (as written in
+## the scenario), evidence (refs `{source, file, line}`), attempts_left, last_value, solved}
 var _fields: Dictionary = {}
 
 
@@ -30,10 +31,20 @@ static func from_scenario(report: Dictionary, answers: Dictionary) -> ReportStat
 		var options: Array[String] = []
 		options.assign(entry.get("options", []))
 		state._order.append(id)
+		var evidence: Array[Dictionary] = []
+		for ref: Dictionary in entry.get("evidence", []):
+			evidence.append({
+				"source": str(ref["source"]),
+				"file": str(ref["file"]),
+				"line": ScenarioFields.to_int(ref["line"]),
+			})
 		state._fields[id] = {
+			"label": str(entry.get("label", id)),
 			"kind": Kind[(entry["kind"] as String).to_upper()],
 			"options": options,
 			"answer": normalize(str(answers.get(id, ""))),
+			"answer_text": str(answers.get(id, "")),
+			"evidence": evidence,
 			"attempts_left": max_attempts,
 			"last_value": "",
 			"solved": false,
@@ -89,6 +100,27 @@ func view() -> ReportView:
 			"solved": f["solved"],
 		})
 	return ReportView.new(rows)
+
+
+## What the end-of-mission debrief shows for each field, in file order:
+## `{id, label, answer, last_value, solved, evidence: [{source, file, line}]}`.
+## These are the answers, so NetworkSim only hands them out once the mission has ended.
+func debrief_rows() -> Array[Dictionary]:
+	var rows: Array[Dictionary] = []
+	for id in _order:
+		var f: Dictionary = _fields[id]
+		var evidence: Array[Dictionary] = []
+		for ref: Dictionary in f["evidence"]:
+			evidence.append(ref.duplicate())
+		rows.append({
+			"id": id,
+			"label": f["label"],
+			"answer": f["answer_text"],
+			"last_value": f["last_value"],
+			"solved": f["solved"],
+			"evidence": evidence,
+		})
+	return rows
 
 
 ## The value as it would be filed, or "" when it cannot be an answer for the

@@ -292,8 +292,12 @@ hint per reason.
 
 ## Solution
 
-A non-empty list of `{ "device": "...", "commands": [ ... ] }` and/or
-`{ "link": { "a": "...", "b": "..." } }` steps. The smoke test
+A non-empty list of `{ "device": "...", "commands": [ ... ] }`,
+`{ "link": { "a": "...", "b": "..." } }` and/or
+`{ "report": { "field": "<report field id>", "value": "..." } }` steps. A
+`report` step files `value` for that field through `submit_report`; the smoke
+test fails the step if the sim refuses it or the answer is wrong, and the
+validator checks the field exists and `value` is a non-empty string. The smoke test
 (`tests/scenario/test_scenario_smoke.gd`, replay logic in
 `tests/support/scenario_runner.gd`) runs for every `*.json` in `scenarios/`
 with no registration. It asserts the file loads (its `id` must equal the file
@@ -301,7 +305,8 @@ name), that at least one objective fails at the start, then applies the steps
 in order through `connect_link` and CLI sessions (stopping at the first step
 the sim refuses), then asserts that every objective passes and that
 `mission_completed` fired once. When a later milestone adds a solution step
-type, add it to `ScenarioRunner._apply_step`. The validator also checks
+type, add it to `ScenarioRunner._apply_step` and the validator's
+`_check_solution_step`. The validator also checks
 that the solution is playable: a link step can't use a reserved port or a port
 that is already cabled (by a start link or an earlier step), and the link steps
 can't outnumber `spare_cables`.

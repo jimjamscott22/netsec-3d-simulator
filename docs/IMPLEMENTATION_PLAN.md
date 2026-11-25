@@ -400,36 +400,119 @@ logs, works out who attacked, how and which account, and files a report.
     the line as shown. `service <name> status` reads `Server.services`
     (`id`, `port`), which M3 fills, so in M2 it always says "unrecognized service".
   - `edit <file>` is task 3.6.
-- [ ] **2.6 Server model scene** (`server_1u`) and a SOC desk with a monitor.
-- [ ] **2.7 Log viewer UI:** file list from `scenario_view` log
+- [x] **2.6 Server model scene** (`server_1u`) and a SOC desk with a monitor.
+  - `world/devices/server_1u.tscn` is a greybox 1U box (one `Socket01` for
+    `Ethernet0`, a console port that opens the server shell); the room builder
+    maps the catalog model id `server` to it.
+  - The room gains a third desk, `Desks/soc_desk`, with `SocMonitor`
+    (`world/soc_monitor.tscn`, `Room.soc_monitor()`). The builder calls
+    `set_online()` on each scenario load: online only when `scenario_view().logs()`
+    is non-empty, when it gets the "SOC monitor" interact label and the
+    `soc_monitor` meta. Task 2.7 hooks the viewer onto that meta in `game/main.gd`.
+  - The trash can moved to x = -1.0 to clear the new desk.
+- [x] **2.7 Log viewer UI:** file list from `scenario_view` log
   descriptors, lines via `query_logs`, scrolling monospace view, filter box
   with match highlight.
-- [ ] **2.8 Report form UI:** fields from `scenario_view`, attempts left
+  - `ui/log_viewer.gd` (`LogViewer`, `log_viewer.tscn`, a full-screen `CanvasLayer`
+    like the terminal) is opened from `game/main.gd` when the player interacts
+    with the SOC monitor (`soc_monitor` meta). The mission HUD steps aside while
+    it is open, and a debrief that is due waits for it to close.
+  - Lines show their file line number (report evidence cites it). The filter keeps
+    lines containing the text, ignoring case (`LogFilter.contains_ignore_case`), and
+    marks each match; the text stays when you switch files. Lines are drawn
+    with `add_text` (BBCode off), so log text can never inject markup. Up/Down pick the
+    file, PgUp/PgDn scroll, Esc closes.
+  - Regex filtering stays in the server shell's `grep`; the viewer is the simple tool.
+- [x] **2.8 Report form UI:** fields from `scenario_view`, attempts left
   and per-field feedback from `report_view`; nothing hard-coded per
   mission.
-- [ ] **2.8b Failed debrief card** (SPEC §7.2 step 6): on `mission_failed`,
+  - `ui/report_form.gd` (`ReportForm`, `report_form.tscn`, a full-screen `CanvasLayer`).
+    It is reached from the log viewer (a "File report" button, or F2, shown only
+    when the mission has a report), and `game/main.gd` swaps the two. One row per
+    `report_fields()` entry: a box by kind (a choice becomes a list of its
+    options), Submit (or Enter), the attempts left and the last answer's feedback.
+  - A wrong answer says "Not correct." and the attempts line drops; a value that
+    cannot be an answer (empty, bad IPv4, nothing picked) is explained and costs
+    nothing; a solved field shows its answer and locks; a spent field says "No
+    attempts left". The form refreshes on `report_submitted`.
+  - The debrief waits behind an open form like it does behind the terminal.
+    Showing the failed card is task 2.8b.
+- [x] **2.8b Failed debrief card** (SPEC §7.2 step 6): on `mission_failed`,
   stop play and show the failed objective, the answers and the evidence
   lines from `Sim.debrief_view()`, and Retry / Main menu.
   *Tests (sim):* `debrief_view` has no answers before failure and has the
   answers and `evidence` after.
   *Done when:* running out of attempts on any field shows the card, and
   Retry reloads the mission from its starting state.
-- [ ] **2.9 Write `scenarios/m2_log_triage.json`.** About 150–300 log lines
+  - `DebriefView.report_fields()` (filled for a completed mission too) gives each
+    field's `label`, `answer`, `last_value`, `solved` and `evidence`, where each
+    evidence entry is `{source, file, line, text}` with the cited log line looked up.
+    `ReportState.debrief_rows()` builds it from the scenario's `equals` and
+    `evidence`; neither reaches a live view.
+  - `MissionCard` gets `Kind.FAILED`: "TICKET FAILED", the objectives with `[!]` on
+    the one that failed, the failed objective named in the body, a scrolling
+    answers-and-evidence block, and Retry / Main menu (`retry_requested`,
+    `menu_requested`). Esc does not dismiss it; Enter picks Retry.
+  - `game/main.gd` closes any open window on `mission_failed` and shows the card at
+    once; Retry reloads the mission by id (so the briefing shows again), Main menu
+    goes to the menu. Nothing is saved on failure.
+- [x] **2.9 Write `scenarios/m2_log_triage.json`.** About 150–300 log lines
   mixing normal traffic with an SSH brute force from one IP that ends in a
   successful login. Solution steps use a new `report` step type in the smoke
   test.
   *Done when:* the smoke test passes.
-- [ ] **2.10 Mission catalog + select screen.** Core
+  - `scenarios/m2_log_triage.json` ("Who Knocked?", sequence 2): two servers (`WEB1`
+    in rack_a slot 1, `DB1` in slot 2), 193 log lines in three files. In WEB1's
+    `auth.log` one address (203.0.113.45, NL) fails 44 passwords across common
+    usernames in about three minutes, then is accepted for `deploy`. Lookalikes keep
+    the answer from being the name or the noise: a scanner (192.0.2.88, DE) fails five
+    times and never gets in, an office admin has one typo, and `deploy` also logs in by
+    key from the CI server. The report asks for the attacker IP, the attack type (six
+    options, so a guess is not a coin flip) and the compromised account, each with
+    evidence lines. Three attempts per field.
+  - New solution step `{ "report": { "field", "value" } }`: validator rules
+    (`_check_solution_report`, the step kinds message now names all three),
+    `ScenarioRunner._apply_step`, and the schema reference.
+  - `tests/scenario/test_m2_log_triage.gd` pins what makes it fair (one heavy-failure
+    address that then gets in, the lookalikes, evidence text, no answer in any live
+    view); the smoke test picks the file up on its own.
+  - Folded in from the Codex review of the failed card: it now lets Tab and the arrow
+    keys reach its buttons (`MissionCard.blocks_key`), and Enter or Space picks the
+    button with focus, so a keyboard-only player can choose Main menu.
+- [x] **2.10 Mission catalog + select screen.** Core
   `summarize_scenario`; `Sim.scenario_catalog()` reads every file in
   `res://scenarios/` and returns summaries sorted by `sequence`; the screen
   locks a mission until the previous `sequence` is completed in saved
   progress.
   *Tests:* summaries for valid files; invalid files skipped; a duplicate
   `sequence` across files is reported and both files are left out.
+  - `NetworkSim.summarize_scenario(data, file_id)` (static) validates the whole file
+    like `load_scenario` and returns a `ScenarioSummary` (`source`, `id`, `title`,
+    `sequence`, `errors`, `ok()`). An invalid file gets its `errors` and no title,
+    where SPEC §3.3 said `null` plus errors, so a caller always has something to
+    report.
+  - `ScenarioCatalog.build()` (pure) sorts the valid summaries by `sequence`, drops
+    invalid files and every file that shares a `sequence`, and lists why in
+    `problems`; `ScenarioCatalog.is_locked()` says a mission waits for the one
+    before it in the list, not for any earlier one.
+  - `Sim.scenario_catalog()` reads every `*.json` in the scenario folder and logs
+    the problems with `push_warning`; `Sim.catalog_problems()` returns them.
+  - `MainMenu` draws one row per mission (title, "Completed" / "Not started" /
+    "Locked", Start). `start_mission(id)` refuses a locked or unknown mission, and
+    the menu no longer loads a mission just to read its title. It asks
+    `Sim.is_mission_locked()` for the lock rule rather than calling the catalog
+    class itself (Codex review). Completing a mission
+    already saves through `Progress`, so the next one unlocks on the next visit.
 - [ ] **2.11 Threat map (should-have):** 2D world map, arcs from `geo`
   countries for lines with `src_ip`; click to jump to the line in the log
   viewer. Pure UI over `query_logs`.
 - [ ] **2.12 Playtest** with `docs/playtest/m2_log_triage.md`.
+  - Checklist written (`docs/playtest/m2_log_triage.md`) and a first scripted run done
+    under Xvfb (`docs/playtest/results/m2_log_triage/PLAYTEST.md`): 25 checks passed
+    and it found three small UI problems, all fixed with tests (a clipped file list
+    in the log viewer, green ticks on the failed card, and a spare-cable line and
+    hint prompt on a mission that has neither). Left unticked, like 1.33, until a human
+    does the new-player run and the lowest-spec performance check.
 
 **Exit criteria:** M2 playable after M1 from mission select; CI green.
 
@@ -567,6 +650,7 @@ Ideas that are out of scope until a milestone pulls them in:
   sit between the rails instead of in front of them.
 - Score / timer / hint penalties.
 - Localization.
+- Server shell counting for log work: `grep -c`, `wc -l` (found in the M2 playtest).
 - `no vlan <id>`, `no hostname`, `no interface <subif>` and other `no` forms
   not needed by `m1_vlan_ping`.
 - More missions: DHCP starvation, ARP spoofing, firewall rules, phishing.

@@ -112,4 +112,12 @@ static func _apply_step(sim: NetworkSim, step: Dictionary) -> String:
 			if not result.ok:
 				return "%s: '%s' -> %s" % [device, line, result.output.strip_edges()]
 		return ""
-	return "unsupported step type (has neither 'link' nor 'device')"
+	if step.has("report"):
+		var filed: Dictionary = step["report"]
+		var r: ReportResult = sim.submit_report(filed["field"], filed["value"])
+		if not r.ok:
+			return "report %s refused (%s)" % [filed["field"], ReportResult.Reason.keys()[r.reason]]
+		if not r.correct:
+			return "report %s: '%s' was not the right answer" % [filed["field"], filed["value"]]
+		return ""
+	return "unsupported step type (has none of 'link', 'device' or 'report')"

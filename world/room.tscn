@@ -1,4 +1,4 @@
-[gd_scene load_steps=27 format=3]
+[gd_scene load_steps=28 format=3]
 
 [ext_resource type="Script" path="res://world/room.gd" id="1"]
 [ext_resource type="Script" path="res://world/room_dressing.gd" id="2"]
@@ -9,6 +9,8 @@
 [ext_resource type="Texture2D" path="res://assets/textures/polyhaven/concrete_wall_008/concrete_wall_008_nor_gl_1k.jpg" id="tex_wall_n"]
 [ext_resource type="Texture2D" path="res://assets/textures/polyhaven/concrete_wall_008/concrete_wall_008_rough_1k.jpg" id="tex_wall_r"]
 [ext_resource type="PackedScene" path="res://assets/models/blender/rack_frame.glb" id="rack_model"]
+
+[ext_resource type="PackedScene" path="res://world/soc_monitor.tscn" id="soc_monitor"]
 
 [sub_resource type="StandardMaterial3D" id="mat_floor"]
 albedo_color = Color(0.78, 0.79, 0.82, 1)
@@ -316,6 +318,29 @@ shape = SubResource("shape_5")
 
 [node name="Marker" type="Marker3D" parent="Desks/desk_2"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.75, 0)
+
+
+[node name="soc_desk" type="StaticBody3D" parent="Desks"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 0, 0, 2.4)
+
+
+[node name="TopShape" type="CollisionShape3D" parent="Desks/soc_desk"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.725, 0)
+shape = SubResource("shape_4")
+
+[node name="PanelLShape" type="CollisionShape3D" parent="Desks/soc_desk"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.675, 0.35, 0)
+shape = SubResource("shape_5")
+
+[node name="PanelRShape" type="CollisionShape3D" parent="Desks/soc_desk"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.675, 0.35, 0)
+shape = SubResource("shape_5")
+
+[node name="Marker" type="Marker3D" parent="Desks/soc_desk"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.75, 0)
+
+[node name="SocMonitor" parent="Desks/soc_desk" instance=ExtResource("soc_monitor")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.75, -0.15)
 
 
 [node name="Dressing" type="Node3D" parent="."]

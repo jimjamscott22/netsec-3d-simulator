@@ -18,3 +18,8 @@ func slot_marker(rack_id: String, slot: int) -> Marker3D:
 ## Anchor on top of desk `desk_id`, or null if the room has no such desk.
 func desk_marker(desk_id: String) -> Marker3D:
 	return get_node_or_null("Desks/%s/Marker" % desk_id) as Marker3D
+
+
+## The SOC desk's monitor (task 2.6), or null if the room has none.
+func soc_monitor() -> SocMonitor:
+	return get_node_or_null("Desks/soc_desk/SocMonitor") as SocMonitor

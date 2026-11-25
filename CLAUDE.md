@@ -46,7 +46,18 @@ in plan order: the log model and `query_logs` (`sim/logs/`, task 2.1), the
 `submit_report`, `report_view` and the `report` objective type (task 2.3), and
 a report field out of attempts failing the mission with `mission_failed` (task
 2.4), and the server mini shell (`ServerSession`, `ServerCommands`, task 2.5) are
-done. Task 2.6 (the server model scene and a SOC desk) is next.
+done, as is the server model scene and the SOC desk with its monitor
+(`server_1u.tscn`, `SocMonitor`, task 2.6) and the log viewer UI
+(`ui/log_viewer.gd`, `LogViewer`, task 2.7) and the report form UI
+(`ui/report_form.gd`, `ReportForm`, task 2.8) and the failed debrief card
+(`MissionCard.Kind.FAILED`, `DebriefView.report_fields()`, task 2.8b) and the
+real M2 mission (`scenarios/m2_log_triage.json` with the `report` solution step,
+task 2.9) and the mission catalog and select screen (`ScenarioSummary`,
+`ScenarioCatalog`, `Sim.scenario_catalog()`, `MainMenu`, task 2.10). The owner
+skipped task 2.11 (the threat map, a should-have). The M2 playtest checklist
+(`docs/playtest/m2_log_triage.md`) and a first scripted run are done (task 2.12);
+it stays unticked until a human does the new-player run and the lowest-spec
+performance check, like 1.33. M3 (task 3.1) is next.
 
 ## Source of truth (read before working)
 

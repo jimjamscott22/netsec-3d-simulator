@@ -35,10 +35,37 @@ func test_has_two_racks_with_twelve_slot_markers_each() -> void:
 		assert_object(room.slot_marker(rack_id, 0)).is_null()
 
 
-func test_has_two_desk_markers() -> void:
+func test_has_two_device_desks_and_a_soc_desk() -> void:
 	var room: Room = _room()
 	assert_object(room.desk_marker("desk_1")).is_not_null()
 	assert_object(room.desk_marker("desk_2")).is_not_null()
+	assert_object(room.desk_marker("soc_desk")).is_not_null()
+
+
+func test_soc_monitor_stands_on_the_soc_desk_facing_the_room() -> void:
+	var room: Room = _room()
+	var monitor: SocMonitor = room.soc_monitor()
+	assert_object(monitor).is_not_null()
+	var top: Vector3 = room.desk_marker("soc_desk").global_position
+	assert_float(monitor.global_position.y).is_equal(top.y)
+	assert_float(monitor.global_position.x).is_equal(top.x)
+	# The desk faces -Z in world space, so the screen does too.
+	assert_float(monitor.global_transform.basis.z.z).is_less(-0.9)
+
+
+func test_soc_monitor_is_inert_until_set_online() -> void:
+	var monitor: SocMonitor = _room().soc_monitor()
+	var target: Area3D = monitor.target()
+	assert_bool(monitor.is_online()).is_false()
+	assert_bool(target.has_meta("interact_label")).is_false()
+	assert_bool(target.has_meta("soc_monitor")).is_false()
+
+	monitor.set_online(true)
+	assert_str(str(target.get_meta("interact_label"))).is_equal(SocMonitor.LABEL)
+	assert_bool(target.has_meta("soc_monitor")).is_true()
+
+	monitor.set_online(false)
+	assert_bool(target.has_meta("interact_label")).is_false()
 
 
 func test_unknown_ids_give_null() -> void:
@@ -90,10 +117,11 @@ func test_shell_blocks_the_player() -> void:
 	var room: Room = _room()
 	var shapes: int = 0
 	for node: Node in _all_nodes(room):
-		if node is CollisionShape3D:
+		# Interact targets (the SOC monitor's Area3D) don't block the player.
+		if node is CollisionShape3D and not node.get_parent() is Area3D:
 			shapes += 1
-	# Floor, ceiling, 4 walls, 2 racks, 2 desks of 3 pieces.
-	assert_int(shapes).is_equal(6 + 2 + 6)
+	# Floor, ceiling, 4 walls, 2 racks, 3 desks of 3 pieces.
+	assert_int(shapes).is_equal(6 + 2 + 9)
 
 
 func test_lighting_stays_within_budget() -> void:

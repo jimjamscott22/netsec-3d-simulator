@@ -34,6 +34,7 @@ signal mission_failed(scenario_id: String, objective_id: String)
 var scenario_dir: String = SCENARIO_DIR
 
 var _net: NetworkSim = NetworkSim.new()
+var _catalog_problems: Array[String] = []
 
 
 func _init() -> void:
@@ -67,6 +68,36 @@ func load_scenario_id(scenario_id: String) -> LoadResult:
 	if result.ok:
 		scenario_loaded.emit(scenario_id)
 	return result
+
+
+## The missions mission select lists: every valid scenario file in the scenario
+## folder, sorted by `sequence`. A file that is not valid, and every file that
+## shares a `sequence` with another, is left out and logged (see
+## `catalog_problems`). Reads files; changes no sim state.
+func scenario_catalog() -> Array[ScenarioSummary]:
+	var summaries: Array[ScenarioSummary] = []
+	for file_name: String in DirAccess.get_files_at(scenario_dir):
+		if file_name.get_extension() != "json":
+			continue
+		summaries.append(_summarize_file(file_name.get_basename()))
+	var catalog: ScenarioCatalog = ScenarioCatalog.build(summaries)
+	_catalog_problems = catalog.problems
+	for problem: String in _catalog_problems:
+		push_warning("Scenario catalog: %s" % problem)
+	return catalog.missions
+
+
+## True when mission `index` of `missions` (from `scenario_catalog()`) is locked,
+## given the ids of the missions already `completed`: every mission but the first
+## waits for the one before it. Mission select asks here, so it never touches the
+## core's catalog rules itself.
+func is_mission_locked(missions: Array[ScenarioSummary], index: int, completed: Array[String]) -> bool:
+	return ScenarioCatalog.is_locked(missions, index, completed)
+
+
+## Why files were left out of the last `scenario_catalog()`, one line each.
+func catalog_problems() -> Array[String]:
+	return _catalog_problems.duplicate()
 
 
 ## Static scenario data, or null until a scenario has loaded.
@@ -126,6 +157,17 @@ func ping(src_id: String, dst_ip: String) -> PingResult:
 ## A terminal session on a device, or null if there is no such device.
 func open_session(device_id: String) -> CliSession:
 	return _net.open_session(device_id)
+
+
+func _summarize_file(scenario_id: String) -> ScenarioSummary:
+	var path: String = "%s/%s.json" % [scenario_dir, scenario_id]
+	var json := JSON.new()
+	if json.parse(FileAccess.get_file_as_string(path)) != OK:
+		var message: String = "line %d: %s" % [json.get_error_line(), json.get_error_message()]
+		return ScenarioSummary.invalid(scenario_id, [message])
+	if not json.data is Dictionary:
+		return ScenarioSummary.invalid(scenario_id, ["the top level must be a JSON object"])
+	return NetworkSim.summarize_scenario(json.data, scenario_id)
 
 
 ## Only a bare file stem: nothing that could walk out of the scenarios folder.

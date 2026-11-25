@@ -1,8 +1,9 @@
 class_name MainMenu
 extends Control
-## The startup screen (SPEC §7.2 step 1, task 1.31): the M1 mission with its
-## completion mark, Start mission, Settings and Quit. Mission select with locked
-## missions replaces the single mission row in M2 (task 2.10).
+## The startup screen (SPEC §7.2 step 1, tasks 1.31 and 2.10): mission select,
+## Settings and Quit. One row per mission from `Sim.scenario_catalog()`, in
+## `sequence` order, each with its status (Completed, Not started, or Locked until
+## the mission before it is completed in the saved progress) and a Start button.
 ##
 ## It opens the player's save (`Progress.open()`) the first time it appears,
 ## unless something opened one already (tests open a temp file first).
@@ -11,7 +12,6 @@ extends Control
 ## running scene it then switches to the game scene itself.
 signal start_requested(scenario_id: String)
 
-const FIRST_MISSION: String = "m1_vlan_ping"
 const GAME_SCENE: String = "res://game/main.tscn"
 const GAME_TITLE: String = "NetSec 3D Simulator"
 const BACKGROUND: Color = Color(0.07, 0.08, 0.10)
@@ -22,11 +22,11 @@ const DONE: Color = Color(0.35, 0.75, 0.40)
 const ERROR: Color = Color(0.90, 0.40, 0.35)
 const WIDTH: float = 560.0
 
-var _mission_title: Label
-var _mission_status: Label
+## One entry per listed mission: `{id, title, locked, title_label, status_label, button}`.
+var _rows: Array[Dictionary] = []
+var _missions_box: VBoxContainer
 var _error: Label
 var _buttons: VBoxContainer
-var _start: Button
 var _settings_button: Button
 var _quit: Button
 var _settings: VBoxContainer
@@ -40,8 +40,8 @@ func _ready() -> void:
 		Progress.open()
 	_build()
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
-	_show_mission()
-	_start.grab_focus.call_deferred()
+	refresh_missions()
+	_focus_first_open_mission()
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -53,14 +53,36 @@ func _unhandled_input(event: InputEvent) -> void:
 # --- public ---------------------------------------------------------------------
 
 
-## Loads the mission and announces it. On a load error the menu stays, shows
-## the problem and returns false.
-func start_mission() -> bool:
-	var result: LoadResult = Sim.load_scenario_id(FIRST_MISSION)
-	if not result.ok:
-		_show_error(result.errors)
+## Reads the catalog and the saved progress again and redraws the mission rows.
+func refresh_missions() -> void:
+	for row: Dictionary in _rows:
+		(row["panel"] as Node).free()
+	_rows.clear()
+	_error.hide()
+	var missions: Array[ScenarioSummary] = Sim.scenario_catalog()
+	var completed: Array[String] = Progress.completed_ids()
+	for index: int in missions.size():
+		_add_row(missions[index], index, Sim.is_mission_locked(missions, index, completed), completed)
+	var problems: Array[String] = Sim.catalog_problems()
+	if missions.is_empty():
+		_show_error("No missions found.", problems)
+	elif not problems.is_empty():
+		_show_error("Some scenario files were left out:", problems)
+
+
+## Loads a mission and announces it; `scenario_id` "" means the first mission in
+## the list. A locked or unknown mission is refused. On a load error the menu stays,
+## shows the problem and returns false.
+func start_mission(scenario_id: String = "") -> bool:
+	var row: Dictionary = _row_for(scenario_id)
+	if row.is_empty() or row["locked"]:
 		return false
-	start_requested.emit(FIRST_MISSION)
+	var id: String = row["id"]
+	var result: LoadResult = Sim.load_scenario_id(id)
+	if not result.ok:
+		_show_error("Could not load the mission:", result.errors)
+		return false
+	start_requested.emit(id)
 	if get_tree().current_scene == self:
 		get_tree().change_scene_to_file(GAME_SCENE)
 	return true
@@ -86,20 +108,35 @@ func settings_panel() -> SettingsPanel:
 	return _settings_panel
 
 
-func mission_title_text() -> String:
-	return _mission_title.text
+## The ids of the listed missions, in order.
+func mission_ids() -> Array[String]:
+	var ids: Array[String] = []
+	for row: Dictionary in _rows:
+		ids.append(row["id"])
+	return ids
 
 
-func mission_status_text() -> String:
-	return _mission_status.text
+## Title of the mission at `index` in the list ("" if there is none).
+func mission_title_text(index: int = 0) -> String:
+	return (_rows[index]["title_label"] as Label).text if index < _rows.size() else ""
+
+
+## "Completed", "Not started" or "Locked" for the mission at `index`.
+func mission_status_text(index: int = 0) -> String:
+	return (_rows[index]["status_label"] as Label).text if index < _rows.size() else ""
+
+
+func is_mission_locked(index: int) -> bool:
+	return index < _rows.size() and _rows[index]["locked"]
 
 
 func error_text() -> String:
 	return _error.text
 
 
-func start_button() -> Button:
-	return _start
+## The Start button of the mission at `index`, or null if there is none.
+func start_button(index: int = 0) -> Button:
+	return _rows[index]["button"] if index < _rows.size() else null
 
 
 func quit_button() -> Button:
@@ -109,24 +146,23 @@ func quit_button() -> Button:
 # --- internals ------------------------------------------------------------------
 
 
-## Loading the mission is the only way to read its title without touching
-## scenario JSON here. Starting it loads it again from scratch.
-func _show_mission() -> void:
-	var result: LoadResult = Sim.load_scenario_id(FIRST_MISSION)
-	if not result.ok:
-		_mission_title.text = FIRST_MISSION
-		_mission_status.text = ""
-		_start.disabled = true
-		_show_error(result.errors)
-		return
-	_mission_title.text = Sim.scenario_view().title()
-	var done: bool = Progress.is_completed(FIRST_MISSION)
-	_mission_status.text = "Completed" if done else "Not started"
-	_mission_status.add_theme_color_override("font_color", DONE if done else MUTED)
+func _row_for(scenario_id: String) -> Dictionary:
+	for row: Dictionary in _rows:
+		if scenario_id.is_empty() or row["id"] == scenario_id:
+			return row
+	return {}
 
 
-func _show_error(errors: Array[String]) -> void:
-	_error.text = "Could not load the mission:\n" + "\n".join(errors)
+func _focus_first_open_mission() -> void:
+	for row: Dictionary in _rows:
+		if not row["locked"]:
+			(row["button"] as Button).grab_focus.call_deferred()
+			return
+	_settings_button.grab_focus.call_deferred()
+
+
+func _show_error(heading: String, lines: Array[String]) -> void:
+	_error.text = "\n".join([heading] + lines)
 	_error.show()
 
 
@@ -152,7 +188,9 @@ func _build() -> void:
 	tagline.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	column.add_child(tagline)
 
-	column.add_child(_mission_row())
+	_missions_box = VBoxContainer.new()
+	_missions_box.add_theme_constant_override("separation", 10)
+	column.add_child(_missions_box)
 
 	_error = _label("", ERROR, 14)
 	_error.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -162,7 +200,6 @@ func _build() -> void:
 	_buttons = VBoxContainer.new()
 	_buttons.add_theme_constant_override("separation", 10)
 	column.add_child(_buttons)
-	_start = _button("Start mission", start_mission)
 	_settings_button = _button("Settings", open_settings)
 	_quit = _button("Quit", get_tree().quit)
 	# A browser tab can't be quit from inside the page.
@@ -183,26 +220,42 @@ func _build() -> void:
 	_settings.add_child(_back)
 
 
-func _mission_row() -> PanelContainer:
+func _add_row(mission: ScenarioSummary, index: int, locked: bool, completed: Array[String]) -> void:
 	var panel := PanelContainer.new()
 	var style := StyleBoxFlat.new()
 	style.bg_color = PANEL
 	style.set_content_margin_all(16.0)
 	style.set_corner_radius_all(4)
 	panel.add_theme_stylebox_override("panel", style)
+	_missions_box.add_child(panel)
 
 	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", 14)
 	panel.add_child(row)
 	var text := VBoxContainer.new()
 	text.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	row.add_child(text)
-	text.add_child(_label("MISSION 1", MUTED, 12))
-	_mission_title = _label("", TEXT, 20)
-	text.add_child(_mission_title)
-	_mission_status = _label("", MUTED, 14)
-	_mission_status.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	row.add_child(_mission_status)
-	return panel
+	text.add_child(_label("MISSION %d" % mission.sequence, MUTED, 12))
+	var title: Label = _label(mission.title, MUTED if locked else TEXT, 20)
+	text.add_child(title)
+
+	var done: bool = completed.has(mission.id)
+	var status_text: String = "Locked" if locked else ("Completed" if done else "Not started")
+	var status: Label = _label(status_text, DONE if done else MUTED, 14)
+	status.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	row.add_child(status)
+
+	var button := Button.new()
+	button.text = "Start"
+	button.custom_minimum_size = Vector2(90.0, 36.0)
+	button.disabled = locked
+	button.pressed.connect(start_mission.bind(mission.id))
+	row.add_child(button)
+
+	_rows.append({
+		"id": mission.id, "title": mission.title, "locked": locked, "panel": panel,
+		"title_label": title, "status_label": status, "button": button,
+	})
 
 
 func _button(text: String, on_press: Callable) -> Button:

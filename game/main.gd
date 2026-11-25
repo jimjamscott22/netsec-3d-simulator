@@ -8,6 +8,8 @@ const MENU_SCENE: String = "res://ui/main_menu.tscn"
 
 @onready var _cabling: Cabling = $CablingHUD
 @onready var _terminal: Terminal = $Terminal
+@onready var _log_viewer: LogViewer = $LogViewer
+@onready var _report_form: ReportForm = $ReportForm
 @onready var _hud: MissionHud = $MissionHUD
 @onready var _card: MissionCard = $MissionCard
 @onready var _player: Player = $Player
@@ -22,11 +24,19 @@ func _ready() -> void:
 	_apply_settings()
 	Progress.settings_changed.connect(_apply_settings)
 	_card.closed.connect(_on_card_closed)
+	_card.retry_requested.connect(_on_retry_requested)
+	_card.menu_requested.connect(_go_to_menu)
 	# The terminal covers the screen and owns Tab, so the HUD steps aside.
 	_terminal.opened.connect(_hud.hide.unbind(1))
 	_terminal.closed.connect(_on_terminal_closed)
+	_log_viewer.opened.connect(_hud.hide)
+	_log_viewer.closed.connect(_on_log_viewer_closed)
+	_log_viewer.report_requested.connect(_on_report_requested)
+	_report_form.opened.connect(_hud.hide)
+	_report_form.closed.connect(_on_report_form_closed)
 	Sim.scenario_loaded.connect(_on_scenario_loaded)
 	Sim.mission_completed.connect(_on_mission_completed)
+	Sim.mission_failed.connect(_on_mission_failed)
 
 	# The main menu loads the mission before switching here. Running this scene
 	# on its own (from the editor, or in tests) falls back to M1.
@@ -38,10 +48,13 @@ func _ready() -> void:
 		push_error("Could not start M1: %s" % "\n".join(result.errors))
 
 
-## A console port or PC screen opens the terminal; everything else is cabling.
+## A console port or PC screen opens the terminal, the SOC monitor opens the log
+## viewer; everything else is cabling.
 func _on_interacted(target: CollisionObject3D) -> void:
 	if target.has_meta("console_device"):
 		_terminal.open(str(target.get_meta("console_device")))
+	elif target.has_meta("soc_monitor"):
+		_log_viewer.open()
 	else:
 		_cabling.interact(target)
 
@@ -54,22 +67,68 @@ func _on_scenario_loaded(_scenario_id: String) -> void:
 ## The last fix is usually typed in the terminal, so the debrief lets the player
 ## see that command's output first and appears once the terminal closes.
 func _on_mission_completed(_scenario_id: String) -> void:
-	if _terminal.is_open():
+	if _terminal.is_open() or _log_viewer.is_open() or _report_form.is_open():
 		_debrief_pending = true
 	else:
 		_card.show_debrief()
 
 
+## Failing stops play: whatever window is open closes and the failed card shows
+## the answers. (The failing answer comes from the report form, mid-submit.)
+func _on_mission_failed(_scenario_id: String, _objective_id: String) -> void:
+	_debrief_pending = false
+	if _terminal.is_open():
+		_terminal.close()
+	if _log_viewer.is_open():
+		_log_viewer.close()
+	if _report_form.is_open():
+		_report_form.close()
+	_card.show_debrief()
+
+
+## Retry reloads the mission from its start; loading shows the briefing again.
+func _on_retry_requested() -> void:
+	var view: ScenarioView = Sim.scenario_view()
+	if view == null:
+		return
+	var result: LoadResult = Sim.load_scenario_id(view.scenario_id())
+	if not result.ok:
+		push_error("Could not restart %s: %s" % [view.scenario_id(), "\n".join(result.errors)])
+
+
 func _on_terminal_closed() -> void:
 	_hud.show()
+	_show_pending_debrief()
+
+
+func _on_log_viewer_closed() -> void:
+	_hud.show()
+	_show_pending_debrief()
+
+
+## The report form is opened from the log viewer, which steps aside for it.
+func _on_report_requested() -> void:
+	_log_viewer.close()
+	_report_form.open()
+
+
+func _on_report_form_closed() -> void:
+	_hud.show()
+	_show_pending_debrief()
+
+
+func _show_pending_debrief() -> void:
 	if _debrief_pending:
 		_debrief_pending = false
 		_card.show_debrief()
 
 
 func _on_card_closed(kind: MissionCard.Kind) -> void:
-	if kind != MissionCard.Kind.DEBRIEF:
-		return
+	if kind == MissionCard.Kind.DEBRIEF:
+		_go_to_menu()
+
+
+func _go_to_menu() -> void:
 	menu_requested.emit()
 	if get_tree().current_scene == self:
 		get_tree().change_scene_to_file(MENU_SCENE)

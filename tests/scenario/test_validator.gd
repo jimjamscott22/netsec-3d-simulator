@@ -754,15 +754,15 @@ func test_solution_shape() -> void:
 	assert_array(_with(["solution", 1], 5)).is_equal(["solution[1]: must be an object"])
 
 
-func test_a_step_is_either_commands_or_a_link() -> void:
-	var msg: String = 'solution[1]: a step has either "device" and "commands", or "link"'
+func test_a_step_is_either_commands_a_link_or_a_report() -> void:
+	var msg: String = 'solution[1]: a step has either "device" and "commands", "link", or "report"'
 	assert_array(_with(["solution", 1], {})).is_equal([msg])
 	assert_array(_with(["solution", 1, "link"], {"a": "S1:Fa0/3", "b": "PC-B:Eth0"})).is_equal([msg])
 
 
 func test_solution_command_steps() -> void:
 	assert_array(_with(["solution", 1, "device"], "X9")).is_equal(['solution[1].device: unknown device "X9"'])
-	assert_array(_without(["solution", 1, "device"])).is_equal(['solution[1]: a step has either "device" and "commands", or "link"'])
+	assert_array(_without(["solution", 1, "device"])).is_equal(['solution[1]: a step has either "device" and "commands", "link", or "report"'])
 	assert_array(_without(["solution", 1, "commands"])).is_equal(["solution[1].commands: required"])
 	assert_array(_with(["solution", 1, "commands"], "enable")).is_equal(["solution[1].commands: must be an array"])
 	assert_array(_with(["solution", 1, "commands"], [])).is_equal(["solution[1].commands: needs at least one command"])
