@@ -57,7 +57,10 @@ task 2.9) and the mission catalog and select screen (`ScenarioSummary`,
 skipped task 2.11 (the threat map, a should-have). The M2 playtest checklist
 (`docs/playtest/m2_log_triage.md`) and a first scripted run are done (task 2.12);
 it stays unticked until a human does the new-player run and the lowest-spec
-performance check, like 1.33. M3 (task 3.1) is next.
+performance check, like 1.33. M3 is under way: server source files and patch
+regions (`sim/web/`: `SourceFile`, `Vuln`, `PatchView`; `NetworkSim.read_file`,
+`patch_views`, `write_patch`, `patch_rev`, the `patch_applied` signal and
+`DeviceView.services()`, task 3.1) are done. The patch matcher (task 3.2) is next.
 
 ## Source of truth (read before working)
 

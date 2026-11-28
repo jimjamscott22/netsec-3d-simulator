@@ -11,6 +11,7 @@ var _gateway: String = ""
 var _locked: bool = false
 var _vlans: Dictionary = {}
 var _static_routes: Array = []
+var _services: Array[Dictionary] = []
 
 
 func _init(d: Device, oper: Dictionary[String, bool]) -> void:
@@ -37,6 +38,15 @@ func _init(d: Device, oper: Dictionary[String, bool]) -> void:
 	if d is Host:
 		_gateway = (d as Host).gateway
 		_locked = (d as Host).locked
+	if d is Server:
+		# Only the listed keys, so nothing hidden can ride along in a service entry.
+		for service: Variant in (d as Server).services:
+			if service is Dictionary:
+				_services.append({
+					"id": str(service.get("id", "")),
+					"port": ScenarioFields.to_int(service.get("port", 0)),
+					"root": str(service.get("root", "")),
+				})
 	if d is Switch:
 		_vlans = (d as Switch).vlans.duplicate()
 	if d is Router:
@@ -77,3 +87,13 @@ func vlans() -> Dictionary:
 
 func static_routes() -> Array:
 	return _static_routes.duplicate(true)
+
+
+## A server's services, each `{id: String, port: int, root: String}`, in
+## declaration order; empty for any other device. Source files, vulns, accepted
+## fixes, fixtures and exploits are never in a view.
+func services() -> Array[Dictionary]:
+	var out: Array[Dictionary] = []
+	for service in _services:
+		out.append(service.duplicate())
+	return out

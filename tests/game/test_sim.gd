@@ -276,6 +276,32 @@ func test_there_is_no_report_or_log_before_a_scenario_loads() -> void:
 	assert_bool(sim.submit_report("attacker_ip", "x").ok).is_false()
 
 
+func test_patching_goes_through_sim_and_re_emits_the_signal() -> void:
+	# The loader reads server files and vulns from task 3.3 on; until then the
+	# test puts them straight on the owned NetworkSim.
+	var sim: Node = _m2()
+	var net: NetworkSim = sim._net
+	net.add_source_file("WEB1", "/var/www/a.php", "<?php\necho $q;\n")
+	var v := Vuln.new("xss", "/var/www/a.php", 2, 2)
+	v.hint = "Escape it."
+	net.add_vuln("WEB1", v)
+	var seen: Array[String] = []
+	_record(sim.patch_applied, "patch", seen)
+	assert_str(sim.read_file("WEB1", "/var/www/a.php")).is_equal("<?php\necho $q;\n")
+	var views: Array[PatchView] = sim.patch_views("WEB1", "/var/www/a.php")
+	assert_str(views[0].hint()).is_equal("Escape it.")
+	assert_bool(sim.write_patch("WEB1", "xss", "echo htmlspecialchars($q);")).is_true()
+	assert_str(sim.read_file("WEB1", "/var/www/a.php")).is_equal("<?php\necho htmlspecialchars($q);\n")
+	assert_array(seen).is_equal(["patch:WEB1:xss"])
+
+
+func test_there_are_no_files_before_a_scenario_loads() -> void:
+	var sim: Node = _sim()
+	assert_object(sim.read_file("WEB1", "/var/www/a.php")).is_null()
+	assert_array(sim.patch_views("WEB1", "/var/www/a.php")).is_empty()
+	assert_bool(sim.write_patch("WEB1", "xss", "x")).is_false()
+
+
 func test_the_autoload_is_registered_as_sim() -> void:
 	var node: Node = (Engine.get_main_loop() as SceneTree).root.get_node_or_null("Sim")
 	assert_object(node).is_not_null()
