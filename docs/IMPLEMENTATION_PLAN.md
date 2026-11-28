@@ -525,7 +525,7 @@ a reflected XSS in its search page. For each one, the player proves the
 exploit with `curl` from a PC, patches the code, and proves the exploit now
 fails.
 
-- [ ] **3.1 Server files + patch regions** (`sim/web/`): files stored as
+- [x] **3.1 Server files + patch regions** (`sim/web/`): files stored as
   prefix + region + suffix per vuln; `read_file`, `patch_views`,
   `write_patch` (bumps `patch_rev`), `patch_applied` signal; `device_view`
   exposes server `services` metadata but redacts `files`, `vulns`, `accept`
@@ -535,6 +535,17 @@ fails.
   new line range; `patch_rev` increments per save; unknown vuln; signal;
   `device_view` on a server excludes `files`, `vulns`, `accept` patterns,
   fixtures, and `exploit` metadata.
+  - Done: `SourceFile` (prefix/region/suffix lines, at most one region, keeps its
+    starting region text for the 3.9 debrief), `Vuln` (with `from_entry` for the
+    3.3 loader) and `PatchView` in `sim/web/`; `Server.files`/`vulns` are typed.
+    `NetworkSim` gains `add_source_file`, `add_vuln`, `source_paths`, `read_file`,
+    `patch_views`, `write_patch` and `patch_rev` (-1 when unknown, for 3.4/3.5).
+    Log and source files share one set of paths per device. Every save bumps
+    `patch_rev`, even with unchanged text. A trailing newline in saved text only
+    ends the last line, and an empty save leaves one empty line to type on.
+    `DeviceView.services()` copies only `id`, `port` and `root`. `Sim` wraps
+    `read_file`, `patch_views`, `write_patch` and re-emits `patch_applied`.
+    The loader still rejects `files`/`vulns`/`services` until 3.3.
 - [ ] **3.2 Patch matcher** (`sim/web/patch_matcher.gd`): normalization
   (strip comments and whitespace outside string literals) + anchored
   full-match against `accept` regexes.
@@ -650,6 +661,8 @@ Ideas that are out of scope until a milestone pulls them in:
   sit between the rails instead of in front of them.
 - Score / timer / hint penalties.
 - Localization.
+- Server shell `ls`/`cat`/`grep` of M3 source files: `ServerFiles` lists only
+  log files today; it could merge `NetworkSim.source_paths` and `read_file`.
 - Server shell counting for log work: `grep -c`, `wc -l` (found in the M2 playtest).
 - `no vlan <id>`, `no hostname`, `no interface <subif>` and other `no` forms
   not needed by `m1_vlan_ping`.

@@ -155,9 +155,9 @@ func _emit_config_changed(device_id: String) -> void:
 
 
 ## Registers a log file on its source device. False, and nothing changes, when
-## that device does not exist or already has a file at that path.
+## that device does not exist or already has a log or source file at that path.
 func add_log_file(f: LogFile) -> bool:
-	if not _devices.has(f.source()):
+	if not _devices.has(f.source()) or source_paths(f.source()).has(f.file()):
 		return false
 	var files: Dictionary = _logs.get_or_add(f.source(), {})
 	if files.has(f.file()):
@@ -210,6 +210,89 @@ func report_view() -> ReportView:
 	if _report == null:
 		return ReportView.new()
 	return _report.view()
+
+
+## Puts a source file on server `device_id`. False, and nothing changes, when
+## that device is not a server or already has a source or log file at `path`.
+func add_source_file(device_id: String, path: String, text: String) -> bool:
+	var server: Server = get_device(device_id) as Server
+	if server == null or server.files.has(path) or log_paths(device_id).has(path):
+		return false
+	server.files[path] = SourceFile.new(path, text)
+	return true
+
+
+## Adds `vuln` to server `device_id` and marks its patch region in its file.
+## False, and nothing changes, when the device is not a server, the server
+## already has a vuln with that id, the file is missing, the file already has a
+## region, or the range is not inside the file.
+func add_vuln(device_id: String, vuln: Vuln) -> bool:
+	var server: Server = get_device(device_id) as Server
+	if server == null or vuln.id == "" or server.vuln(vuln.id) != null:
+		return false
+	var file: SourceFile = server.files.get(vuln.file)
+	if file == null or not file.mark_region(vuln.id, vuln.first_line, vuln.last_line):
+		return false
+	server.vulns.append(vuln)
+	return true
+
+
+## The paths of the source files on `device_id`, in declaration order; empty for
+## anything that is not a server.
+func source_paths(device_id: String) -> Array[String]:
+	var out: Array[String] = []
+	var server: Server = get_device(device_id) as Server
+	if server != null:
+		out.assign(server.files.keys())
+	return out
+
+
+## A source file's whole current text, or null when the device or file does not
+## exist.
+func read_file(device_id: String, path: String) -> Variant:
+	var file: SourceFile = _source_file(device_id, path)
+	return file.text() if file != null else null
+
+
+## The patch regions in one source file (at most one), as fresh read-only views;
+## empty when the device or file does not exist or the file has no region.
+func patch_views(device_id: String, path: String) -> Array[PatchView]:
+	var out: Array[PatchView] = []
+	var file: SourceFile = _source_file(device_id, path)
+	if file == null or not file.has_region():
+		return out
+	var vuln: Vuln = (get_device(device_id) as Server).vuln(file.vuln_id())
+	out.append(PatchView.new(vuln.id, file.region_first_line(), file.region_last_line(), vuln.hint))
+	return out
+
+
+## Saves `text` as the patch region of `vuln_id` on `device_id`. Only the region
+## changes. Every save bumps the vuln's `patch_rev`, even one that leaves the
+## text as it was, then `patch_applied` fires and the objectives are re-checked.
+## False, and nothing changes, for an unknown device or vuln.
+func write_patch(device_id: String, vuln_id: String, text: String) -> bool:
+	var server: Server = get_device(device_id) as Server
+	var vuln: Vuln = server.vuln(vuln_id) if server != null else null
+	if vuln == null:
+		return false
+	server.files[vuln.file].replace_region(text)
+	vuln.patch_rev += 1
+	events.patch_applied.emit(device_id, vuln_id)
+	_reevaluate()
+	return true
+
+
+## How many times `vuln_id`'s region has been saved, or -1 for an unknown device
+## or vuln.
+func patch_rev(device_id: String, vuln_id: String) -> int:
+	var server: Server = get_device(device_id) as Server
+	var vuln: Vuln = server.vuln(vuln_id) if server != null else null
+	return vuln.patch_rev if vuln != null else -1
+
+
+func _source_file(device_id: String, path: String) -> SourceFile:
+	var server: Server = get_device(device_id) as Server
+	return server.files.get(path) if server != null else null
 
 
 func add_device(d: Device) -> bool:

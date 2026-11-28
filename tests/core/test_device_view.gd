@@ -85,3 +85,38 @@ func test_view_peer_is_a_string_when_cabled() -> void:
 	var d: Dictionary = sim.device_view("PC-A").interface("eth0")
 	assert_str(d["peer"]).is_equal("PC-B:Ethernet0")
 	assert_bool(d["oper_up"]).is_true()
+
+
+func test_a_server_view_shows_services_but_no_hidden_metadata() -> void:
+	var sim := NetworkSim.new()
+	var web := Server.new("WEB1")
+	web.services = [{"id": "http", "port": 80, "root": "/var/www", "secret": "x"}]
+	sim.add_device(web)
+	sim.add_source_file("WEB1", "/var/www/login.php", "a\nb\n")
+	var v := Vuln.new("sqli_login", "/var/www/login.php", 1, 1)
+	v.accept.assign(["pattern"])
+	v.accept_fixtures.assign(["fixture"])
+	v.exploit = {"payload": "' OR '1'='1"}
+	sim.add_vuln("WEB1", v)
+	var view: DeviceView = sim.device_view("WEB1")
+	assert_int(view.kind()).is_equal(Device.Kind.SERVER)
+	assert_array(view.services()).is_equal([{"id": "http", "port": 80, "root": "/var/www"}])
+	# A copy: changing it touches neither the view nor the server.
+	view.services()[0]["port"] = 8080
+	assert_int(view.services()[0]["port"]).is_equal(80)
+	# No files, vulns, accept patterns, fixtures or exploit anywhere in the view.
+	var props: Array = view.get_property_list().map(func(p: Dictionary) -> String: return p["name"])
+	for hidden: String in ["files", "_files", "vulns", "_vulns", "accept", "exploit"]:
+		assert_bool(props.has(hidden)).is_false()
+	var dump: String = ""
+	for p: Dictionary in view.get_property_list():
+		if p["usage"] & PROPERTY_USAGE_SCRIPT_VARIABLE:
+			dump += str(view.get(p["name"]))
+	for secret: String in ["login.php", "sqli_login", "pattern", "fixture", "OR '1'", "secret"]:
+		assert_str(dump).not_contains(secret)
+
+
+func test_non_servers_have_no_services() -> void:
+	var sim := NetworkSim.new()
+	sim.add_device(Host.new("PC-1"))
+	assert_array(sim.device_view("PC-1").services()).is_empty()

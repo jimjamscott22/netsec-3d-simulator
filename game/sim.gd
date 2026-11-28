@@ -24,6 +24,7 @@ signal scenario_loaded(scenario_id: String)
 signal link_changed(a_port: String, b_port: String, connected: bool)
 signal interface_state_changed(port: String, oper_up: bool)
 signal config_changed(device_id: String)
+signal patch_applied(device_id: String, vuln_id: String)
 signal report_submitted(field: String, correct: bool)
 signal objective_updated(objective_id: String, passed: bool)
 signal mission_completed(scenario_id: String)
@@ -44,6 +45,7 @@ func _init() -> void:
 	events.link_changed.connect(link_changed.emit)
 	events.interface_state_changed.connect(interface_state_changed.emit)
 	events.config_changed.connect(config_changed.emit)
+	events.patch_applied.connect(patch_applied.emit)
 	events.report_submitted.connect(report_submitted.emit)
 	events.objective_updated.connect(objective_updated.emit)
 	events.mission_completed.connect(mission_completed.emit)
@@ -136,6 +138,22 @@ func submit_report(field: String, value: String) -> ReportResult:
 ## order. The log viewer reads through this.
 func query_logs(source_id: String, file: String, filter: LogFilter) -> Array[LogLine]:
 	return _net.query_logs(source_id, file, filter)
+
+
+## A server source file's whole current text, or null if there is no such file.
+## The code editor reads through this.
+func read_file(device_id: String, path: String) -> Variant:
+	return _net.read_file(device_id, path)
+
+
+## The patch regions in one source file (vuln id, current line range, hint).
+func patch_views(device_id: String, path: String) -> Array[PatchView]:
+	return _net.patch_views(device_id, path)
+
+
+## Saves a vuln's patch region; see `NetworkSim.write_patch`.
+func write_patch(device_id: String, vuln_id: String, text: String) -> bool:
+	return _net.write_patch(device_id, vuln_id, text)
 
 
 func spare_cables() -> int:
